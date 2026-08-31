@@ -1,6 +1,6 @@
 /* ==========================================================================
-   GREEN KARMA — ILLEGAL DUMPING REPORTING & CIVIC ACTION
-   Citizen-powered Geo-Tagged Hotspot Spotting (+20 GP on Verification)
+   GREEN LEGACY — ILLEGAL DUMPING REPORTING & CIVIC ACTION
+   Citizen-powered Geo-Tagged Hotspot Spotting (+20 GC on Verification)
    ========================================================================== */
 
 import { State } from '../state.js';
@@ -27,11 +27,11 @@ export const IllegalDumpingView = {
               <span>🚨</span> Swachh Civic Vigilance
             </div>
             <h2>Report Illegal Garbage Hotspots</h2>
-            <p>Help the municipal authority identify and eliminate illegal dumping sites. Earn +20 GP once resolved.</p>
+            <p>Help the municipal authority identify and eliminate illegal dumping sites. Earn +20 GC once resolved.</p>
           </div>
 
           <span class="badge badge-points" style="font-size: 0.95rem; padding: 0.5rem 1rem;">
-            +20 Green Points / Report
+            +20 Green Credits / Report
           </span>
         </div>
 
@@ -84,7 +84,7 @@ export const IllegalDumpingView = {
             </div>
 
             <button class="btn btn-primary btn-block btn-lg" style="margin-top: 1rem;" onclick="window.IllegalDumpingView.submitReport()">
-              <span>🚨</span> Submit Hotspot Report (+20 GP)
+              <span>🚨</span> Submit Hotspot Report (+20 GC)
             </button>
           </div>
 
@@ -106,7 +106,7 @@ export const IllegalDumpingView = {
                   <span>3️⃣</span> <strong>Investigating</strong> — Heavy vehicle cleanup
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.75rem; background: #ECFDF5; padding: 0.6rem 0.85rem; border-radius: var(--radius-md); border: 1px solid var(--color-primary);">
-                  <span>4️⃣</span> <strong style="color: var(--color-primary-dark);">Resolved</strong> — Clean site photo + 20 GP credited!
+                  <span>4️⃣</span> <strong style="color: var(--color-primary-dark);">Resolved</strong> — Clean site photo + 20 GC credited!
                 </div>
               </div>
             </div>
@@ -129,7 +129,7 @@ export const IllegalDumpingView = {
 
                     <div style="text-align: right;">
                       <span class="badge" style="background: ${r.status === 'Resolved' ? '#D1FAE5' : '#FEF3C7'}; color: ${r.status === 'Resolved' ? '#065F46' : '#92400E'}; font-size: 0.75rem;">
-                        ${r.status === 'Resolved' ? '✓ Resolved (+20 GP)' : '🟡 ' + r.status}
+                        ${r.status === 'Resolved' ? '✓ Resolved (+20 GC)' : '🟡 ' + r.status}
                       </span>
                     </div>
                   </div>
