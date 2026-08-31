@@ -1,18 +1,24 @@
 /* ==========================================================================
-   GREEN KARMA — REACTIVE STATE STORE
+   GREEN LEGACY — REACTIVE STATE STORE
    Persistent State, Role-Based Access, & Event Subscriptions
    ========================================================================== */
 
 import { Formatters } from './utils/formatters.js';
 
+// Demo persistence (localStorage) — see saveState()/restoreState()/resetState()
+const STORAGE_KEY = 'greenLegacyDemoState';
+const STORAGE_VERSION = 1;
+
 class StateStore {
   constructor() {
     this.listeners = new Set();
-    this.loadInitialState();
+    this.state = this.restoreState() || this.getSeedState();
   }
 
-  loadInitialState() {
-    this.state = {
+  // Original seed/demo dataset. Also used by resetState() to restore
+  // the app to its starting condition.
+  getSeedState() {
+    return {
       // Current User Role: 'citizen' | 'worker' | 'admin' | 'institution'
       currentRole: 'citizen',
 
@@ -24,12 +30,16 @@ class StateStore {
         phone: '+91 98765 43210',
         avatar: 'SP',
         address: 'Flat 402, Green Meadows, Ward 4B, Mumbai',
-        greenPoints: 1250, // 100 GP = ₹10 => ₹125
+        greenPoints: 1250, // 100 GC = ₹10 => ₹125
         lifetimeWasteKg: 125,
         pickupsCompleted: 18,
         co2SavedKg: 84.5,
         treesEquivalent: 6.2,
         waterSavedLitres: 480,
+        // Category breakdown of lifetimeWasteKg — kept in sync with it
+        // (wet + dry + harmful === lifetimeWasteKg) so the Impact
+        // Dashboard's composition card can derive real percentages.
+        wasteByCategoryKg: { wet: 48, dry: 65, harmful: 12 },
         rank: 12,
         greenStreakDays: 8,
         kycVerified: true,
@@ -58,6 +68,9 @@ class StateStore {
         greenPointsIssued: 4850000,
         greenPointsRedeemed: 3920000,
         hotspotsResolved: 342,
+        // Category breakdown of totalWasteTons — kept in sync with it
+        // so the admin Segregation Ratio chart derives real percentages.
+        wasteByCategoryTons: { wet: 12922, dry: 8946, harmful: 2982 },
         connectedDatabases: [
           { name: 'Municipal Waste Registry (BMC-GIS)', status: 'ONLINE', ping: '18ms', records: '1.4M' },
           { name: 'National Citizen Green Ledger (UIDAI / SBM)', status: 'ONLINE', ping: '24ms', records: '125K' },
@@ -233,7 +246,7 @@ class StateStore {
           id: 'badge_4',
           name: 'Eco Champion',
           icon: '🏆',
-          description: 'Accumulate more than 2,000 Green Points.',
+          description: 'Accumulate more than 2,000 Green Credits.',
           unlocked: false,
           progress: 62.5 // 1250/2000
         },
@@ -375,7 +388,7 @@ class StateStore {
         },
         {
           id: 'notif_2',
-          title: '🌱 You Earned +10 Green Points!',
+          title: '🌱 You Earned +10 Green Credits!',
           message: 'Wet waste collection #GK-2026-89210 verified successfully by municipal inspector.',
           timestamp: new Date(Date.now() - 3 * 3600 * 1000).toISOString(),
           read: false,
@@ -384,7 +397,7 @@ class StateStore {
         {
           id: 'notif_3',
           title: '🔥 8-Day Green Streak!',
-          message: 'Keep logging segregated waste daily to unlock the Eco Master +50 GP milestone.',
+          message: 'Keep logging segregated waste daily to unlock the Eco Master +50 GC milestone.',
           timestamp: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
           read: true,
           type: 'streak'
@@ -392,13 +405,72 @@ class StateStore {
         {
           id: 'notif_4',
           title: '📱 Recharge Successful',
-          message: '₹10 Jio recharge applied successfully using 100 Green Points.',
+          message: '₹10 Jio recharge applied successfully using 100 Green Credits.',
           timestamp: new Date(Date.now() - 48 * 3600 * 1000).toISOString(),
           read: true,
           type: 'reward'
         }
       ]
     };
+  }
+
+  // ------------------------------------------------------------------
+  // Demo persistence (localStorage)
+  // ------------------------------------------------------------------
+
+  // Attempt to restore a previously saved demo session. Returns null
+  // (falling back to the seed state) if nothing is saved, or if what's
+  // saved is missing/corrupted/from an incompatible schema version.
+  restoreState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+
+      const parsed = JSON.parse(raw);
+      const looksValid = parsed
+        && parsed.version === STORAGE_VERSION
+        && parsed.state
+        && parsed.state.user
+        && parsed.state.cityStats
+        && Array.isArray(parsed.state.pickups)
+        && Array.isArray(parsed.state.transactions);
+
+      if (!looksValid) {
+        console.warn('Green Legacy: saved demo state was missing/invalid — starting from the seed state.');
+        return null;
+      }
+
+      return parsed.state;
+    } catch (e) {
+      console.warn('Green Legacy: saved demo state was corrupted — starting from the seed state.', e);
+      return null;
+    }
+  }
+
+  // Persist the current state. Called automatically after every
+  // state-mutating action (see notify()). Best-effort: a demo should
+  // keep working even if localStorage is unavailable or full.
+  saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        version: STORAGE_VERSION,
+        state: this.state
+      }));
+    } catch (e) {
+      console.warn('Green Legacy: could not save demo state to localStorage.', e);
+    }
+  }
+
+  // Wipe the saved session and restore the original seed data.
+  resetState() {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {
+      // Ignore — saveState() below will just overwrite it if it still exists.
+    }
+    this.state = this.getSeedState();
+    this.saveState();
+    this.notify();
   }
 
   // Subscribe to state changes
@@ -408,6 +480,7 @@ class StateStore {
   }
 
   notify() {
+    this.saveState();
     this.listeners.forEach(fn => fn(this.state));
   }
 
@@ -466,7 +539,7 @@ class StateStore {
     return newRequest;
   }
 
-  // Worker Verifies Waste & Credits GP
+  // Worker Verifies Waste & Credits GC
   verifyWasteSubmission(pickupId, approved = true, adjustedWeightKg = null) {
     const pickup = this.state.pickups.find(p => p.id === pickupId);
     const workerItem = this.state.workerQueue.find(p => p.id === pickupId);
@@ -489,9 +562,18 @@ class StateStore {
       this.state.user.co2SavedKg += Math.round(weight * 0.65 * 10) / 10;
       this.state.user.treesEquivalent = Math.round((this.state.user.co2SavedKg / 13.5) * 10) / 10;
 
+      const category = pickup ? pickup.category : 'wet';
+      if (this.state.user.wasteByCategoryKg[category] !== undefined) {
+        this.state.user.wasteByCategoryKg[category] = Math.round((this.state.user.wasteByCategoryKg[category] + weight) * 10) / 10;
+      }
+
       // Update Municipal Stats
       this.state.cityStats.verifiedPickups += 1;
       this.state.cityStats.greenPointsIssued += points;
+      this.state.cityStats.totalWasteTons = Math.round((this.state.cityStats.totalWasteTons + weight / 1000) * 100) / 100;
+      if (this.state.cityStats.wasteByCategoryTons[category] !== undefined) {
+        this.state.cityStats.wasteByCategoryTons[category] = Math.round((this.state.cityStats.wasteByCategoryTons[category] + weight / 1000) * 100) / 100;
+      }
 
       // Add Ledger Transaction
       this.state.transactions.unshift({
@@ -508,7 +590,7 @@ class StateStore {
 
       // Add Notification
       this.addNotification({
-        title: `🌱 +${points} Green Points Credited!`,
+        title: `🌱 +${points} Green Credits Credited!`,
         message: `Waste pickup #${pickupId} (${weight} kg) has been verified. Green Wallet updated.`,
         type: 'points'
       });
@@ -530,10 +612,10 @@ class StateStore {
     }
   }
 
-  // Redeem Green Points (Mobile Recharge, Utility Bills, Vouchers)
+  // Redeem Green Credits (Mobile Recharge, Utility Bills, Vouchers)
   redeemPoints(category, title, amountGp, metadata = '') {
     if (this.state.user.greenPoints < amountGp) {
-      return { success: false, message: 'Insufficient Green Points balance' };
+      return { success: false, message: 'Insufficient Green Credits balance' };
     }
 
     const inrValue = Formatters.gpToInr(amountGp);
@@ -556,7 +638,7 @@ class StateStore {
 
     this.addNotification({
       title: `🎁 Redemption Successful`,
-      message: `${title} applied for ₹${inrValue} (${amountGp} GP deducted).`,
+      message: `${title} applied for ₹${inrValue} (${amountGp} GC deducted).`,
       type: 'reward'
     });
 
@@ -579,7 +661,7 @@ class StateStore {
     this.state.illegalDumpingReports.unshift(newReport);
     this.addNotification({
       title: '🚨 Illegal Dumping Reported',
-      message: `Report #${newReport.id} registered. Once municipal inspection resolves this site, +20 GP will be credited.`,
+      message: `Report #${newReport.id} registered. Once municipal inspection resolves this site, +20 GC will be credited.`,
       type: 'info'
     });
 
