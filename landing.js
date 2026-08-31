@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GREEN KARMA — LANDING PAGE COMPONENT
+   GREEN LEGACY — LANDING PAGE COMPONENT
    Tagline: EARN. RECYCLE. REWARD.
    ========================================================================== */
 
@@ -32,7 +32,7 @@ export const LandingPage = {
                 </h1>
                 
                 <p style="font-size: 1.15rem; margin-bottom: 2rem; max-width: 520px; color: var(--text-muted); line-height: 1.6;">
-                  Segregate. Dispose. Earn Green Points. Build a cleaner tomorrow with India's premier gamified municipal waste-management network.
+                  Segregate. Dispose. Earn Green Credits. Build a cleaner tomorrow with India's premier gamified municipal waste-management network.
                 </p>
 
                 <!-- Action Buttons -->
@@ -41,7 +41,7 @@ export const LandingPage = {
                     <span>♻️</span> Report Waste Now
                   </button>
                   <button class="btn btn-secondary btn-lg" onclick="window.AppRouter.navigate('rewards')">
-                    <span>🌱</span> Start Earning (100 GP = ₹10)
+                    <span>🌱</span> Start Earning (100 GC = ₹10)
                   </button>
                 </div>
 
@@ -73,7 +73,7 @@ export const LandingPage = {
                     ✨
                   </div>
                   <div>
-                    <div style="font-weight: 800; color: var(--color-primary-dark); font-size: 0.95rem;">+10 Green Points</div>
+                    <div style="font-weight: 800; color: var(--color-primary-dark); font-size: 0.95rem;">+10 Green Credits</div>
                     <div style="font-size: 0.75rem; color: var(--text-muted);">Waste Pickup Verified</div>
                   </div>
                 </div>
@@ -128,9 +128,9 @@ export const LandingPage = {
                       <div style="font-size: 1.5rem;">💳</div>
                       <div style="flex: 1;">
                         <div style="font-size: 0.9rem; font-weight: 800; color: #FFFFFF;">Green Wallet Credited (Instant)</div>
-                        <div style="font-size: 0.75rem; color: #DCFCE7;">100 GP = ₹10 (Recharge, Bills, Discounts)</div>
+                        <div style="font-size: 0.75rem; color: #DCFCE7;">100 GC = ₹10 (Recharge, Bills, Discounts)</div>
                       </div>
-                      <span class="badge badge-points">+10 GP</span>
+                      <span class="badge badge-points">+10 GC</span>
                     </div>
                   </div>
 
@@ -145,7 +145,7 @@ export const LandingPage = {
         <section style="padding: 4rem 0; background: #FFFFFF; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border);">
           <div class="app-container">
             <div style="text-align: center; max-width: 680px; margin: 0 auto 3.5rem auto;">
-              <div class="badge badge-green" style="margin-bottom: 0.75rem;">HOW GREEN KARMA WORKS</div>
+              <div class="badge badge-green" style="margin-bottom: 0.75rem;">HOW GREEN LEGACY WORKS</div>
               <h2>From Household Bin to Instant Rewards in 5 Steps</h2>
               <p style="margin-top: 0.5rem;">Our streamlined end-to-end framework verifies correct segregation and provides transparent civic incentives.</p>
             </div>
@@ -195,7 +195,7 @@ export const LandingPage = {
                   5️⃣
                 </div>
                 <h4 style="margin-bottom: 0.5rem; color: var(--color-primary-dark);">5. Earn & Redeem</h4>
-                <p style="font-size: 0.85rem; color: var(--text-muted);">Green Points instantly credited. Redeem for mobile recharges and utility bills.</p>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Green Credits instantly credited. Redeem for mobile recharges and utility bills.</p>
               </div>
 
             </div>
@@ -207,8 +207,8 @@ export const LandingPage = {
           <div class="app-container">
             <div style="text-align: center; max-width: 680px; margin: 0 auto 3.5rem auto;">
               <div class="badge badge-green" style="margin-bottom: 0.75rem;">WASTE SEGREGATION GUIDE</div>
-              <h2>Know Your Waste Categories & Points</h2>
-              <p style="margin-top: 0.5rem;">Select your waste correctly to maximize points and prevent hazardous contamination.</p>
+              <h2>Know Your Waste Categories & Credits</h2>
+              <p style="margin-top: 0.5rem;">Select your waste correctly to maximize credits and prevent hazardous contamination.</p>
             </div>
 
             <!-- 3 Large Category Cards -->
@@ -219,7 +219,7 @@ export const LandingPage = {
                 <div>
                   <div class="flex-between" style="margin-bottom: 1.5rem;">
                     <div class="category-icon-wrapper">🍏</div>
-                    <span class="category-points-tag">+10 POINTS</span>
+                    <span class="category-points-tag">+10 CREDITS</span>
                   </div>
                   <h3 style="color: var(--waste-wet); margin-bottom: 0.5rem;">🟢 WET WASTE</h3>
                   <p style="font-size: 0.875rem; color: var(--color-navy); font-weight: 600; margin-bottom: 1rem;">
@@ -239,7 +239,7 @@ export const LandingPage = {
                 </div>
 
                 <button class="btn btn-primary btn-block" onclick="window.AppRouter.navigate('report-waste', { category: 'wet' })">
-                  <span>🟢</span> Report Wet Waste (+10 GP)
+                  <span>🟢</span> Report Wet Waste (+10 GC)
                 </button>
               </div>
 
@@ -248,7 +248,7 @@ export const LandingPage = {
                 <div>
                   <div class="flex-between" style="margin-bottom: 1.5rem;">
                     <div class="category-icon-wrapper">📦</div>
-                    <span class="category-points-tag">+7 POINTS</span>
+                    <span class="category-points-tag">+7 CREDITS</span>
                   </div>
                   <h3 style="color: var(--waste-dry); margin-bottom: 0.5rem;">🔵 DRY WASTE</h3>
                   <p style="font-size: 0.875rem; color: var(--color-navy); font-weight: 600; margin-bottom: 1rem;">
@@ -268,7 +268,7 @@ export const LandingPage = {
                 </div>
 
                 <button class="btn btn-block" style="background: var(--waste-dry); color: #FFFFFF;" onclick="window.AppRouter.navigate('report-waste', { category: 'dry' })">
-                  <span>🔵</span> Report Dry Waste (+7 GP)
+                  <span>🔵</span> Report Dry Waste (+7 GC)
                 </button>
               </div>
 
@@ -277,7 +277,7 @@ export const LandingPage = {
                 <div>
                   <div class="flex-between" style="margin-bottom: 1.5rem;">
                     <div class="category-icon-wrapper">⚠️</div>
-                    <span class="category-points-tag">+5 POINTS</span>
+                    <span class="category-points-tag">+5 CREDITS</span>
                   </div>
                   <h3 style="color: var(--waste-harmful); margin-bottom: 0.5rem;">🔴 HARMFUL WASTE</h3>
                   <p style="font-size: 0.875rem; color: var(--color-navy); font-weight: 600; margin-bottom: 1rem;">
@@ -301,7 +301,7 @@ export const LandingPage = {
                 </div>
 
                 <button class="btn btn-block" style="background: var(--waste-harmful); color: #FFFFFF;" onclick="window.AppRouter.navigate('report-waste', { category: 'harmful' })">
-                  <span>🔴</span> Report Harmful Waste (+5 GP)
+                  <span>🔴</span> Report Harmful Waste (+5 GC)
                 </button>
               </div>
 
@@ -317,22 +317,22 @@ export const LandingPage = {
                 <div class="badge" style="background: rgba(132, 204, 22, 0.2); color: #84CC16; border: 1px solid #84CC16; margin-bottom: 1rem;">
                   🌱 TRANSPARENT FINTECH VALUATION
                 </div>
-                <h2 style="color: #FFFFFF; margin-bottom: 1rem;">100 Green Points = ₹10 Real Value</h2>
+                <h2 style="color: #FFFFFF; margin-bottom: 1rem;">100 Green Credits = ₹10 Real Value</h2>
                 <p style="color: #CBD5E1; margin-bottom: 1.5rem;">
-                  Every kilogram of segregated waste you report directly accumulates cash-convertible Green Points in your Green Karma Wallet. Use it for instant prepaid recharges, electricity and water bills, or eco-friendly shopping vouchers.
+                  Every kilogram of segregated waste you report directly accumulates cash-convertible Green Credits in your Green Legacy Wallet. Use it for instant prepaid recharges, electricity and water bills, or eco-friendly shopping vouchers.
                 </p>
 
                 <div style="display: flex; flex-direction: column; gap: 0.85rem;">
                   <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.08); padding: 0.75rem 1.25rem; border-radius: var(--radius-md);">
-                    <span>🟢 500 Green Points</span>
+                    <span>🟢 500 Green Credits</span>
                     <strong style="color: #84CC16; font-size: 1.1rem;">= ₹50 Direct Credit</strong>
                   </div>
                   <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.08); padding: 0.75rem 1.25rem; border-radius: var(--radius-md);">
-                    <span>🔵 1,000 Green Points</span>
+                    <span>🔵 1,000 Green Credits</span>
                     <strong style="color: #84CC16; font-size: 1.1rem;">= ₹100 Direct Credit</strong>
                   </div>
                   <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.08); padding: 0.75rem 1.25rem; border-radius: var(--radius-md);">
-                    <span>⭐ 2,500 Green Points</span>
+                    <span>⭐ 2,500 Green Credits</span>
                     <strong style="color: #84CC16; font-size: 1.1rem;">= ₹250 Direct Credit</strong>
                   </div>
                 </div>
@@ -345,7 +345,7 @@ export const LandingPage = {
                 <div class="form-group">
                   <div class="flex-between">
                     <label class="form-label" style="margin: 0;">Wet Waste (Pickups / Month):</label>
-                    <span id="calc-wet-val" style="font-weight: 800; color: var(--waste-wet);">8 pickups (80 GP)</span>
+                    <span id="calc-wet-val" style="font-weight: 800; color: var(--waste-wet);">8 pickups (80 GC)</span>
                   </div>
                   <input type="range" id="calc-wet-slider" min="0" max="30" value="8" style="width: 100%; accent-color: var(--waste-wet);" oninput="window.LandingPage.updateCalculator()">
                 </div>
@@ -353,7 +353,7 @@ export const LandingPage = {
                 <div class="form-group">
                   <div class="flex-between">
                     <label class="form-label" style="margin: 0;">Dry Recyclable Waste (Pickups / Month):</label>
-                    <span id="calc-dry-val" style="font-weight: 800; color: var(--waste-dry);">6 pickups (42 GP)</span>
+                    <span id="calc-dry-val" style="font-weight: 800; color: var(--waste-dry);">6 pickups (42 GC)</span>
                   </div>
                   <input type="range" id="calc-dry-slider" min="0" max="30" value="6" style="width: 100%; accent-color: var(--waste-dry);" oninput="window.LandingPage.updateCalculator()">
                 </div>
@@ -361,7 +361,7 @@ export const LandingPage = {
                 <div class="form-group">
                   <div class="flex-between">
                     <label class="form-label" style="margin: 0;">Weekly Streaks & Challenges:</label>
-                    <span id="calc-bonus-val" style="font-weight: 800; color: #F59E0B;">+75 GP Bonus</span>
+                    <span id="calc-bonus-val" style="font-weight: 800; color: #F59E0B;">+75 GC Bonus</span>
                   </div>
                   <input type="range" id="calc-bonus-slider" min="0" max="200" value="75" step="25" style="width: 100%; accent-color: #F59E0B;" oninput="window.LandingPage.updateCalculator()">
                 </div>
@@ -370,11 +370,11 @@ export const LandingPage = {
                 <div style="background: var(--waste-wet-bg); border: 1.5px solid var(--waste-wet-border); border-radius: var(--radius-md); padding: 1.25rem; text-align: center; margin-top: 1.5rem;">
                   <div style="font-size: 0.8rem; font-weight: 700; color: var(--color-primary-dark); text-transform: uppercase;">Estimated Monthly Reward</div>
                   <div style="font-size: 2rem; font-weight: 800; color: var(--color-primary-dark); margin: 0.25rem 0;" id="calc-total-inr">₹19.70 / month</div>
-                  <div style="font-size: 0.85rem; color: var(--text-muted);" id="calc-total-gp">(197 Green Points)</div>
+                  <div style="font-size: 0.85rem; color: var(--text-muted);" id="calc-total-gp">(197 Green Credits)</div>
                 </div>
 
                 <button class="btn btn-primary btn-block" style="margin-top: 1.5rem;" onclick="window.AppRouter.navigate('report-waste')">
-                  Start Earning Green Points 🚀
+                  Start Earning Green Credits 🚀
                 </button>
               </div>
 
@@ -399,7 +399,7 @@ export const LandingPage = {
               </button>
             </div>
             <div style="margin-top: 3rem; font-weight: 800; letter-spacing: 0.18em; color: var(--color-primary-dark); font-size: 0.9rem;">
-              🌱 GREEN KARMA &bull; EARN. RECYCLE. REWARD.
+              🌱 GREEN LEGACY &bull; EARN. RECYCLE. REWARD.
             </div>
           </div>
         </section>
@@ -424,11 +424,11 @@ export const LandingPage = {
     const totalGp = wetGp + dryGp + bonusGp;
     const totalInr = (totalGp / 10).toFixed(2);
 
-    document.getElementById('calc-wet-val').textContent = `${wetCount} pickups (${wetGp} GP)`;
-    document.getElementById('calc-dry-val').textContent = `${dryCount} pickups (${dryGp} GP)`;
-    document.getElementById('calc-bonus-val').textContent = `+${bonusGp} GP Bonus`;
+    document.getElementById('calc-wet-val').textContent = `${wetCount} pickups (${wetGp} GC)`;
+    document.getElementById('calc-dry-val').textContent = `${dryCount} pickups (${dryGp} GC)`;
+    document.getElementById('calc-bonus-val').textContent = `+${bonusGp} GC Bonus`;
     document.getElementById('calc-total-inr').textContent = `₹${totalInr} / month`;
-    document.getElementById('calc-total-gp').textContent = `(${totalGp} Green Points)`;
+    document.getElementById('calc-total-gp').textContent = `(${totalGp} Green Credits)`;
   }
 };
 
