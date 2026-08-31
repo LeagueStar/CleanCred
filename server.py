@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-GREEN KARMA — Smart Waste Management & Rewards Platform
+GREEN LEGACY — Smart Waste Management & Rewards Platform
 Local Development & REST API Server
 """
 
@@ -23,7 +23,7 @@ if sys.platform == 'win32':
 PORT = 8081
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
-class GreenKarmaHandler(http.server.SimpleHTTPRequestHandler):
+class GreenLegacyHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
 
@@ -48,7 +48,7 @@ class GreenKarmaHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             response = {
                 "status": "healthy",
-                "platform": "GREEN KARMA — Smart Waste Management",
+                "platform": "GREEN LEGACY — Smart Waste Management",
                 "tagline": "EARN. RECYCLE. REWARD.",
                 "timestamp": datetime.now().isoformat(),
                 "databases": {
@@ -66,9 +66,9 @@ class GreenKarmaHandler(http.server.SimpleHTTPRequestHandler):
 def run_server():
     os.chdir(DIRECTORY)
     socketserver.TCPServer.allow_reuse_address = True
-    with socketserver.TCPServer(("", PORT), GreenKarmaHandler) as httpd:
+    with socketserver.TCPServer(("", PORT), GreenLegacyHandler) as httpd:
         print("==================================================")
-        print("  GREEN KARMA Web Platform Running")
+        print("  GREEN LEGACY Web Platform Running")
         print("  Tagline: EARN. RECYCLE. REWARD.")
         print(f"  URL: http://127.0.0.1:{PORT}")
         print(f"  Serving directory: {DIRECTORY}")
