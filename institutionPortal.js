@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GREEN KARMA — INSTITUTION SERVICES & DASHBOARD
+   GREEN LEGACY — INSTITUTION SERVICES & DASHBOARD
    Schools, Colleges, Hospitals, Corporate Offices, Residential Societies
    ========================================================================== */
 
@@ -64,7 +64,7 @@ export const InstitutionPortalView = {
           
           <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🌱 📜</div>
           <div style="font-size: 0.85rem; font-weight: 800; color: var(--color-primary-dark); letter-spacing: 0.15em; text-transform: uppercase;">
-            MUNICIPAL CORPORATION OF GREATER MUMBAI & GREEN KARMA
+            MUNICIPAL CORPORATION OF GREATER MUMBAI & GREEN LEGACY
           </div>
           <h2 style="color: var(--color-navy); margin: 0.75rem 0;">Certificate of Sustainability Excellence</h2>
           <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1.5rem;">
@@ -110,13 +110,13 @@ export const InstitutionPortalView = {
                 <h3 style="color: var(--color-navy);">Delhi Public School — Green Brigade</h3>
                 <p style="font-size: 0.85rem;">Student Body: 1,420 Active Recyclers &bull; Sustainability Score: 94/100</p>
               </div>
-              <div class="badge badge-points" style="font-size: 1rem; padding: 0.5rem 1rem;">19,500 Total GP</div>
+              <div class="badge badge-points" style="font-size: 1rem; padding: 0.5rem 1rem;">19,500 Total GC</div>
             </div>
 
             <div class="grid-cols-3" style="margin-bottom: 2rem;">
               <div style="background: #F8FAFC; padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--color-border);">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Student Rewards</strong>
-                <p style="font-size: 0.8rem; color: var(--text-muted);">Students earn Green Karma points for bringing segregated paper and e-waste from home.</p>
+                <p style="font-size: 0.8rem; color: var(--text-muted);">Students earn Green Credits for bringing segregated paper and e-waste from home.</p>
               </div>
               <div style="background: #F8FAFC; padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--color-border);">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Classroom Battles</strong>
@@ -143,7 +143,7 @@ export const InstitutionPortalView = {
                 <h3 style="color: var(--color-navy);">IIT Bombay — Campus Eco Cell</h3>
                 <p style="font-size: 0.85rem;">Hostel Waste Decentralization & Tech-Driven Composting &bull; Score: 98/100</p>
               </div>
-              <div class="badge badge-points" style="font-size: 1rem; padding: 0.5rem 1rem;">38,400 Total GP</div>
+              <div class="badge badge-points" style="font-size: 1rem; padding: 0.5rem 1rem;">38,400 Total GC</div>
             </div>
 
             <div class="grid-cols-3" style="margin-bottom: 2rem;">
@@ -153,7 +153,7 @@ export const InstitutionPortalView = {
               </div>
               <div style="background: #F8FAFC; padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--color-border);">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Student Innovation Grants</strong>
-                <p style="font-size: 0.8rem; color: var(--text-muted);">Green Karma grants funded 3 student research prototypes on plastic pyrolysis.</p>
+                <p style="font-size: 0.8rem; color: var(--text-muted);">Green Legacy grants funded 3 student research prototypes on plastic pyrolysis.</p>
               </div>
               <div style="background: #F8FAFC; padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--color-border);">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Event Waste Zero-Target</strong>
