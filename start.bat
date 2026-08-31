@@ -1,7 +1,7 @@
 @echo off
-title GREEN KARMA Platform
+title GREEN LEGACY Platform
 echo ===================================================
-echo   Starting GREEN KARMA Platform...
+echo   Starting GREEN LEGACY Platform...
 echo   Tagline: EARN. RECYCLE. REWARD.
 echo ===================================================
 
