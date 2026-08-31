@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GREEN KARMA — MUNICIPAL WORKER VERIFICATION PORTAL
+   GREEN LEGACY — MUNICIPAL WORKER VERIFICATION PORTAL
    Role: Ramesh Kumar | Zone 4 - Ward 4B | Electric Van MH-02-GK-4091
    ========================================================================== */
 
@@ -61,7 +61,7 @@ export const WorkerPortalView = {
           <div class="flex-between" style="margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
             <div>
               <h3 style="color: var(--color-navy);">Assigned Collection Route Queue</h3>
-              <p style="font-size: 0.85rem;">Inspect waste bags, verify segregation compliance, and approve points disbursement.</p>
+              <p style="font-size: 0.85rem;">Inspect waste bags, verify segregation compliance, and approve credits disbursement.</p>
             </div>
             <span class="badge badge-green">${queue.filter(q => q.status !== 'verified' && q.status !== 'rejected').length} Pending Verifications</span>
           </div>
@@ -93,7 +93,7 @@ export const WorkerPortalView = {
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
                   ${item.status === 'verified' ? `
                     <span class="badge" style="background: #D1FAE5; color: #065F46; font-size: 0.9rem; padding: 0.5rem 1rem;">
-                      ✓ Verified (+${item.pointsReward} GP)
+                      ✓ Verified (+${item.pointsReward} GC)
                     </span>
                   ` : item.status === 'rejected' ? `
                     <span class="badge" style="background: #FEE2E2; color: #991B1B; font-size: 0.9rem; padding: 0.5rem 1rem;">
@@ -175,7 +175,7 @@ export const WorkerPortalView = {
             Reject Submission
           </button>
           <button class="btn btn-primary btn-lg" onclick="window.WorkerPortalView.processVerification('${item.id}', true)">
-            Approve & Credit +${item.pointsReward} GP ⚡
+            Approve & Credit +${item.pointsReward} GC ⚡
           </button>
         </div>
       `;
