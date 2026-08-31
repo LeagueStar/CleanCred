@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GREEN KARMA — LIVE PICKUP TRACKING COMPONENT
+   GREEN LEGACY — LIVE PICKUP TRACKING COMPONENT
    Swiggy/Uber-Style Interactive Delivery Map & Status Progression
    ========================================================================== */
 
@@ -159,8 +159,8 @@ export const LiveTrackingView = {
                 <!-- 6. Points Credited -->
                 <div class="timeline-item ${pickup.status === 'verified' ? 'done' : ''}">
                   <div class="timeline-dot">${pickup.status === 'verified' ? '✓' : '○'}</div>
-                  <strong style="font-size: 0.875rem; color: var(--color-primary-dark);">Green Points Credited</strong>
-                  <div style="font-size: 0.75rem; color: var(--color-primary-dark); font-weight: 700;">+${pickup.pointsReward} GP added to Green Wallet</div>
+                  <strong style="font-size: 0.875rem; color: var(--color-primary-dark);">Green Credits Credited</strong>
+                  <div style="font-size: 0.75rem; color: var(--color-primary-dark); font-weight: 700;">+${pickup.pointsReward} GC added to Green Wallet</div>
                 </div>
 
               </div>
