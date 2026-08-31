@@ -1,6 +1,6 @@
 /* ==========================================================================
-   GREEN KARMA — CITIZEN DASHBOARD COMPONENT
-   Profile: Shivansh Prajapati | 1,250 GP = ₹125
+   GREEN LEGACY — CITIZEN DASHBOARD COMPONENT
+   Profile: Shivansh Prajapati | 1,250 GC = ₹125
    ========================================================================== */
 
 import { State } from '../state.js';
@@ -30,7 +30,7 @@ export const DashboardView = {
 
           <div style="display: flex; gap: 0.85rem; align-items: center;">
             <button class="btn btn-primary" onclick="window.AppRouter.navigate('report-waste')">
-              <span>♻️</span> Report Waste (+10 GP)
+              <span>♻️</span> Report Waste (+10 GC)
             </button>
             <button class="btn btn-secondary" onclick="window.AppRouter.navigate('rewards')">
               <span>💳</span> Green Wallet
@@ -73,17 +73,17 @@ export const DashboardView = {
         <!-- Top 4 Metrics Summary Grid -->
         <div class="grid-cols-4" style="margin-bottom: 2rem;">
           
-          <!-- Green Points & Rupee Valuation -->
+          <!-- Green Credits & Rupee Valuation -->
           <div class="glass-card glass-card-emerald" style="padding: 1.5rem; cursor: pointer;" onclick="window.AppRouter.navigate('rewards')">
             <div class="flex-between" style="margin-bottom: 0.75rem;">
               <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #DCFCE7;">Green Wallet</span>
               <span style="font-size: 1.25rem;">🌱</span>
             </div>
             <div style="font-size: 2.1rem; font-weight: 900; color: #FFFFFF; line-height: 1;">
-              ${Formatters.formatNumber(user.greenPoints)} <span style="font-size: 1rem; font-weight: 600;">GP</span>
+              ${Formatters.formatNumber(user.greenPoints)} <span style="font-size: 1rem; font-weight: 600;">GC</span>
             </div>
             <div style="margin-top: 0.5rem; font-size: 0.85rem; color: #DCFCE7; font-weight: 600;">
-              ≈ ${Formatters.formatCurrency(inrValue)} Real Value (100 GP = ₹10)
+              ≈ ${Formatters.formatCurrency(inrValue)} Real Value (100 GC = ₹10)
             </div>
           </div>
 
@@ -151,19 +151,19 @@ export const DashboardView = {
                 <div class="glass-card-interactive" style="background: var(--waste-wet-bg); border: 1.5px solid var(--waste-wet-border); padding: 1.25rem; border-radius: var(--radius-lg); text-align: center;" onclick="window.AppRouter.navigate('report-waste', { category: 'wet' })">
                   <div style="font-size: 2rem; margin-bottom: 0.4rem;">🟢</div>
                   <strong style="color: var(--waste-wet); display: block; font-size: 0.95rem;">Wet Waste</strong>
-                  <span class="badge" style="background: #16A34A; color: #FFFFFF; margin-top: 0.5rem; font-size: 0.72rem;">+10 GP</span>
+                  <span class="badge" style="background: #16A34A; color: #FFFFFF; margin-top: 0.5rem; font-size: 0.72rem;">+10 GC</span>
                 </div>
 
                 <div class="glass-card-interactive" style="background: var(--waste-dry-bg); border: 1.5px solid var(--waste-dry-border); padding: 1.25rem; border-radius: var(--radius-lg); text-align: center;" onclick="window.AppRouter.navigate('report-waste', { category: 'dry' })">
                   <div style="font-size: 2rem; margin-bottom: 0.4rem;">🔵</div>
                   <strong style="color: var(--waste-dry); display: block; font-size: 0.95rem;">Dry Waste</strong>
-                  <span class="badge" style="background: #2563EB; color: #FFFFFF; margin-top: 0.5rem; font-size: 0.72rem;">+7 GP</span>
+                  <span class="badge" style="background: #2563EB; color: #FFFFFF; margin-top: 0.5rem; font-size: 0.72rem;">+7 GC</span>
                 </div>
 
                 <div class="glass-card-interactive" style="background: var(--waste-harmful-bg); border: 1.5px solid var(--waste-harmful-border); padding: 1.25rem; border-radius: var(--radius-lg); text-align: center;" onclick="window.AppRouter.navigate('report-waste', { category: 'harmful' })">
                   <div style="font-size: 2rem; margin-bottom: 0.4rem;">🔴</div>
                   <strong style="color: var(--waste-harmful); display: block; font-size: 0.95rem;">Harmful Waste</strong>
-                  <span class="badge" style="background: #EF4444; color: #FFFFFF; margin-top: 0.5rem; font-size: 0.72rem;">+5 GP</span>
+                  <span class="badge" style="background: #EF4444; color: #FFFFFF; margin-top: 0.5rem; font-size: 0.72rem;">+5 GC</span>
                 </div>
               </div>
             </div>
@@ -173,7 +173,7 @@ export const DashboardView = {
               <div class="flex-between" style="margin-bottom: 1.25rem;">
                 <div>
                   <h3 style="color: var(--color-navy);">Weekly Eco Challenges</h3>
-                  <p style="font-size: 0.85rem;">Complete challenges to earn bonus points and rank multipliers.</p>
+                  <p style="font-size: 0.85rem;">Complete challenges to earn bonus credits and rank multipliers.</p>
                 </div>
                 <button class="btn btn-sm btn-emerald-outline" onclick="window.AppRouter.navigate('leaderboard')">
                   View All
@@ -185,7 +185,7 @@ export const DashboardView = {
                   <div style="background: #F8FAFC; border: 1px solid var(--color-border); padding: 1.15rem; border-radius: var(--radius-md);">
                     <div class="flex-between" style="margin-bottom: 0.5rem;">
                       <strong style="font-size: 0.92rem; color: var(--color-navy);">${ch.title}</strong>
-                      <span class="badge badge-points">+${ch.rewardGp} GP</span>
+                      <span class="badge badge-points">+${ch.rewardGp} GC</span>
                     </div>
                     <p style="font-size: 0.82rem; margin-bottom: 0.75rem;">${ch.description}</p>
                     
@@ -210,15 +210,15 @@ export const DashboardView = {
             <div class="glass-card" style="padding: 1.75rem; margin-bottom: 2rem;">
               <div class="flex-between" style="margin-bottom: 1rem;">
                 <h3 style="color: var(--color-navy);">Redeem Rewards</h3>
-                <span style="font-size: 0.8rem; color: var(--color-primary-dark); font-weight: 700;">Balance: ${user.greenPoints} GP</span>
+                <span style="font-size: 0.8rem; color: var(--color-primary-dark); font-weight: 700;">Balance: ${user.greenPoints} GC</span>
               </div>
-              <p style="font-size: 0.85rem; margin-bottom: 1.25rem;">Instant one-click utility redemption with your Green Karma points.</p>
+              <p style="font-size: 0.85rem; margin-bottom: 1.25rem;">Instant one-click utility redemption with your Green Credits.</p>
 
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
                 <button class="btn btn-secondary" style="padding: 0.85rem; display: flex; flex-direction: column; gap: 0.25rem;" onclick="window.RewardsWallet.openRechargeModal()">
                   <span style="font-size: 1.4rem;">📱</span>
                   <span style="font-weight: 700; font-size: 0.85rem;">Mobile Recharge</span>
-                  <span style="font-size: 0.72rem; color: var(--text-muted);">From 100 GP (₹10)</span>
+                  <span style="font-size: 0.72rem; color: var(--text-muted);">From 100 GC (₹10)</span>
                 </button>
 
                 <button class="btn btn-secondary" style="padding: 0.85rem; display: flex; flex-direction: column; gap: 0.25rem;" onclick="window.RewardsWallet.openBillsModal()">
@@ -253,7 +253,7 @@ export const DashboardView = {
 
                     <div style="text-align: right;">
                       ${p.status === 'verified' ? `
-                        <span class="badge" style="background: #D1FAE5; color: #065F46;">+${p.pointsReward} GP ✓</span>
+                        <span class="badge" style="background: #D1FAE5; color: #065F46;">+${p.pointsReward} GC ✓</span>
                       ` : p.status === 'on_the_way' ? `
                         <span class="badge" style="background: #FEF3C7; color: #92400E;">On Way 🚚</span>
                       ` : `
