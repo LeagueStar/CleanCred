@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GREEN KARMA — GOVERNMENT & MUNICIPAL ADMIN COMMAND CENTER
+   GREEN LEGACY — GOVERNMENT & MUNICIPAL ADMIN COMMAND CENTER
    Connected to Municipal Waste Database & Smart City GIS Grid
    ========================================================================== */
 
@@ -182,7 +182,10 @@ export const AdminDashboardView = {
     Object.values(this.charts).forEach(c => c.destroy());
     this.charts = {};
 
-    // 1. Monthly Trends Line Chart
+    // 1. Monthly Trends Line Chart — kept as static historical figures.
+    // The state model has no monthly time-series data to derive this from
+    // (only running totals), so connecting it to live state would mean
+    // inventing a monthly breakdown that isn't backed by real data.
     const ctxMonthly = document.getElementById('chart-monthly-trends');
     if (ctxMonthly) {
       this.charts.monthly = new window.Chart(ctxMonthly, {
@@ -217,15 +220,24 @@ export const AdminDashboardView = {
       });
     }
 
-    // 2. Waste Breakdown Doughnut
+    // 2. Waste Breakdown Doughnut — derived from cityStats.wasteByCategoryTons,
+    // which is seeded from the city's total waste and incremented whenever a
+    // worker verifies a pickup (see State.verifyWasteSubmission), so demo
+    // actions nudge this chart instead of it being a frozen mockup.
     const ctxRatio = document.getElementById('chart-waste-ratio');
     if (ctxRatio) {
+      const catTons = State.state.cityStats.wasteByCategoryTons;
+      const catTotal = catTons.wet + catTons.dry + catTons.harmful;
+      const wetPct = catTotal > 0 ? Math.round((catTons.wet / catTotal) * 100) : 0;
+      const dryPct = catTotal > 0 ? Math.round((catTons.dry / catTotal) * 100) : 0;
+      const harmfulPct = catTotal > 0 ? Math.max(0, 100 - wetPct - dryPct) : 0;
+
       this.charts.ratio = new window.Chart(ctxRatio, {
         type: 'doughnut',
         data: {
-          labels: ['🟢 Wet Waste (52%)', '🔵 Dry Waste (36%)', '🔴 Harmful Waste (12%)'],
+          labels: [`🟢 Wet Waste (${wetPct}%)`, `🔵 Dry Waste (${dryPct}%)`, `🔴 Harmful Waste (${harmfulPct}%)`],
           datasets: [{
-            data: [52, 36, 12],
+            data: [wetPct, dryPct, harmfulPct],
             backgroundColor: ['#16A34A', '#2563EB', '#EF4444'],
             borderWidth: 2
           }]
@@ -238,7 +250,9 @@ export const AdminDashboardView = {
       });
     }
 
-    // 3. Ward Efficiency Bar Chart
+    // 3. Ward Efficiency Bar Chart — kept as static figures. The state
+    // model has no per-ward dataset (pickups aren't tagged by ward), so
+    // this is left as illustrative rather than manufactured live data.
     const ctxWard = document.getElementById('chart-ward-efficiency');
     if (ctxWard) {
       this.charts.ward = new window.Chart(ctxWard, {
