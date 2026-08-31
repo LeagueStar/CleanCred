@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GREEN KARMA — LEAFLET MAP HELPER
+   GREEN LEGACY — LEAFLET MAP HELPER
    Interactive Geolocation, Vehicle Tracking, and City Hotspots
    ========================================================================== */
 
