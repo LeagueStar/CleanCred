@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GREEN KARMA — REPORT WASTE 5-STEP WIZARD COMPONENT
+   GREEN LEGACY — REPORT WASTE 5-STEP WIZARD COMPONENT
    Interactive Category Selection, Photo Simulation, Map Pin, and Request ID
    ========================================================================== */
 
@@ -42,7 +42,7 @@ export const ReportWasteView = {
         <div style="text-align: center; margin-bottom: 2rem;">
           <div class="badge badge-green" style="margin-bottom: 0.5rem;">EARN. RECYCLE. REWARD.</div>
           <h2>Report Waste & Request Pickup</h2>
-          <p>Complete the 5-step verification process to earn guaranteed Green Points.</p>
+          <p>Complete the 5-step verification process to earn guaranteed Green Credits.</p>
         </div>
 
         <!-- Stepper Navigation Bar -->
@@ -108,7 +108,7 @@ export const ReportWasteView = {
     return `
       <div>
         <h3 style="margin-bottom: 0.5rem; color: var(--color-navy);">Step 1: Select Waste Category</h3>
-        <p style="font-size: 0.9rem; margin-bottom: 1.75rem;">Choose the segregated waste type you are reporting to see available points reward.</p>
+        <p style="font-size: 0.9rem; margin-bottom: 1.75rem;">Choose the segregated waste type you are reporting to see available credits reward.</p>
 
         <div class="grid-cols-3" style="margin-bottom: 2rem;">
           
@@ -116,7 +116,7 @@ export const ReportWasteView = {
           <div class="glass-card-interactive" style="padding: 1.5rem; border-radius: var(--radius-xl); border: 2px solid ${this.formData.category === 'wet' ? 'var(--waste-wet)' : 'var(--color-border)'}; background: ${this.formData.category === 'wet' ? 'var(--waste-wet-bg)' : '#FFFFFF'};" onclick="window.ReportWasteView.setCategory('wet')">
             <div class="flex-between" style="margin-bottom: 1rem;">
               <span style="font-size: 2rem;">🟢</span>
-              <span class="badge" style="background: var(--waste-wet); color: #FFFFFF; font-weight: 800;">+10 GP</span>
+              <span class="badge" style="background: var(--waste-wet); color: #FFFFFF; font-weight: 800;">+10 GC</span>
             </div>
             <h4 style="color: var(--waste-wet); margin-bottom: 0.35rem;">Wet Waste</h4>
             <p style="font-size: 0.8rem; color: var(--text-muted);">Organic kitchen scraps, vegetable peels, food leftovers & garden waste.</p>
@@ -126,7 +126,7 @@ export const ReportWasteView = {
           <div class="glass-card-interactive" style="padding: 1.5rem; border-radius: var(--radius-xl); border: 2px solid ${this.formData.category === 'dry' ? 'var(--waste-dry)' : 'var(--color-border)'}; background: ${this.formData.category === 'dry' ? 'var(--waste-dry-bg)' : '#FFFFFF'};" onclick="window.ReportWasteView.setCategory('dry')">
             <div class="flex-between" style="margin-bottom: 1rem;">
               <span style="font-size: 2rem;">🔵</span>
-              <span class="badge" style="background: var(--waste-dry); color: #FFFFFF; font-weight: 800;">+7 GP</span>
+              <span class="badge" style="background: var(--waste-dry); color: #FFFFFF; font-weight: 800;">+7 GC</span>
             </div>
             <h4 style="color: var(--waste-dry); margin-bottom: 0.35rem;">Dry Waste</h4>
             <p style="font-size: 0.8rem; color: var(--text-muted);">Paper, cardboard boxes, plastic containers, beverage bottles, glass & metal.</p>
@@ -136,7 +136,7 @@ export const ReportWasteView = {
           <div class="glass-card-interactive" style="padding: 1.5rem; border-radius: var(--radius-xl); border: 2px solid ${this.formData.category === 'harmful' ? 'var(--waste-harmful)' : 'var(--color-border)'}; background: ${this.formData.category === 'harmful' ? 'var(--waste-harmful-bg)' : '#FFFFFF'};" onclick="window.ReportWasteView.setCategory('harmful')">
             <div class="flex-between" style="margin-bottom: 1rem;">
               <span style="font-size: 2rem;">🔴</span>
-              <span class="badge" style="background: var(--waste-harmful); color: #FFFFFF; font-weight: 800;">+5 GP</span>
+              <span class="badge" style="background: var(--waste-harmful); color: #FFFFFF; font-weight: 800;">+5 GC</span>
             </div>
             <h4 style="color: var(--waste-harmful); margin-bottom: 0.35rem;">Harmful Waste</h4>
             <p style="font-size: 0.8rem; color: var(--text-muted);">Batteries, expired medicines, chemical sprays, old electronic gadgets & CFLs.</p>
@@ -360,8 +360,8 @@ export const ReportWasteView = {
           </div>
 
           <div class="flex-between">
-            <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Expected Points</span>
-            <span class="badge badge-points">+${lastRequest ? lastRequest.pointsReward : 10} Green Points</span>
+            <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Expected Credits</span>
+            <span class="badge badge-points">+${lastRequest ? lastRequest.pointsReward : 10} Green Credits</span>
           </div>
         </div>
 
