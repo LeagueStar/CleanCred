@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GREEN KARMA — MAIN APPLICATION ROUTER & CONTROLLER
+   GREEN LEGACY — MAIN APPLICATION ROUTER & CONTROLLER
    Tagline: EARN. RECYCLE. REWARD.
    ========================================================================== */
 
@@ -157,7 +157,7 @@ class AppRouterManager {
     // Update user points chip in navbar
     const pointsChip = document.getElementById('nav-user-points');
     if (pointsChip) {
-      pointsChip.textContent = `${Formatters.formatNumber(user.greenPoints)} GP`;
+      pointsChip.textContent = `${Formatters.formatNumber(user.greenPoints)} GC`;
     }
 
     // Update notification dot
