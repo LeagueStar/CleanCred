@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GREEN KARMA — CITIZEN PROFILE & ACCOUNT SETTINGS
+   GREEN LEGACY — CITIZEN PROFILE & ACCOUNT SETTINGS
    ========================================================================== */
 
 import { State } from '../state.js';
@@ -46,7 +46,7 @@ export const ProfileView = {
             <div style="background: #F8FAFC; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 1rem; text-align: left; font-size: 0.85rem; display: flex; flex-direction: column; gap: 0.5rem;">
               <div class="flex-between">
                 <span style="color: var(--text-muted);">Green Wallet:</span>
-                <strong style="color: var(--color-primary-dark);">${user.greenPoints} GP (₹${Formatters.gpToInr(user.greenPoints)})</strong>
+                <strong style="color: var(--color-primary-dark);">${user.greenPoints} GC (₹${Formatters.gpToInr(user.greenPoints)})</strong>
               </div>
               <div class="flex-between">
                 <span style="color: var(--text-muted);">Current Rank:</span>
@@ -97,6 +97,14 @@ export const ProfileView = {
             <button class="btn btn-primary" style="margin-top: 1.5rem;" onclick="window.ProfileView.saveProfile()">
               Save Changes ✓
             </button>
+
+            <!-- Demo Controls -->
+            <div style="border-top: 1px solid var(--color-border); padding-top: 1rem; margin-top: 1.75rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Testing the demo? You can wipe everything back to the starting data.</span>
+              <button class="btn btn-sm" style="background: transparent; color: var(--text-muted); border: 1px solid var(--color-border);" onclick="window.ProfileView.resetDemo()">
+                ↺ Reset Demo Data
+              </button>
+            </div>
           </div>
 
         </div>
@@ -123,8 +131,21 @@ export const ProfileView = {
       type: 'info'
     });
 
+    // Persist the edit and let other views (navbar, dashboard, etc.) pick it up
+    State.notify();
+
     alert('Profile information updated successfully!');
     this.render();
+  },
+
+  resetDemo() {
+    SoundFX.playClick();
+    const confirmed = confirm('Reset all demo data back to its original starting state? This cannot be undone.');
+    if (!confirmed) return;
+
+    State.resetState();
+    alert('Demo data has been reset to its original state.');
+    window.AppRouter.navigate('profile');
   }
 };
 
