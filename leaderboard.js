@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GREEN KARMA — GAMIFIED LEADERBOARD, BADGES & CHALLENGES
+   GREEN LEGACY — GAMIFIED LEADERBOARD, BADGES & CHALLENGES
    ========================================================================== */
 
 import { State } from '../state.js';
@@ -14,9 +14,28 @@ export const LeaderboardView = {
     const container = document.getElementById('view-leaderboard');
     if (!container) return;
 
-    const list = State.state.leaderboards[this.currentTab] || State.state.leaderboards.city;
+    const rawList = State.state.leaderboards[this.currentTab] || State.state.leaderboards.city;
+
+    // Keep the citizen's own row in sync with their live wallet/impact
+    // stats instead of the static seed values baked into the leaderboard
+    // dataset (this does not mutate the underlying state array).
+    const list = rawList.map(u => u.isUser ? {
+      ...u,
+      points: State.state.user.greenPoints,
+      wasteKg: State.state.user.lifetimeWasteKg,
+      streak: State.state.user.greenStreakDays
+    } : u);
+
     const top3 = list.slice(0, 3);
     const rest = list.slice(3);
+
+    // "Your Current Standing" must reflect whichever tab is selected —
+    // not a hardcoded rank. Citizens aren't ranked on the college/school
+    // tabs, so there may be no entry for them there.
+    const currentUserEntry = list.find(u => u.isUser);
+    const currentUserIndex = currentUserEntry ? list.indexOf(currentUserEntry) : -1;
+    const aheadOfUser = currentUserIndex > 0 ? list[currentUserIndex - 1] : null;
+    const gapToNextRank = (currentUserEntry && aheadOfUser) ? (aheadOfUser.points - currentUserEntry.points) : 0;
 
     container.innerHTML = `
       <div class="app-container">
@@ -36,8 +55,15 @@ export const LeaderboardView = {
             <div style="font-size: 1.8rem;">🔥</div>
             <div>
               <div style="font-size: 0.75rem; color: #DCFCE7; font-weight: 700; text-transform: uppercase;">Your Current Standing</div>
-              <strong style="font-size: 1.1rem; color: #FFFFFF;">#12 Shivansh Prajapati (1,250 GP)</strong>
-              <div style="font-size: 0.75rem; color: #84CC16;">You are only 120 points away from #10! 🚀</div>
+              ${currentUserEntry ? `
+                <strong style="font-size: 1.1rem; color: #FFFFFF;">#${currentUserEntry.rank} ${State.state.user.name} (${Formatters.formatNumber(currentUserEntry.points)} GC)</strong>
+                <div style="font-size: 0.75rem; color: #84CC16;">
+                  ${gapToNextRank > 0 ? `You are only ${Formatters.formatNumber(gapToNextRank)} credits away from #${aheadOfUser.rank}! 🚀` : "You're in the lead on this leaderboard! 🏆"}
+                </div>
+              ` : `
+                <strong style="font-size: 1.1rem; color: #FFFFFF;">Not Ranked Here</strong>
+                <div style="font-size: 0.75rem; color: #84CC16;">You're not enrolled in this leaderboard category yet.</div>
+              `}
             </div>
           </div>
         </div>
@@ -75,7 +101,7 @@ export const LeaderboardView = {
                 <strong style="font-size: 0.95rem; color: var(--color-navy); display: block;">${top3[1].name}</strong>
                 <span style="font-size: 0.78rem; color: var(--text-muted);">${top3[1].location}</span>
                 <div style="background: #E2E8F0; width: 100%; height: 110px; border-radius: var(--radius-md) var(--radius-md) 0 0; margin-top: 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; color: #334155;">
-                  <span style="font-size: 1.15rem;">${top3[1].points} GP</span>
+                  <span style="font-size: 1.15rem;">${top3[1].points} GC</span>
                   <span style="font-size: 0.75rem; color: #64748B;">${top3[1].wasteKg} KG Waste</span>
                 </div>
               </div>
@@ -91,7 +117,7 @@ export const LeaderboardView = {
                 <strong style="font-size: 1.05rem; color: var(--color-navy); display: block;">${top3[0].name}</strong>
                 <span style="font-size: 0.8rem; color: var(--text-muted);">${top3[0].location}</span>
                 <div style="background: linear-gradient(180deg, #FDE68A, #F59E0B); width: 100%; height: 145px; border-radius: var(--radius-md) var(--radius-md) 0 0; margin-top: 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 900; color: #78350F; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);">
-                  <span style="font-size: 1.35rem;">${top3[0].points} GP</span>
+                  <span style="font-size: 1.35rem;">${top3[0].points} GC</span>
                   <span style="font-size: 0.8rem; color: #92400E;">${top3[0].wasteKg} KG Waste</span>
                 </div>
               </div>
@@ -107,7 +133,7 @@ export const LeaderboardView = {
                 <strong style="font-size: 0.95rem; color: var(--color-navy); display: block;">${top3[2].name}</strong>
                 <span style="font-size: 0.78rem; color: var(--text-muted);">${top3[2].location}</span>
                 <div style="background: #FED7AA; width: 100%; height: 85px; border-radius: var(--radius-md) var(--radius-md) 0 0; margin-top: 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; color: #7C2D12;">
-                  <span style="font-size: 1.15rem;">${top3[2].points} GP</span>
+                  <span style="font-size: 1.15rem;">${top3[2].points} GC</span>
                   <span style="font-size: 0.75rem; color: #9A3412;">${top3[2].wasteKg} KG Waste</span>
                 </div>
               </div>
@@ -142,7 +168,7 @@ export const LeaderboardView = {
                   </div>
 
                   <div style="text-align: right;">
-                    <span class="badge badge-points" style="font-size: 0.85rem;">${Formatters.formatNumber(u.points)} GP</span>
+                    <span class="badge badge-points" style="font-size: 0.85rem;">${Formatters.formatNumber(u.points)} GC</span>
                     ${u.streak ? `
                       <div style="font-size: 0.72rem; color: #EA580C; font-weight: 700; margin-top: 2px;">
                         🔥 ${u.streak}d streak
@@ -188,7 +214,7 @@ export const LeaderboardView = {
                   <div style="padding: 1rem; background: #F8FAFC; border: 1px solid var(--color-border); border-radius: var(--radius-md);">
                     <div class="flex-between" style="margin-bottom: 0.35rem;">
                       <strong style="color: var(--color-navy); font-size: 0.88rem;">${c.title}</strong>
-                      <span class="badge badge-points">+${c.rewardGp} GP</span>
+                      <span class="badge badge-points">+${c.rewardGp} GC</span>
                     </div>
                     <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.65rem;">${c.description}</p>
                     
