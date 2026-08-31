@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>GREEN KARMA — Smart Waste Management & Rewards Platform</title>
+  <meta name="description" content="EARN. RECYCLE. REWARD. India's premier gamified municipal waste-management network. Segregate waste, request pickups, earn Green Points, and redeem for mobile recharges and bills.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20width=%22100%22%20height=%22100%22><text y=%22.9em%22 font-size=%2290%22>🌱</text></svg>">
+
+  <!-- Leaflet CSS for Interactive Maps -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+  <!-- Core Design System & Components CSS -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/glassmorphism.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/responsive.css">
+
+  <!-- Chart.js for City Analytics & Waste Trends -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Leaflet JS for Geolocation & Fleet Tracking -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
+<body>
+
+  <!-- Confetti Canvas Layer -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Fixed Top Header Navigation -->
+  <header class="app-header glass-nav">
+    <div class="app-container header-container">
+      
+      <!-- Brand Logo -->
+      <a href="#landing" class="brand-logo" onclick="window.AppRouter.navigate('landing')">
+        <div class="logo-icon">🌱</div>
+        <div>
+          <span>GREEN KARMA</span>
+          <span class="brand-tagline">EARN. RECYCLE. REWARD.</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="desktop-only-nav">
+        <ul class="nav-links">
+          <li class="nav-item active" data-route="landing" onclick="window.AppRouter.navigate('landing')">Home</li>
+          <li class="nav-item" data-route="dashboard" onclick="window.AppRouter.navigate('dashboard')">Dashboard</li>
+          <li class="nav-item" data-route="report-waste" onclick="window.AppRouter.navigate('report-waste')">Report Waste</li>
+          <li class="nav-item" data-route="live-tracking" onclick="window.AppRouter.navigate('live-tracking')">Live Pickup</li>
+          <li class="nav-item" data-route="rewards" onclick="window.AppRouter.navigate('rewards')">Green Wallet</li>
+          <li class="nav-item" data-route="leaderboard" onclick="window.AppRouter.navigate('leaderboard')">Leaderboard</li>
+          <li class="nav-item" data-route="admin" onclick="window.AppRouter.navigate('admin')">City Command</li>
+          <li class="nav-item" data-route="institutions" onclick="window.AppRouter.navigate('institutions')">Institutions</li>
+          <li class="nav-item" data-route="impact" onclick="window.AppRouter.navigate('impact')">Impact</li>
+        </ul>
+      </nav>
+
+      <!-- Right Header Actions -->
+      <div class="header-actions">
+        
+        <!-- Live Role Switcher (For Pitch & Demo Presentation) -->
+        <div class="role-pill-selector">
+          <span style="font-size: 0.85rem;">Role:</span>
+          <select id="app-role-select" onchange="window.AppRouter.handleRoleChange(this.value)">
+            <option value="citizen">👤 Citizen (Shivansh)</option>
+            <option value="worker">👨‍🔧 Worker (Ramesh)</option>
+            <option value="admin">🏛️ Govt Admin (Smart City)</option>
+            <option value="institution">🏫 School/College Admin</option>
+          </select>
+        </div>
+
+        <!-- Green Points Pill (Citizen) -->
+        <div class="badge badge-points" id="nav-user-points" style="cursor: pointer;" onclick="window.AppRouter.navigate('rewards')">
+          1,250 GP
+        </div>
+
+        <!-- Notification Bell -->
+        <div style="position: relative;">
+          <button class="notification-bell-btn" id="notif-bell-btn" onclick="window.AppRouter.toggleNotificationTray()">
+            🔔
+            <span class="notification-badge-dot" id="notif-dot"></span>
+          </button>
+
+          <!-- Notifications Dropdown Tray -->
+          <div id="notifications-tray" class="glass-card" style="display: none; position: absolute; top: calc(100% + 12px); right: 0; width: 320px; max-height: 400px; overflow-y: auto; z-index: 2000; box-shadow: var(--shadow-lg); border: 1px solid var(--color-border); padding: 0;">
+            <div class="flex-between" style="padding: 0.85rem 1rem; border-bottom: 1px solid var(--color-border); background: #F8FAFC;">
+              <strong style="font-size: 0.85rem; color: var(--color-navy);">Civic Notifications</strong>
+              <span style="font-size: 0.72rem; color: var(--color-primary-dark); font-weight: 700;">Live Feed</span>
+            </div>
+            <div id="notif-tray-list"></div>
+          </div>
+        </div>
+
+        <!-- User Avatar Button -->
+        <button class="user-avatar-btn" onclick="window.AppRouter.navigate('profile')">
+          <div class="avatar-img">SP</div>
+        </button>
+
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main View Container -->
+  <main class="main-content">
+    <div id="view-landing" class="view-section active"></div>
+    <div id="view-dashboard" class="view-section"></div>
+    <div id="view-report-waste" class="view-section"></div>
+    <div id="view-live-tracking" class="view-section"></div>
+    <div id="view-rewards" class="view-section"></div>
+    <div id="view-leaderboard" class="view-section"></div>
+    <div id="view-worker" class="view-section"></div>
+    <div id="view-admin" class="view-section"></div>
+    <div id="view-institutions" class="view-section"></div>
+    <div id="view-illegal-dumping" class="view-section"></div>
+    <div id="view-impact" class="view-section"></div>
+    <div id="view-profile" class="view-section"></div>
+  </main>
+
+  <!-- Mobile Bottom Navigation (Responsive Mobile View) -->
+  <nav class="mobile-bottom-nav">
+    <ul class="mobile-nav-items">
+      <li class="mobile-nav-btn active" data-route="dashboard" onclick="window.AppRouter.navigate('dashboard')">
+        <span class="mobile-nav-icon">🏠</span>
+        <span>Home</span>
+      </li>
+      <li class="mobile-nav-btn" data-route="report-waste" onclick="window.AppRouter.navigate('report-waste')">
+        <span class="mobile-nav-icon">♻️</span>
+        <span>Report</span>
+      </li>
+      <li class="mobile-nav-btn" data-route="rewards" onclick="window.AppRouter.navigate('rewards')">
+        <span class="mobile-nav-icon">🌱</span>
+        <span>Points</span>
+      </li>
+      <li class="mobile-nav-btn" data-route="live-tracking" onclick="window.AppRouter.navigate('live-tracking')">
+        <span class="mobile-nav-icon">📍</span>
+        <span>Track</span>
+      </li>
+      <li class="mobile-nav-btn" data-route="leaderboard" onclick="window.AppRouter.navigate('leaderboard')">
+        <span class="mobile-nav-icon">🏆</span>
+        <span>Rank</span>
+      </li>
+      <li class="mobile-nav-btn" data-route="profile" onclick="window.AppRouter.navigate('profile')">
+        <span class="mobile-nav-icon">👤</span>
+        <span>Profile</span>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- ES6 Module App Entrypoint -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

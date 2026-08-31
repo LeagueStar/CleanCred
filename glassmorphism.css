@@ -1,0 +1,100 @@
+/* ==========================================================================
+   GREEN KARMA — GLASSMORPHISM & ELEVATIONS
+   ========================================================================== */
+
+/* Glass Card Baseline */
+.glass-card {
+  background: var(--color-surface-translucent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-lg);
+  position: relative;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s ease;
+}
+
+.glass-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(22, 163, 74, 0.3);
+}
+
+.glass-card-interactive {
+  cursor: pointer;
+}
+
+.glass-card-interactive:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Premium Dark Navy Glass (for Top Widgets & Hero Highlights) */
+.glass-card-navy {
+  background: linear-gradient(135deg, rgba(16, 42, 67, 0.96) 0%, rgba(11, 93, 59, 0.92) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #FFFFFF;
+  box-shadow: 0 12px 32px -4px rgba(10, 25, 41, 0.4);
+}
+
+.glass-card-navy h1,
+.glass-card-navy h2,
+.glass-card-navy h3,
+.glass-card-navy h4 {
+  color: #FFFFFF;
+}
+
+.glass-card-navy p {
+  color: #CBD5E1;
+}
+
+/* Glowing Border Accent */
+.glass-card-emerald {
+  background: linear-gradient(135deg, #0B5D3B 0%, #16A34A 100%);
+  color: #FFFFFF;
+  box-shadow: 0 10px 30px -4px rgba(22, 163, 74, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-card-emerald h1,
+.glass-card-emerald h2,
+.glass-card-emerald h3,
+.glass-card-emerald h4 {
+  color: #FFFFFF;
+}
+
+.glass-card-emerald p {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Glass Header & Floating Nav */
+.glass-nav {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 4px 20px -2px rgba(16, 42, 67, 0.04);
+}
+
+/* Glass Modal Dialog Overlay */
+.glass-overlay {
+  background: rgba(16, 42, 67, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Subtle Inner Glow Indicator */
+.indicator-glow-green {
+  box-shadow: 0 0 12px rgba(22, 163, 74, 0.6);
+}
+
+.indicator-glow-amber {
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
+}
+
+.indicator-glow-red {
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+}
