@@ -1,6 +1,6 @@
 /* ==========================================================================
-   GREEN KARMA — FINTECH GREEN WALLET & REWARDS STORE
-   Points Conversion: 100 Green Points = ₹10 INR
+   GREEN LEGACY — FINTECH GREEN WALLET & REWARDS STORE
+   Points Conversion: 100 Green Credits = ₹10 INR
    ========================================================================== */
 
 import { State } from '../state.js';
@@ -18,6 +18,22 @@ export const RewardsWallet = {
     const user = State.state.user;
     const inrValue = Formatters.gpToInr(user.greenPoints);
 
+    // Derive lifetime earnings / redeemed value from the actual
+    // transaction ledger instead of hardcoded figures, so they always
+    // match the ledger shown below and update after every redemption.
+    const lifetimeEarnedGp = State.state.transactions
+      .filter(t => t.type === 'credit')
+      .reduce((sum, t) => sum + t.amountGp, 0);
+    const lifetimeEarnedInr = Formatters.gpToInr(lifetimeEarnedGp);
+    const avgEarningPerPickupInr = user.pickupsCompleted > 0
+      ? Math.round((lifetimeEarnedInr / user.pickupsCompleted) * 100) / 100
+      : 0;
+
+    const totalRedeemedGp = State.state.transactions
+      .filter(t => t.type === 'debit')
+      .reduce((sum, t) => sum + t.amountGp, 0);
+    const totalRedeemedInr = Formatters.gpToInr(totalRedeemedGp);
+
     container.innerHTML = `
       <div class="app-container">
         
@@ -25,15 +41,15 @@ export const RewardsWallet = {
         <div class="flex-between" style="margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
           <div>
             <div class="badge badge-green" style="margin-bottom: 0.35rem;">
-              <span>🌱</span> Green Karma Fintech Wallet
+              <span>🌱</span> Green Legacy Fintech Wallet
             </div>
-            <h2>Green Points & Rewards Store</h2>
+            <h2>Green Credits & Rewards Store</h2>
             <p>Convert responsible waste disposal into real-world utility savings and shopping vouchers.</p>
           </div>
 
           <!-- Fast Conversion Banner -->
           <div style="background: rgba(22, 163, 74, 0.1); border: 1.5px solid var(--color-primary); padding: 0.5rem 1rem; border-radius: var(--radius-full); font-size: 0.85rem; font-weight: 700; color: var(--color-primary-dark);">
-            ⚡ Conversion Rate: 100 GP = ₹10 INR
+            ⚡ Conversion Rate: 100 GC = ₹10 INR
           </div>
         </div>
 
@@ -47,7 +63,7 @@ export const RewardsWallet = {
               <span style="font-size: 1.5rem;">💳</span>
             </div>
             <div style="font-size: 2.8rem; font-weight: 900; color: #FFFFFF; line-height: 1;">
-              ${Formatters.formatNumber(user.greenPoints)} <span style="font-size: 1.25rem; font-weight: 600;">GP</span>
+              ${Formatters.formatNumber(user.greenPoints)} <span style="font-size: 1.25rem; font-weight: 600;">GC</span>
             </div>
             <div style="margin-top: 0.75rem; font-size: 1.05rem; font-weight: 700; color: #DCFCE7;">
               ≈ ${Formatters.formatCurrency(inrValue)} Real Cash Value
@@ -69,12 +85,12 @@ export const RewardsWallet = {
               <span style="font-size: 1.5rem;">📈</span>
             </div>
             <div style="font-size: 2.8rem; font-weight: 900; color: var(--color-navy); line-height: 1;">
-              1,680 <span style="font-size: 1.25rem; font-weight: 600; color: var(--text-muted);">GP</span>
+              ${Formatters.formatNumber(lifetimeEarnedGp)} <span style="font-size: 1.25rem; font-weight: 600; color: var(--text-muted);">GC</span>
             </div>
             <div style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--color-primary); font-weight: 700;">
-              ≈ ₹168.00 Earned via 18 Pickups
+              ≈ ${Formatters.formatCurrency(lifetimeEarnedInr)} Earned via ${user.pickupsCompleted} Pickups
             </div>
-            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 1rem;">Average earning: ₹28.50 per week through segregated disposal.</p>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 1rem;">Average earning: ${Formatters.formatCurrency(avgEarningPerPickupInr)} per verified pickup.</p>
           </div>
 
           <!-- Total Redeemed -->
@@ -84,10 +100,10 @@ export const RewardsWallet = {
               <span style="font-size: 1.5rem;">🎁</span>
             </div>
             <div style="font-size: 2.8rem; font-weight: 900; color: var(--color-navy); line-height: 1;">
-              430 <span style="font-size: 1.25rem; font-weight: 600; color: var(--text-muted);">GP</span>
+              ${Formatters.formatNumber(totalRedeemedGp)} <span style="font-size: 1.25rem; font-weight: 600; color: var(--text-muted);">GC</span>
             </div>
             <div style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">
-              ₹43.00 Redeemed (Recharge & Vouchers)
+              ${Formatters.formatCurrency(totalRedeemedInr)} Redeemed (Recharge & Vouchers)
             </div>
             <div style="margin-top: 1.25rem;">
               <span class="badge badge-green">KYC Verified Wallet ✓</span>
@@ -116,7 +132,7 @@ export const RewardsWallet = {
               <div class="glass-card" style="padding: 1.25rem; text-align: center; border-top: 4px solid var(--color-primary);">
                 <div style="font-size: 1.6rem; font-weight: 800; color: var(--color-navy); margin-bottom: 0.25rem;">₹10</div>
                 <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem;">Talktime / Topup</div>
-                <div class="badge badge-points" style="margin-bottom: 1rem;">100 GP</div>
+                <div class="badge badge-points" style="margin-bottom: 1rem;">100 GC</div>
                 <button class="btn btn-primary btn-sm btn-block" onclick="window.RewardsWallet.redeemQuick('RECHARGE', 'Mobile Topup ₹10', 100)">
                   Redeem ₹10
                 </button>
@@ -126,7 +142,7 @@ export const RewardsWallet = {
               <div class="glass-card" style="padding: 1.25rem; text-align: center; border-top: 4px solid var(--color-primary);">
                 <div style="font-size: 1.6rem; font-weight: 800; color: var(--color-navy); margin-bottom: 0.25rem;">₹50</div>
                 <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem;">Talktime + 5GB Data</div>
-                <div class="badge badge-points" style="margin-bottom: 1rem;">500 GP</div>
+                <div class="badge badge-points" style="margin-bottom: 1rem;">500 GC</div>
                 <button class="btn btn-primary btn-sm btn-block" onclick="window.RewardsWallet.redeemQuick('RECHARGE', 'Mobile Data Pack ₹50', 500)">
                   Redeem ₹50
                 </button>
@@ -136,7 +152,7 @@ export const RewardsWallet = {
               <div class="glass-card" style="padding: 1.25rem; text-align: center; border-top: 4px solid var(--color-primary);">
                 <div style="font-size: 1.6rem; font-weight: 800; color: var(--color-navy); margin-bottom: 0.25rem;">₹100</div>
                 <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem;">Full Talktime Pack</div>
-                <div class="badge badge-points" style="margin-bottom: 1rem;">1,000 GP</div>
+                <div class="badge badge-points" style="margin-bottom: 1rem;">1,000 GC</div>
                 <button class="btn btn-primary btn-sm btn-block" onclick="window.RewardsWallet.redeemQuick('RECHARGE', 'Full Talktime Pack ₹100', 1000)">
                   Redeem ₹100
                 </button>
@@ -146,7 +162,7 @@ export const RewardsWallet = {
               <div class="glass-card" style="padding: 1.25rem; text-align: center; border-top: 4px solid var(--color-primary);">
                 <div style="font-size: 1.6rem; font-weight: 800; color: var(--color-navy); margin-bottom: 0.25rem;">₹200</div>
                 <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem;">Unlimited 28-Day Plan</div>
-                <div class="badge badge-points" style="margin-bottom: 1rem;">2,000 GP</div>
+                <div class="badge badge-points" style="margin-bottom: 1rem;">2,000 GC</div>
                 <button class="btn btn-secondary btn-sm btn-block" onclick="window.RewardsWallet.redeemQuick('RECHARGE', 'Unlimited 28-Day Plan ₹200', 2000)">
                   Redeem ₹200
                 </button>
@@ -171,7 +187,7 @@ export const RewardsWallet = {
                 <div style="font-size: 2rem; margin-bottom: 0.35rem;">⚡</div>
                 <strong style="color: var(--color-navy); display: block; font-size: 0.95rem;">Electricity Bill</strong>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.85rem;">Tata Power / BESCOM / Adani</p>
-                <div class="badge badge-points" style="margin-bottom: 1rem;">₹50 Off (500 GP)</div>
+                <div class="badge badge-points" style="margin-bottom: 1rem;">₹50 Off (500 GC)</div>
                 <button class="btn btn-emerald-outline btn-sm btn-block" onclick="window.RewardsWallet.openBillsModal('Electricity')">
                   Pay Bill
                 </button>
@@ -181,7 +197,7 @@ export const RewardsWallet = {
                 <div style="font-size: 2rem; margin-bottom: 0.35rem;">💧</div>
                 <strong style="color: var(--color-navy); display: block; font-size: 0.95rem;">Water Board Bill</strong>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.85rem;">Municipal Corporation Jal Board</p>
-                <div class="badge badge-points" style="margin-bottom: 1rem;">₹50 Off (500 GP)</div>
+                <div class="badge badge-points" style="margin-bottom: 1rem;">₹50 Off (500 GC)</div>
                 <button class="btn btn-emerald-outline btn-sm btn-block" onclick="window.RewardsWallet.openBillsModal('Water')">
                   Pay Bill
                 </button>
@@ -191,7 +207,7 @@ export const RewardsWallet = {
                 <div style="font-size: 2rem; margin-bottom: 0.35rem;">🔥</div>
                 <strong style="color: var(--color-navy); display: block; font-size: 0.95rem;">Piped Gas Bill</strong>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.85rem;">Mahanagar Gas / IGL / Adani</p>
-                <div class="badge badge-points" style="margin-bottom: 1rem;">₹50 Off (500 GP)</div>
+                <div class="badge badge-points" style="margin-bottom: 1rem;">₹50 Off (500 GC)</div>
                 <button class="btn btn-emerald-outline btn-sm btn-block" onclick="window.RewardsWallet.openBillsModal('Gas')">
                   Pay Bill
                 </button>
@@ -201,7 +217,7 @@ export const RewardsWallet = {
                 <div style="font-size: 2rem; margin-bottom: 0.35rem;">🌐</div>
                 <strong style="color: var(--color-navy); display: block; font-size: 0.95rem;">Broadband Bill</strong>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.85rem;">Airtel Fiber / JioFiber / ACT</p>
-                <div class="badge badge-points" style="margin-bottom: 1rem;">₹100 Off (1,000 GP)</div>
+                <div class="badge badge-points" style="margin-bottom: 1rem;">₹100 Off (1,000 GC)</div>
                 <button class="btn btn-emerald-outline btn-sm btn-block" onclick="window.RewardsWallet.openBillsModal('Broadband')">
                   Pay Bill
                 </button>
@@ -227,7 +243,7 @@ export const RewardsWallet = {
                 <strong style="color: var(--color-navy); display: block;">BigBasket Organic</strong>
                 <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">₹100 Voucher on min ₹500 grocery.</p>
                 <div class="flex-between">
-                  <span class="badge badge-points">1,000 GP</span>
+                  <span class="badge badge-points">1,000 GC</span>
                   <button class="btn btn-primary btn-sm" onclick="window.RewardsWallet.redeemQuick('SHOPPING', 'BigBasket Organic ₹100 Voucher', 1000)">
                     Claim
                   </button>
@@ -239,7 +255,7 @@ export const RewardsWallet = {
                 <strong style="color: var(--color-navy); display: block;">Bamboo India Store</strong>
                 <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">₹50 Gift Card for eco toothbrushes & kits.</p>
                 <div class="flex-between">
-                  <span class="badge badge-points">500 GP</span>
+                  <span class="badge badge-points">500 GC</span>
                   <button class="btn btn-primary btn-sm" onclick="window.RewardsWallet.redeemQuick('SHOPPING', 'Bamboo India ₹50 Voucher', 500)">
                     Claim
                   </button>
@@ -251,7 +267,7 @@ export const RewardsWallet = {
                 <strong style="color: var(--color-navy); display: block;">Starbucks Coffee</strong>
                 <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">Free reusable bamboo tumbler with refill.</p>
                 <div class="flex-between">
-                  <span class="badge badge-points">1,200 GP</span>
+                  <span class="badge badge-points">1,200 GC</span>
                   <button class="btn btn-primary btn-sm" onclick="window.RewardsWallet.redeemQuick('CAFE', 'Starbucks Eco Tumbler Voucher', 1200)">
                     Claim
                   </button>
@@ -263,7 +279,7 @@ export const RewardsWallet = {
                 <strong style="color: var(--color-navy); display: block;">Subway Green Meal</strong>
                 <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">₹50 discount on organic salad subs.</p>
                 <div class="flex-between">
-                  <span class="badge badge-points">500 GP</span>
+                  <span class="badge badge-points">500 GC</span>
                   <button class="btn btn-primary btn-sm" onclick="window.RewardsWallet.redeemQuick('CAFE', 'Subway ₹50 Meal Discount', 500)">
                     Claim
                   </button>
@@ -289,10 +305,10 @@ export const RewardsWallet = {
                 All
               </button>
               <button class="btn btn-sm ${this.currentTab === 'credit' ? 'btn-primary' : 'btn-secondary'}" onclick="window.RewardsWallet.filterLedger('credit')">
-                Credits (+GP)
+                Credits (+GC)
               </button>
               <button class="btn btn-sm ${this.currentTab === 'debit' ? 'btn-primary' : 'btn-secondary'}" onclick="window.RewardsWallet.filterLedger('debit')">
-                Debits (-GP)
+                Debits (-GC)
               </button>
             </div>
           </div>
@@ -316,7 +332,7 @@ export const RewardsWallet = {
 
                   <div style="text-align: right;">
                     <div style="font-size: 1.15rem; font-weight: 800; color: ${t.type === 'credit' ? 'var(--color-primary-dark)' : '#EF4444'};">
-                      ${t.type === 'credit' ? '+' : '-'}${t.amountGp} GP
+                      ${t.type === 'credit' ? '+' : '-'}${t.amountGp} GC
                     </div>
                     <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">
                       ${t.type === 'credit' ? '+' : '-'}${Formatters.formatCurrency(t.equivalentInr)}
@@ -338,7 +354,7 @@ export const RewardsWallet = {
             <span style="font-size: 2rem;">📱</span>
             <div>
               <h3 style="color: var(--color-navy);">Instant Mobile Recharge</h3>
-              <p style="font-size: 0.85rem;">Recharge prepaid numbers using your Green Points balance.</p>
+              <p style="font-size: 0.85rem;">Recharge prepaid numbers using your Green Credits balance.</p>
             </div>
           </div>
 
@@ -360,17 +376,17 @@ export const RewardsWallet = {
           <div class="form-group">
             <label class="form-label">Select Recharge Plan</label>
             <select class="form-select" id="recharge-amount">
-              <option value="100">₹10 Talktime (100 Green Points)</option>
-              <option value="500">₹50 Data Pack (500 Green Points)</option>
-              <option value="1000">₹100 Full Talktime (1,000 Green Points)</option>
-              <option value="2000">₹200 28-Day Unlimited (2,000 Green Points)</option>
+              <option value="100">₹10 Talktime (100 Green Credits)</option>
+              <option value="500">₹50 Data Pack (500 Green Credits)</option>
+              <option value="1000">₹100 Full Talktime (1,000 Green Credits)</option>
+              <option value="2000">₹200 28-Day Unlimited (2,000 Green Credits)</option>
             </select>
           </div>
 
           <div style="background: var(--waste-wet-bg); border: 1.5px solid var(--waste-wet-border); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.5rem; font-size: 0.85rem;">
             <div class="flex-between">
-              <span>Your GP Balance:</span>
-              <strong>${user.greenPoints} GP (₹${inrValue})</strong>
+              <span>Your GC Balance:</span>
+              <strong>${user.greenPoints} GC (₹${inrValue})</strong>
             </div>
           </div>
 
@@ -389,7 +405,7 @@ export const RewardsWallet = {
             <span style="font-size: 2rem;">💡</span>
             <div>
               <h3 style="color: var(--color-navy);">Pay Utility Bill</h3>
-              <p style="font-size: 0.85rem;">Apply Green Karma points as direct discount on municipal bills.</p>
+              <p style="font-size: 0.85rem;">Apply Green Credits as direct discount on municipal bills.</p>
             </div>
           </div>
 
@@ -411,8 +427,8 @@ export const RewardsWallet = {
           <div class="form-group">
             <label class="form-label">Redeem Value</label>
             <select class="form-select" id="bill-gp-amount">
-              <option value="500">₹50 Bill Discount (500 Green Points)</option>
-              <option value="1000">₹100 Bill Discount (1,000 Green Points)</option>
+              <option value="500">₹50 Bill Discount (500 Green Credits)</option>
+              <option value="1000">₹100 Bill Discount (1,000 Green Credits)</option>
             </select>
           </div>
 
@@ -454,7 +470,7 @@ export const RewardsWallet = {
       Confetti.trigger(75);
       this.render();
     } else {
-      alert(res.message || 'Insufficient Green Points balance');
+      alert(res.message || 'Insufficient Green Credits balance');
     }
   },
 
