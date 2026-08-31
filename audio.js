@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GREEN KARMA — WEB AUDIO API SYNTHESIZER
+   GREEN LEGACY — WEB AUDIO API SYNTHESIZER
    Delightful micro-interactions & feedback sounds
    ========================================================================== */
 
@@ -19,7 +19,7 @@ class SoundEffectsManager {
   }
 
   /**
-   * Sound: Earn Green Points Chime (Upward cheerful arpeggio)
+   * Sound: Earn Green Credits Chime (Upward cheerful arpeggio)
    */
   playPointsEarned() {
     if (!this.enabled) return;
