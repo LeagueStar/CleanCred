@@ -74,9 +74,9 @@ export const MapHelper = {
       zoomControl: true
     });
 
-    // Clean OpenStreetMap tiles with eco-friendly styling
-    window.L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+// Standard OpenStreetMap tiles (No API Key Required)
+    window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       maxZoom: 19
     }).addTo(map);
 
