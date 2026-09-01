@@ -1,6 +1,7 @@
 /* ==========================================================================
-   GREEN LEGACY — GOOGLE MAPS API HELPER
+   GREEN LEGACY — MAPS API HELPER
    Interactive Geolocation, Vehicle Tracking, and City Hotspots
+   Now using Open-Source Leaflet & OpenStreetMap (No API Key Required)
    ========================================================================== */
 
 export const MapHelper = {
@@ -15,7 +16,7 @@ export const MapHelper = {
           display: flex;
           flex-direction: column;
           align-items: center;
-          transform: translate(0, -100%);
+          transform: translate(-50%, -100%);
         ">
           <div style="
             background: ${colorHex};
@@ -52,19 +53,32 @@ export const MapHelper = {
   },
 
   /**
-   * Initialize a standard Google Map on an element ID
+   * Initialize a standard Leaflet Map on an element ID
    */
   initMap(elementId, center = [19.0760, 72.8777], zoom = 14) {
-    if (!window.google) return null;
+    if (!window.L) return null;
     const container = document.getElementById(elementId);
     if (!container) return null;
 
-    const map = new window.google.maps.Map(container, {
-      center: { lat: center[0], lng: center[1] },
-      zoom: zoom,
-      mapId: 'DEMO_MAP_ID', // Required for AdvancedMarkerElement
-      disableDefaultUI: false,
-    });
+    // Destroy map if it already exists on this container
+    if (container._leaflet_id) {
+       container.innerHTML = '';
+       container._leaflet_id = null;
+    }
+
+    const map = window.L.map(container, { zoomControl: false }).setView(center, zoom);
+    
+    // Add default Leaflet zoom controls to bottom right
+    window.L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+    window.L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap contributors, &copy; CARTO'
+    }).addTo(map);
+
+    // Polyfill for Google Maps map.setCenter()
+    map.setCenter = function(c) {
+      this.setView([c.lat, c.lng], this.getZoom());
+    };
 
     return map;
   },
@@ -73,26 +87,55 @@ export const MapHelper = {
    * Add a marker to the map
    */
   addMarker(map, position, content, options = {}) {
-    if (!window.google || !window.google.maps.marker) return null;
-    return new window.google.maps.marker.AdvancedMarkerElement({
-      map: map,
-      position: { lat: position[0], lng: position[1] },
-      content: content,
-      ...options
+    if (!window.L) return null;
+
+    const icon = window.L.divIcon({
+      html: typeof content === 'string' ? content : content.outerHTML,
+      className: '', // prevent default Leaflet divIcon styles
+      iconSize: [0, 0], // CSS will handle dimensions via the transform
+      iconAnchor: [0, 0] // the transform: translate(-50%, -100%) inside custom HTML anchors it
     });
+
+    const isDraggable = options.gmpDraggable === true || options.draggable === true;
+    
+    const marker = window.L.marker(position, { 
+      icon, 
+      draggable: isDraggable
+    }).addTo(map);
+
+    // Polyfill marker.position for Google Maps compatibility
+    Object.defineProperty(marker, 'position', {
+      set: function(val) {
+        this.setLatLng([val.lat, val.lng]);
+      },
+      get: function() {
+        const ll = this.getLatLng();
+        return { lat: ll.lat, lng: ll.lng };
+      }
+    });
+
+    // Polyfill marker.addListener for Google Maps compatibility
+    marker.addListener = function(event, callback) {
+      if (event === 'dragend') {
+        this.on('dragend', callback);
+      } else {
+        this.on(event, callback);
+      }
+    };
+
+    return marker;
   },
 
   /**
    * Add a polyline to the map
    */
   addPolyline(map, coords, options = {}) {
-    if (!window.google) return null;
-    const path = coords.map(c => ({ lat: c[0], lng: c[1] }));
-    const polyline = new window.google.maps.Polyline({
-      path,
-      map,
-      ...options
-    });
+    if (!window.L) return null;
+    const polyline = window.L.polyline(coords, {
+      color: options.strokeColor || '#16A34A',
+      weight: options.strokeWeight || 5,
+      opacity: options.strokeOpacity || 0.8
+    }).addTo(map);
     return polyline;
   }
 };
