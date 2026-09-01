@@ -71,8 +71,12 @@ export const MapHelper = {
     // Add default Leaflet zoom controls to bottom right
     window.L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    window.L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OpenStreetMap contributors, &copy; CARTO'
+    window.L.tileLayer('https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=6kEsfjusNCieuJjsU7Uu', {
+      tileSize: 512,
+      zoomOffset: -1,
+      minZoom: 1,
+      crossOrigin: true,
+      attribution: '&copy; <a href="https://www.maptiler.com/copyright/" target="_blank">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap contributors</a>'
     }).addTo(map);
 
     // Polyfill for Google Maps map.setCenter()
