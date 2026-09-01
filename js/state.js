@@ -72,10 +72,10 @@ class StateStore {
         // so the admin Segregation Ratio chart derives real percentages.
         wasteByCategoryTons: { wet: 12922, dry: 8946, harmful: 2982 },
         connectedDatabases: [
-          { name: 'Municipal Waste Registry (BMC-GIS)', status: 'ONLINE', ping: '18ms', records: '1.4M' },
-          { name: 'National Citizen Green Ledger (UIDAI / SBM)', status: 'ONLINE', ping: '24ms', records: '125K' },
-          { name: 'Smart City Fleet & Worker Dispatch API', status: 'ONLINE', ping: '12ms', records: '480 Vans' },
-          { name: 'Authorized Material Recovery Facilities (MRF)', status: 'ONLINE', ping: '32ms', records: '18 Hubs' }
+          { name: 'Application', status: 'LOCAL DEMO', detail: 'Interactive prototype running in this browser' },
+          { name: 'Data Store', status: 'BROWSER PERSISTENCE', detail: 'Demo state is saved locally on this device' },
+          { name: 'Municipal Integration', status: 'PROTOTYPE', detail: 'Workflow demonstration; no live city system is connected' },
+          { name: 'MRF Network', status: 'DEMO DATASET', detail: 'Recovery stages are represented with sample data' }
         ]
       },
 

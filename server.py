@@ -48,14 +48,15 @@ class CleanCredHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             response = {
                 "status": "healthy",
+                "environment": "local_demo",
                 "platform": "CleanCred — Smart Waste Management",
                 "tagline": "Verified waste recovery",
                 "timestamp": datetime.now().isoformat(),
-                "databases": {
-                    "municipal_waste_db": "CONNECTED",
-                    "citizen_ledger_db": "CONNECTED",
-                    "smart_city_api": "CONNECTED",
-                    "mrf_recyclers_net": "CONNECTED"
+                "services": {
+                    "application": "LOCAL DEMO",
+                    "data_store": "Browser Persistence",
+                    "municipal_integration": "Prototype",
+                    "mrf_network": "Demo Dataset"
                 }
             }
             self.wfile.write(json.dumps(response, indent=2).encode('utf-8'))

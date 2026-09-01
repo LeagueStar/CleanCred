@@ -102,7 +102,7 @@ export const ProfileView = {
             <div style="border-top: 1px solid var(--color-border); padding-top: 1rem; margin-top: 1.75rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
               <span style="font-size: 0.75rem; color: var(--text-muted);">Testing the demo? You can wipe everything back to the starting data.</span>
               <button class="btn btn-sm" style="background: transparent; color: var(--text-muted); border: 1px solid var(--color-border);" onclick="window.ProfileView.resetDemo()">
-                ↺ Reset Demo Data
+                Reset Demo
               </button>
             </div>
           </div>
@@ -134,7 +134,7 @@ export const ProfileView = {
     // Persist the edit and let other views (navbar, dashboard, etc.) pick it up
     State.notify();
 
-    alert('Profile information updated successfully!');
+    window.AppRouter.showToast('Profile changes saved.');
     this.render();
   },
 
@@ -144,7 +144,7 @@ export const ProfileView = {
     if (!confirmed) return;
 
     State.resetState();
-    alert('Demo data has been reset to its original state.');
+    window.AppRouter.showToast('Demo reset to its starting data.');
     window.AppRouter.navigate('profile');
   }
 };

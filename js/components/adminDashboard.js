@@ -1,6 +1,5 @@
 /* ==========================================================================
-   GREEN LEGACY — GOVERNMENT & MUNICIPAL ADMIN COMMAND CENTER
-   Connected to Municipal Waste Database & Smart City GIS Grid
+   CLEAN CRED — MUNICIPAL DEMO COMMAND CENTER
    ========================================================================== */
 
 import { State } from '../state.js';
@@ -17,6 +16,12 @@ export const AdminDashboardView = {
     if (!container) return;
 
     const stats = State.state.cityStats;
+    const demoSources = [
+      { name: 'Application', status: 'LOCAL DEMO', detail: 'Interactive prototype running in this browser' },
+      { name: 'Data Store', status: 'BROWSER PERSISTENCE', detail: 'Demo state is saved locally on this device' },
+      { name: 'Municipal Integration', status: 'PROTOTYPE', detail: 'Workflow demonstration; no live city system is connected' },
+      { name: 'MRF Network', status: 'DEMO DATASET', detail: 'Recovery stages are represented with sample data' }
+    ];
 
     container.innerHTML = `
       <div class="app-container">
@@ -28,13 +33,11 @@ export const AdminDashboardView = {
               Municipal operations &bull; City command
             </div>
             <h2>City waste operations</h2>
-            <p>Real-time municipal telemetry, ward-wise segregation indices, and recycling efficiency.</p>
+            <p>Prototype operational view using the local demo dataset and browser-persisted interactions.</p>
           </div>
 
-          <!-- Connected DB Status Pill -->
-          <div style="background: #ECFDF5; border: 1.5px solid #10B981; padding: 0.6rem 1.2rem; border-radius: var(--radius-full); display: flex; align-items: center; gap: 0.6rem;">
-            <span style="width: 10px; height: 10px; border-radius: 50%; background: #10B981; animation: pulseGlow 1.5s infinite;"></span>
-            <strong style="color: #065F46; font-size: 0.85rem; letter-spacing: 0.04em;">MUNICIPAL DATABASE CONNECTED ✓</strong>
+          <div class="badge badge-green" style="padding: .55rem .75rem;">
+            LOCAL DEMO · Browser persistence
           </div>
         </div>
 
@@ -83,28 +86,27 @@ export const AdminDashboardView = {
 
         </div>
 
-        <!-- Dedicated Section: "Connected to Your City" Municipal Systems -->
-        <div class="glass-card" style="padding: 1.75rem; margin-bottom: 2.5rem; background: linear-gradient(135deg, #102A43, #0A1929); color: #FFFFFF;">
+        <!-- Transparent demo-data scope -->
+        <div class="glass-card" style="padding: 1.75rem; margin-bottom: 2.5rem;">
           <div class="flex-between" style="margin-bottom: 1.25rem;">
             <div>
-              <h3 style="color: #FFFFFF;">Municipal systems overview</h3>
-              <p style="color: #CBD5E1; font-size: 0.85rem;">Integrated back-office endpoints for municipal databases, worker dispatch, and material recovery facilities.</p>
+              <h3>Demo data scope</h3>
+              <p style="font-size: 0.85rem;">This presentation build uses local browser persistence and a representative dataset. It does not claim live municipal or MRF integrations.</p>
             </div>
-            <span class="badge" style="background: rgba(132, 204, 22, 0.2); color: #84CC16; border: 1px solid #84CC16;">
-              4 / 4 Nodes Active
+            <span class="badge badge-green">
+              Presentation mode
             </span>
           </div>
 
           <div class="grid-cols-4">
-            ${stats.connectedDatabases.map(db => `
-              <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); padding: 1.15rem; border-radius: var(--radius-md);">
+            ${demoSources.map(db => `
+              <div style="background: #F7F9F7; border: 1px solid var(--color-border); padding: 1.15rem; border-radius: var(--radius-md);">
                 <div class="flex-between" style="margin-bottom: 0.5rem;">
-                  <strong style="color: #FFFFFF; font-size: 0.85rem;">${db.name}</strong>
-                  <span class="badge" style="background: #16A34A; color: #FFFFFF; font-size: 0.65rem; padding: 2px 6px;">${db.status}</span>
+                  <strong style="color: var(--color-navy); font-size: 0.85rem;">${db.name}</strong>
+                  <span class="badge badge-green" style="font-size: 0.65rem; padding: 2px 6px;">${db.status}</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #94A3B8; margin-top: 0.5rem;">
-                  <span>Latency: <strong style="color: #84CC16;">${db.ping}</strong></span>
-                  <span>Sync: <strong style="color: #FFFFFF;">${db.records}</strong></span>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; line-height: 1.45;">
+                  ${db.detail}
                 </div>
               </div>
             `).join('')}

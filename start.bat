@@ -1,7 +1,7 @@
 @echo off
-title CleanCred Platform
+title GREEN LEGACY Platform
 echo ===================================================
-echo   Starting CleanCred Platform...
+echo   Starting GREEN LEGACY Platform...
 echo   Tagline: EARN. RECYCLE. REWARD.
 echo ===================================================
 
