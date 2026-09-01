@@ -42,6 +42,7 @@ CleanCred utilizes a lightweight yet robust stack, prioritizing a smooth UI and 
 
 ## 📂 Project Structure
 
+```bash
 CleanCred/
 ├── index.html                   # Main entry point
 ├── server.py                    # Python backend server
@@ -53,8 +54,8 @@ CleanCred/
 │   ├── main.css                 # Global stylesheets
 │   └── responsive.css           # Mobile/tablet responsiveness
 └── js/
-    ├── app.js                   # Application initialization
-
+    ├── app.js                   # Application initialization  
+   ```
 ## 🚀 Installation & Local Setup
 
 To run CleanCred locally on your machine for development or evaluation:
