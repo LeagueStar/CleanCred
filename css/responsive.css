@@ -1,0 +1,165 @@
+/* ==========================================================================
+   GREEN LEGACY — RESPONSIVE DESIGN & MOBILE OPTIMIZATIONS
+   ========================================================================== */
+
+/* Tablet Breakpoint (<= 1024px) */
+@media (max-width: 1024px) {
+  :root {
+    --container-max: 960px;
+  }
+
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid-cols-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+  }
+
+  .hero-visual {
+    order: 0;
+  }
+}
+
+/* Mobile Breakpoint (<= 768px) */
+@media (max-width: 768px) {
+  :root {
+    --nav-height: 64px;
+  }
+
+  body {
+    padding-bottom: var(--mobile-nav-height);
+  }
+
+  .mobile-bottom-nav {
+    display: block;
+  }
+
+  .desktop-only-nav {
+    display: none !important;
+  }
+
+  .grid-cols-2,
+  .grid-cols-3,
+  .grid-cols-4 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .app-container {
+    padding: 0 1rem;
+  }
+
+  .main-content {
+    padding-top: calc(var(--nav-height) + 1rem);
+    padding-bottom: 5rem;
+  }
+
+  .stepper-header::before {
+    display: none;
+  }
+
+  .stepper-header {
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    gap: 1rem;
+    justify-content: flex-start;
+  }
+
+  .step-label {
+    display: none;
+  }
+
+  .modal-content {
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .toast-container {
+    left: 1rem;
+    right: 1rem;
+    bottom: calc(var(--mobile-nav-height) + 1rem);
+  }
+
+  .toast {
+    min-width: unset;
+    width: 100%;
+  }
+
+  /* Hide decorative floating cards on small screens */
+  .floating-stat-card {
+    display: none;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-buttons .btn {
+    width: 100%;
+  }
+
+  .points-podium {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+}
+
+/* Final responsive QA: protect every view from width leaks and fixed UI overlap. */
+img, svg, canvas, video { max-width: 100%; }
+.app-container, .view-section, .glass-card, .modal-content, .grid-cols-2 > *, .grid-cols-3 > *, .grid-cols-4 > *, .hero-grid > * { min-width: 0; }
+input, select, textarea { max-width: 100%; }
+
+@media (max-width: 480px) {
+  :root { --mobile-nav-height: 68px; }
+
+  .app-container { padding-left: .875rem; padding-right: .875rem; }
+  .brand-logo { font-size: 1.08rem; gap: .45rem; }
+  .brand-logo .logo-icon { width: 34px; height: 34px; font-size: 1rem; }
+  .brand-logo .brand-tagline, .demo-mode-label { display: none; }
+  .header-actions { gap: .35rem; }
+  .role-pill-selector { padding: .3rem .4rem; }
+  .role-pill-selector select { font-size: .78rem; max-width: 82px; }
+  .header-actions > .badge-points, .header-actions > div:has(.notification-bell-btn), .user-avatar-btn { display: none; }
+
+  .main-content { padding-top: calc(var(--nav-height) + .75rem); padding-bottom: calc(var(--mobile-nav-height) + 1.25rem); }
+  .mobile-bottom-nav { height: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom); }
+  .mobile-nav-btn { min-width: 44px; min-height: 48px; justify-content: center; }
+  .mobile-nav-icon { width: 19px; height: 19px; }
+
+  h1 { font-size: clamp(1.75rem, 8vw, 2.25rem); }
+  h2 { font-size: clamp(1.35rem, 6.5vw, 1.75rem); }
+  .btn { min-height: 44px; padding: .65rem 1rem; white-space: normal; text-align: center; }
+  .btn-sm { min-height: 38px; padding: .45rem .7rem; }
+  .modal-overlay { align-items: flex-end; padding: .75rem; }
+  .modal-content { max-height: calc(100dvh - 1.5rem); padding: 1.25rem; border-radius: var(--radius-lg); }
+  .modal-close-btn { top: .75rem; right: .75rem; width: 40px; height: 40px; }
+  .toast-container { left: .75rem; right: .75rem; bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom) + .75rem); }
+  .toast { max-width: none; padding: .8rem 1rem; }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .header-actions { gap: .5rem; }
+  .role-pill-selector { padding: .3rem .5rem; }
+  .demo-mode-label { display: none; }
+  .user-avatar-btn { padding: .2rem; }
+  .main-content { padding-bottom: calc(var(--mobile-nav-height) + 1.25rem); }
+  .mobile-nav-btn { min-width: 44px; min-height: 48px; justify-content: center; }
+  .modal-content { max-height: calc(100dvh - 2rem); }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .header-container { padding-left: 1.25rem; padding-right: 1.25rem; }
+  .nav-links { gap: .15rem; }
+  .nav-item { padding: .5rem .6rem; font-size: .82rem; }
+  .header-actions { gap: .45rem; }
+  .role-pill-selector { padding: .3rem .5rem; }
+  .demo-mode-label { display: none; }
+  .badge-points { padding: .35rem .55rem; }
+}

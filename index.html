@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>GREEN LEGACY — Smart Waste Management & Rewards Platform</title>
-  <meta name="description" content="EARN. RECYCLE. REWARD. India's premier gamified municipal waste-management network. Segregate waste, request pickups, earn Green Credits, and redeem for mobile recharges and bills.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20width=%22100%22%20height=%22100%22><text y=%22.9em%22 font-size=%2290%22>🌱</text></svg>">
+  <title>CleanCred — Smart Waste Management</title>
+  <meta name="description" content="CleanCred is a verified, traceable municipal waste-management platform that helps citizens report waste and track its recovery journey.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%20100%20100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%2314532D%22/><path d=%22M28%2070C28%2044%2043%2027%2072%2025C70%2052%2053%2069%2028%2070Z%22 fill=%22%23DCFCE7%22/></svg>">
 
   <!-- Leaflet CSS for Interactive Maps -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 
   <!-- Core Design System & Components CSS -->
   <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/glassmorphism.css">
+  <!-- Legacy glass class names are retained for markup compatibility; civic surface styles are in components.css. -->
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/responsive.css">
@@ -22,6 +22,15 @@
 
   <!-- Leaflet JS for Geolocation & Fleet Tracking -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- qrcode-generator for rendering pickup QR codes (citizen side) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+
+  <!-- jsQR for live camera QR scanning (collector side) -->
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
+  <!-- Lucide provides the shared navigation icon set. -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
@@ -34,10 +43,10 @@
       
       <!-- Brand Logo -->
       <a href="#landing" class="brand-logo" onclick="window.AppRouter.navigate('landing')">
-        <div class="logo-icon">🌱</div>
+        <div class="logo-icon" aria-hidden="true">C</div>
         <div>
-          <span>GREEN LEGACY</span>
-          <span class="brand-tagline">EARN. RECYCLE. REWARD.</span>
+          <span>CleanCred</span>
+          <span class="brand-tagline">Verified waste recovery</span>
         </div>
       </a>
 
@@ -45,13 +54,9 @@
       <nav class="desktop-only-nav">
         <ul class="nav-links">
           <li class="nav-item active" data-route="landing" onclick="window.AppRouter.navigate('landing')">Home</li>
-          <li class="nav-item" data-route="dashboard" onclick="window.AppRouter.navigate('dashboard')">Dashboard</li>
           <li class="nav-item" data-route="report-waste" onclick="window.AppRouter.navigate('report-waste')">Report Waste</li>
-          <li class="nav-item" data-route="live-tracking" onclick="window.AppRouter.navigate('live-tracking')">Live Pickup</li>
-          <li class="nav-item" data-route="rewards" onclick="window.AppRouter.navigate('rewards')">Green Wallet</li>
-          <li class="nav-item" data-route="leaderboard" onclick="window.AppRouter.navigate('leaderboard')">Leaderboard</li>
-          <li class="nav-item" data-route="admin" onclick="window.AppRouter.navigate('admin')">City Command</li>
-          <li class="nav-item" data-route="institutions" onclick="window.AppRouter.navigate('institutions')">Institutions</li>
+          <li class="nav-item" data-route="live-tracking" onclick="window.AppRouter.navigate('live-tracking')">Track</li>
+          <li class="nav-item" data-route="rewards" onclick="window.AppRouter.navigate('rewards')">Green Credits</li>
           <li class="nav-item" data-route="impact" onclick="window.AppRouter.navigate('impact')">Impact</li>
         </ul>
       </nav>
@@ -61,12 +66,12 @@
         
         <!-- Live Role Switcher (For Pitch & Demo Presentation) -->
         <div class="role-pill-selector">
-          <span style="font-size: 0.85rem;">Role:</span>
+          <span class="demo-mode-label">Demo mode</span>
           <select id="app-role-select" onchange="window.AppRouter.handleRoleChange(this.value)">
-            <option value="citizen">👤 Citizen (Shivansh)</option>
-            <option value="worker">👨‍🔧 Worker (Ramesh)</option>
-            <option value="admin">🏛️ Govt Admin (Smart City)</option>
-            <option value="institution">🏫 School/College Admin</option>
+            <option value="citizen">Citizen</option>
+            <option value="worker">Worker</option>
+            <option value="admin">City Admin</option>
+            <option value="institution">Institution</option>
           </select>
         </div>
 
@@ -78,7 +83,7 @@
         <!-- Notification Bell -->
         <div style="position: relative;">
           <button class="notification-bell-btn" id="notif-bell-btn" onclick="window.AppRouter.toggleNotificationTray()">
-            🔔
+            <i data-lucide="bell" aria-hidden="true"></i><span class="sr-only">Notifications</span>
             <span class="notification-badge-dot" id="notif-dot"></span>
           </button>
 
@@ -122,33 +127,30 @@
   <nav class="mobile-bottom-nav">
     <ul class="mobile-nav-items">
       <li class="mobile-nav-btn active" data-route="dashboard" onclick="window.AppRouter.navigate('dashboard')">
-        <span class="mobile-nav-icon">🏠</span>
+        <i class="mobile-nav-icon" data-lucide="house" aria-hidden="true"></i>
         <span>Home</span>
       </li>
       <li class="mobile-nav-btn" data-route="report-waste" onclick="window.AppRouter.navigate('report-waste')">
-        <span class="mobile-nav-icon">♻️</span>
+        <i class="mobile-nav-icon" data-lucide="plus-circle" aria-hidden="true"></i>
         <span>Report</span>
       </li>
       <li class="mobile-nav-btn" data-route="rewards" onclick="window.AppRouter.navigate('rewards')">
-        <span class="mobile-nav-icon">🌱</span>
+        <i class="mobile-nav-icon" data-lucide="wallet-cards" aria-hidden="true"></i>
         <span>Credits</span>
       </li>
       <li class="mobile-nav-btn" data-route="live-tracking" onclick="window.AppRouter.navigate('live-tracking')">
-        <span class="mobile-nav-icon">📍</span>
+        <i class="mobile-nav-icon" data-lucide="map-pin" aria-hidden="true"></i>
         <span>Track</span>
       </li>
-      <li class="mobile-nav-btn" data-route="leaderboard" onclick="window.AppRouter.navigate('leaderboard')">
-        <span class="mobile-nav-icon">🏆</span>
-        <span>Rank</span>
-      </li>
       <li class="mobile-nav-btn" data-route="profile" onclick="window.AppRouter.navigate('profile')">
-        <span class="mobile-nav-icon">👤</span>
-        <span>Profile</span>
+        <i class="mobile-nav-icon" data-lucide="menu" aria-hidden="true"></i>
+        <span>More</span>
       </li>
     </ul>
   </nav>
 
   <!-- ES6 Module App Entrypoint -->
   <script type="module" src="js/app.js"></script>
+  <script>window.addEventListener('DOMContentLoaded', () => window.lucide?.createIcons());</script>
 </body>
 </html>
