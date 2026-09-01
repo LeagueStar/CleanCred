@@ -54,7 +54,11 @@ CleanCred/
 │   ├── main.css                 # Global stylesheets
 │   └── responsive.css           # Mobile/tablet responsiveness
 └── js/
-    ├── app.js                   # Application initialization  
+    ├── app.js                   # Application initialization    
+    ├── state.js                 # Global state management
+    ├── components/              # Specialized UI modules (dashboards, portals, reports)
+    └── utils/                   # Helpers (audio, confetti, maps, QR code/scanner)
+
    ```
 ## 🚀 Installation & Local Setup
 
@@ -101,6 +105,3 @@ This project was developed for innovation and hackathon purposes. All rights res
 * **Developer:** Kartik Devdhawala (LeagueStar)
 * **GitHub:** [@LeagueStar](https://github.com/LeagueStar)
 * **Live Website:** [CleanCred Live](https://leaguestar.github.io/CleanCred/)
-    ├── state.js                 # Global state management
-    ├── components/              # Specialized UI modules (dashboards, portals, reports)
-    └── utils/                   # Helpers (audio, confetti, maps, QR code/scanner)
