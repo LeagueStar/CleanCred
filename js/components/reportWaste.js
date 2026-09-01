@@ -443,22 +443,20 @@ export const ReportWasteView = {
 
   initStepMap() {
     const mapElement = document.getElementById('report-location-map');
-    if (!mapElement) return;
+    if (!mapElement || !window.L) return;
 
     this.mapInstance = MapHelper.initMap('report-location-map', [19.0760, 72.8777], 15);
     if (!this.mapInstance) return;
 
     const pin = MapHelper.createCustomPin('🏠', 'Your Location', '#16A34A');
-    this.markerInstance = MapHelper.addMarker(this.mapInstance, [19.0760, 72.8777], pin, { gmpDraggable: true });
+    this.markerInstance = window.L.marker([19.0760, 72.8777], { icon: pin, draggable: true }).addTo(this.mapInstance);
 
-    if (this.markerInstance) {
-      this.markerInstance.addListener('dragend', (e) => {
-        const pos = this.markerInstance.position;
-        this.formData.address = `Near Coordinates (${pos.lat.toFixed(4)}, ${pos.lng.toFixed(4)}), Ward 4B`;
-        const addrField = document.getElementById('form-address');
-        if (addrField) addrField.value = this.formData.address;
-      });
-    }
+    this.markerInstance.on('dragend', (e) => {
+      const pos = e.target.getLatLng();
+      this.formData.address = `Near Coordinates (${pos.lat.toFixed(4)}, ${pos.lng.toFixed(4)}), Ward 4B`;
+      const addrField = document.getElementById('form-address');
+      if (addrField) addrField.value = this.formData.address;
+    });
   },
 
   detectLocation() {
@@ -469,9 +467,8 @@ export const ReportWasteView = {
           const lat = pos.coords.latitude;
           const lng = pos.coords.longitude;
           if (this.mapInstance && this.markerInstance) {
-            this.mapInstance.setCenter({ lat, lng });
-            this.mapInstance.setZoom(16);
-            this.markerInstance.position = { lat, lng };
+            this.mapInstance.setView([lat, lng], 16);
+            this.markerInstance.setLatLng([lat, lng]);
             this.formData.address = `GPS Detected Location (${lat.toFixed(4)}, ${lng.toFixed(4)}), Ward 4B`;
             const addrField = document.getElementById('form-address');
             if (addrField) addrField.value = this.formData.address;
