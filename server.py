@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-GREEN LEGACY — Smart Waste Management & Rewards Platform
+CleanCred — Smart Waste Management
 Local Development & REST API Server
 """
 
@@ -23,7 +23,7 @@ if sys.platform == 'win32':
 PORT = 8081
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
-class GreenLegacyHandler(http.server.SimpleHTTPRequestHandler):
+class CleanCredHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
 
@@ -48,8 +48,8 @@ class GreenLegacyHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             response = {
                 "status": "healthy",
-                "platform": "GREEN LEGACY — Smart Waste Management",
-                "tagline": "EARN. RECYCLE. REWARD.",
+                "platform": "CleanCred — Smart Waste Management",
+                "tagline": "Verified waste recovery",
                 "timestamp": datetime.now().isoformat(),
                 "databases": {
                     "municipal_waste_db": "CONNECTED",
@@ -66,10 +66,10 @@ class GreenLegacyHandler(http.server.SimpleHTTPRequestHandler):
 def run_server():
     os.chdir(DIRECTORY)
     socketserver.TCPServer.allow_reuse_address = True
-    with socketserver.TCPServer(("", PORT), GreenLegacyHandler) as httpd:
+    with socketserver.TCPServer(("", PORT), CleanCredHandler) as httpd:
         print("==================================================")
-        print("  GREEN LEGACY Web Platform Running")
-        print("  Tagline: EARN. RECYCLE. REWARD.")
+        print("  CleanCred Web Platform Running")
+        print("  Tagline: Verified waste recovery")
         print(f"  URL: http://127.0.0.1:{PORT}")
         print(f"  Serving directory: {DIRECTORY}")
         print("==================================================")
