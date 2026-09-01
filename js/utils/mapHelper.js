@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GREEN LEGACY — LEAFLET MAP HELPER
+   GREEN LEGACY — GOOGLE MAPS API HELPER
    Interactive Geolocation, Vehicle Tracking, and City Hotspots
    ========================================================================== */
 
@@ -8,16 +8,14 @@ export const MapHelper = {
    * Create custom HTML Marker Pin with icon and theme color
    */
   createCustomPin(iconEmoji, label, colorHex = '#16A34A') {
-    if (!window.L) return null;
-    return window.L.divIcon({
-      className: 'custom-map-marker-container',
-      html: `
+    const el = document.createElement('div');
+    el.innerHTML = `
         <div style="
           position: relative;
           display: flex;
           flex-direction: column;
           align-items: center;
-          transform: translate(-50%, -100%);
+          transform: translate(0, -100%);
         ">
           <div style="
             background: ${colorHex};
@@ -49,37 +47,52 @@ export const MapHelper = {
             ">${label}</div>
           ` : ''}
         </div>
-      `,
-      iconSize: [38, 38],
-      iconAnchor: [19, 38]
+    `;
+    return el.firstElementChild;
+  },
+
+  /**
+   * Initialize a standard Google Map on an element ID
+   */
+  initMap(elementId, center = [19.0760, 72.8777], zoom = 14) {
+    if (!window.google) return null;
+    const container = document.getElementById(elementId);
+    if (!container) return null;
+
+    const map = new window.google.maps.Map(container, {
+      center: { lat: center[0], lng: center[1] },
+      zoom: zoom,
+      mapId: 'DEMO_MAP_ID', // Required for AdvancedMarkerElement
+      disableDefaultUI: false,
+    });
+
+    return map;
+  },
+
+  /**
+   * Add a marker to the map
+   */
+  addMarker(map, position, content, options = {}) {
+    if (!window.google || !window.google.maps.marker) return null;
+    return new window.google.maps.marker.AdvancedMarkerElement({
+      map: map,
+      position: { lat: position[0], lng: position[1] },
+      content: content,
+      ...options
     });
   },
 
   /**
-   * Initialize a standard Leaflet Map on an element ID
+   * Add a polyline to the map
    */
-  initMap(elementId, center = [19.0760, 72.8777], zoom = 14) {
-    if (!window.L) return null;
-    const container = document.getElementById(elementId);
-    if (!container) return null;
-
-    // Remove existing map if already initialized
-    if (container._leaflet_id) {
-      container._leaflet_id = null;
-    }
-
-    const map = window.L.map(elementId, {
-      center: center,
-      zoom: zoom,
-      zoomControl: true
+  addPolyline(map, coords, options = {}) {
+    if (!window.google) return null;
+    const path = coords.map(c => ({ lat: c[0], lng: c[1] }));
+    const polyline = new window.google.maps.Polyline({
+      path,
+      map,
+      ...options
     });
-
-    // Clean OpenStreetMap tiles with eco-friendly styling
-    window.L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-      maxZoom: 19
-    }).addTo(map);
-
-    return map;
+    return polyline;
   }
 };

@@ -190,7 +190,7 @@ export const LiveTrackingView = {
 
   initMap() {
     const mapElement = document.getElementById('live-tracking-map');
-    if (!mapElement || !window.L) return;
+    if (!mapElement) return;
 
     const userCoord = [19.0760, 72.8777];
     const vanCoord = [19.0650, 72.8550];
@@ -201,15 +201,15 @@ export const LiveTrackingView = {
 
     // User Home Pin
     const homePin = MapHelper.createCustomPin('🏠', 'Shivansh (Home)', '#16A34A');
-    window.L.marker(userCoord, { icon: homePin }).addTo(this.mapInstance);
+    MapHelper.addMarker(this.mapInstance, userCoord, homePin);
 
     // Van Pin
     const vanPin = MapHelper.createCustomPin('🚚', 'Waste Van (ETA 12m)', '#2563EB');
-    this.truckMarker = window.L.marker(vanCoord, { icon: vanPin }).addTo(this.mapInstance);
+    this.truckMarker = MapHelper.addMarker(this.mapInstance, vanCoord, vanPin);
 
     // MRF Facility Pin
     const mrfPin = MapHelper.createCustomPin('🏢', 'Municipal MRF Hub', '#102A43');
-    window.L.marker(mrfCoord, { icon: mrfPin }).addTo(this.mapInstance);
+    MapHelper.addMarker(this.mapInstance, mrfCoord, mrfPin);
 
     // Route Polyline
     const routeCoords = [
@@ -221,12 +221,11 @@ export const LiveTrackingView = {
       mrfCoord
     ];
 
-    this.routePolyline = window.L.polyline(routeCoords, {
-      color: '#16A34A',
-      weight: 5,
-      opacity: 0.8,
-      dashArray: '8, 8'
-    }).addTo(this.mapInstance);
+    this.routePolyline = MapHelper.addPolyline(this.mapInstance, routeCoords, {
+      strokeColor: '#16A34A',
+      strokeWeight: 5,
+      strokeOpacity: 0.8
+    });
   },
 
   simulateWorkerMove() {
@@ -234,7 +233,7 @@ export const LiveTrackingView = {
     if (this.truckMarker) {
       const newLat = 19.0710 + (Math.random() - 0.5) * 0.005;
       const newLng = 72.8680 + (Math.random() - 0.5) * 0.005;
-      this.truckMarker.setLatLng([newLat, newLng]);
+      this.truckMarker.position = { lat: newLat, lng: newLng };
       State.addNotification({
         title: '🚚 Van Location Updated',
         message: 'Ramesh Kumar is now entering Green Park Avenue (~8 mins away).',

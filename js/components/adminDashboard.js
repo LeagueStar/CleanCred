@@ -280,25 +280,25 @@ export const AdminDashboardView = {
 
   initCityMap() {
     const mapElement = document.getElementById('admin-city-map');
-    if (!mapElement || !window.L) return;
+    if (!mapElement) return;
 
     this.mapInstance = MapHelper.initMap('admin-city-map', [19.0760, 72.8777], 13);
     if (!this.mapInstance) return;
 
     // Hotspot 1 (Red Warning)
     const hot1 = MapHelper.createCustomPin('⚠️', 'Hotspot Link Rd', '#EF4444');
-    window.L.marker([19.0820, 72.8620], { icon: hot1 }).addTo(this.mapInstance);
+    MapHelper.addMarker(this.mapInstance, [19.0820, 72.8620], hot1);
 
     // Hotspot 2 (Amber Resolving)
     const hot2 = MapHelper.createCustomPin('🟡', 'Sector 9 Tank', '#F59E0B');
-    window.L.marker([19.0680, 72.8890], { icon: hot2 }).addTo(this.mapInstance);
+    MapHelper.addMarker(this.mapInstance, [19.0680, 72.8890], hot2);
 
     // Fleet Vans
     const van1 = MapHelper.createCustomPin('🚚', 'Van #4091', '#2563EB');
-    window.L.marker([19.0650, 72.8550], { icon: van1 }).addTo(this.mapInstance);
+    MapHelper.addMarker(this.mapInstance, [19.0650, 72.8550], van1);
 
     const van2 = MapHelper.createCustomPin('🚚', 'Van #2210', '#2563EB');
-    window.L.marker([19.0910, 72.8730], { icon: van2 }).addTo(this.mapInstance);
+    MapHelper.addMarker(this.mapInstance, [19.0910, 72.8730], van2);
   },
 
   simulateHotspotRefresh() {
