@@ -1,7 +1,7 @@
 <div align="center">
   <h1>🌍 CleanCred</h1>
   <p><b>An Intelligent, Gamified Waste Management & Tracking Platform</b></p>
-  <p>Developed by <b>LeagueStar (Kartik Devdhawala) — Team GreenLegacy</b></p>
+  <p>Developed by <b>Team GreenLegacy</b></p>
   <p>
     <a href="https://leaguestar.github.io/CleanCred/"><b>🌐 View Live Website</b></a> •
     <a href="#-features--portals"><b>Features</b></a> •
@@ -58,8 +58,7 @@ CleanCred/
     ├── state.js                 # Global state management
     ├── components/              # Specialized UI modules (dashboards, portals, reports)
     └── utils/                   # Helpers (audio, confetti, maps, QR code/scanner)
-
-   ```
+```
 ## 🚀 Installation & Local Setup
 
 To run CleanCred locally on your machine for development or evaluation:
@@ -87,21 +86,23 @@ To run CleanCred locally on your machine for development or evaluation:
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome! If you'd like to improve CleanCred:
+This is an exclusive project developed for the Smart India Hackathon (SIH). Outside contributions, pull requests, and forks are currently not permitted to maintain project integrity.
 
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/Enhancement`).
-3. Commit your changes (`git commit -m 'Add some Enhancement'`).
-4. Push to the branch (`git push origin feature/Enhancement`).
-5. Open a Pull Request.
+## 🛡️ License & Copyright
 
-## 🛡️ License
+**Copyright (c) 2026 Team GreenLegacy. All Rights Reserved.**
 
-This project was developed for innovation and hackathon purposes. All rights reserved by **Team GreenLegacy**.
+This project was developed by Team GreenLegacy for the Smart India Hackathon (SIH). This source code is proprietary and confidential. No part of this software, code, or design may be copied, reproduced, distributed, published, or modified, in whole or in part, in any form or by any means, without the prior written, explicit permission of the copyright owners. 
 
-## 📞 Contact
+Unauthorized copying, cloning, or use of this project is strictly prohibited.
 
-**Team GreenLegacy**
-* **Developer:** Kartik Devdhawala (LeagueStar)
-* **GitHub:** [@LeagueStar](https://github.com/LeagueStar)
-* **Live Website:** [CleanCred Live](https://leaguestar.github.io/CleanCred/)
+## 📞 Team GreenLegacy
+
+* **Kartik Devdhawala (LeagueStar)** - [@LeagueStar](https://github.com/LeagueStar)
+* **Harshprit Bagga**
+* **Shivansh Prajapati**
+* **Suraj Singh**
+* **Satyam Gupta**
+* **Kreya Patel**
+
+**Live Website:** [CleanCred Live](https://leaguestar.github.io/CleanCred/)
