@@ -13,7 +13,7 @@ We currently provide security updates for the following versions of CleanCred:
 
 Please do not report security vulnerabilities through public GitHub issues. 
 
-If you believe you have found a security vulnerability in CleanCred, please report it privately by emailing [Insert Email Address]. 
+If you believe you have found a security vulnerability in CleanCred, please report it privately through LinkedIn. 
 
 **What to include:**
 * A description of the vulnerability and its potential impact.
