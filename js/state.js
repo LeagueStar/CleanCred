@@ -31,6 +31,8 @@ class StateStore {
         avatar: 'SP',
         address: 'Flat 402, Green Meadows, Ward 4B, Mumbai',
         greenPoints: 1250, // 100 GC = ₹10 => ₹125
+        get greenCredits() { return this.greenPoints; },
+        set greenCredits(val) { this.greenPoints = val; },
         lifetimeWasteKg: 125,
         pickupsCompleted: 18,
         co2SavedKg: 84.5,
@@ -440,6 +442,15 @@ class StateStore {
         return null;
       }
 
+      if (parsed.state.user && typeof parsed.state.user.greenPoints === 'number') {
+        Object.defineProperty(parsed.state.user, 'greenCredits', {
+          get() { return this.greenPoints; },
+          set(v) { this.greenPoints = v; },
+          configurable: true,
+          enumerable: true
+        });
+      }
+
       return parsed.state;
     } catch (e) {
       console.warn('Green Legacy: saved demo state was corrupted — starting from the seed state.', e);
@@ -510,7 +521,8 @@ class StateStore {
       status: 'created',
       otp: Math.floor(1000 + Math.random() * 9000).toString(),
       etaMinutes: 18,
-      photoUrl: formData.photoUrl || null
+      photoUrl: formData.photoUrl || null,
+      geoCoords: formData.geoCoords || null
     };
 
     this.state.pickups.unshift(newRequest);
@@ -526,7 +538,8 @@ class StateStore {
       pointsReward: newRequest.pointsReward,
       status: 'created',
       otp: newRequest.otp,
-      photoUrl: newRequest.photoUrl || 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=300&q=80'
+      photoUrl: newRequest.photoUrl || 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=300&q=80',
+      geoCoords: newRequest.geoCoords
     });
 
     this.addNotification({
@@ -558,8 +571,10 @@ class StateStore {
     }
 
     if (approved) {
-      const points = pickup ? pickup.pointsReward : 10;
-      const weight = adjustedWeightKg || (pickup ? pickup.quantityKg : 4.0);
+      const rateMap = { wet: 10, dry: 7, harmful: 5 };
+      const rate = pickup ? (rateMap[pickup.category] || pickup.pointsReward || 10) : 10;
+      const weight = (adjustedWeightKg !== null && adjustedWeightKg !== undefined) ? adjustedWeightKg : (pickup ? pickup.quantityKg : 4.0);
+      const points = (adjustedWeightKg !== null && adjustedWeightKg !== undefined) ? Math.round(weight * rate) : (pickup ? pickup.pointsReward : 10);
 
       // Update Pickup Status
       if (pickup) {
@@ -567,7 +582,11 @@ class StateStore {
         pickup.quantityKg = weight;
         pickup.pointsCredited = points;
       }
-      if (workerItem) workerItem.status = 'verified';
+      if (workerItem) {
+        workerItem.status = 'verified';
+        workerItem.quantityKg = weight;
+        workerItem.pointsReward = points;
+      }
 
       // Credit User Points & Impact
       this.state.user.greenPoints += points;
@@ -577,7 +596,7 @@ class StateStore {
       this.state.user.treesEquivalent = Math.round((this.state.user.co2SavedKg / 13.5) * 10) / 10;
 
       const category = pickup ? pickup.category : 'wet';
-      if (this.state.user.wasteByCategoryKg[category] !== undefined) {
+      if (this.state.user.wasteByCategoryKg && this.state.user.wasteByCategoryKg[category] !== undefined) {
         this.state.user.wasteByCategoryKg[category] = Math.round((this.state.user.wasteByCategoryKg[category] + weight) * 10) / 10;
       }
 
@@ -585,7 +604,7 @@ class StateStore {
       this.state.cityStats.verifiedPickups += 1;
       this.state.cityStats.greenPointsIssued += points;
       this.state.cityStats.totalWasteTons = Math.round((this.state.cityStats.totalWasteTons + weight / 1000) * 100) / 100;
-      if (this.state.cityStats.wasteByCategoryTons[category] !== undefined) {
+      if (this.state.cityStats.wasteByCategoryTons && this.state.cityStats.wasteByCategoryTons[category] !== undefined) {
         this.state.cityStats.wasteByCategoryTons[category] = Math.round((this.state.cityStats.wasteByCategoryTons[category] + weight / 1000) * 100) / 100;
       }
 
@@ -593,7 +612,8 @@ class StateStore {
       this.state.transactions.unshift({
         id: `TXN-${Math.floor(100000 + Math.random() * 900000)}`,
         title: `${pickup ? pickup.categoryName : 'Waste'} Pickup Verified`,
-        category: 'EARN',
+        category: category,
+        amount: points,
         amountGp: points,
         equivalentInr: Formatters.gpToInr(points),
         date: new Date().toISOString(),
@@ -610,7 +630,7 @@ class StateStore {
       });
 
       this.notify();
-      return { success: true, points, weight };
+      return { success: true, points, awardedPoints: points, weight };
     } else {
       if (pickup) pickup.status = 'rejected';
       if (workerItem) workerItem.status = 'rejected';
@@ -624,6 +644,40 @@ class StateStore {
       this.notify();
       return { success: false };
     }
+  }
+
+  // Alias for awardCredits adhering to idempotency and scale weight
+  awardCredits(pickupId, weight = null) {
+    const res = this.verifyWasteSubmission(pickupId, true, weight);
+    return {
+      success: res.success,
+      alreadyVerified: res.alreadyVerified || false,
+      awardedPoints: res.awardedPoints || res.points || 0,
+      points: res.points || 0,
+      weight: res.weight
+    };
+  }
+
+  // Lifecycle status updates: created -> assigned -> on_the_way -> collected -> verified/rejected
+  updatePickupStatus(pickupId, newStatus) {
+    const validStatuses = ['created', 'assigned', 'on_the_way', 'collected', 'verified', 'rejected'];
+    if (!validStatuses.includes(newStatus)) {
+      console.warn(`CleanCred: Invalid status ${newStatus}`);
+      return { success: false, message: `Invalid status ${newStatus}` };
+    }
+
+    const pickup = this.state.pickups.find(p => p.id === pickupId);
+    const workerItem = this.state.workerQueue.find(p => p.id === pickupId);
+
+    if (!pickup && !workerItem) {
+      return { success: false, message: `Pickup ${pickupId} not found` };
+    }
+
+    if (pickup) pickup.status = newStatus;
+    if (workerItem) workerItem.status = newStatus;
+
+    this.notify();
+    return { success: true, status: newStatus };
   }
 
   // Redeem Green Credits (Mobile Recharge, Utility Bills, Vouchers)
@@ -703,3 +757,4 @@ class StateStore {
 }
 
 export const State = new StateStore();
+window.State = State;

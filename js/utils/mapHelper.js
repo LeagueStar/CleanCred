@@ -74,12 +74,52 @@ export const MapHelper = {
       zoomControl: true
     });
 
-// Standard OpenStreetMap tiles (No API Key Required)
-    window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    // Clean OpenStreetMap tiles with eco-friendly styling
+    window.L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
       maxZoom: 19
     }).addTo(map);
 
     return map;
+  },
+
+  /**
+   * Request real device coordinates via HTML5 Geolocation API
+   */
+  getUserLocation() {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error('Geolocation is not supported by this browser.'));
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          resolve({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+            accuracy: position.coords.accuracy
+          });
+        },
+        error => {
+          let msg = 'Unable to retrieve location.';
+          if (error.code === 1) msg = 'Location access permission denied.';
+          else if (error.code === 2) msg = 'Position unavailable.';
+          else if (error.code === 3) msg = 'Location request timed out.';
+          reject(new Error(msg));
+        },
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
+      );
+    });
+  },
+
+  /**
+   * Format latitude and longitude coordinates
+   */
+  formatCoords(lat, lng) {
+    if (typeof lat !== 'number' || typeof lng !== 'number') return '';
+    const latDir = lat >= 0 ? 'N' : 'S';
+    const lngDir = lng >= 0 ? 'E' : 'W';
+    return `${Math.abs(lat).toFixed(4)}° ${latDir}, ${Math.abs(lng).toFixed(4)}° ${lngDir}`;
   }
 };

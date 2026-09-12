@@ -24,6 +24,10 @@ export class ConfettiManager {
     this.canvas.height = window.innerHeight;
   }
 
+  fire(count = 70, duration = 3000) {
+    this.trigger(count, duration);
+  }
+
   trigger(count = 70, duration = 3000) {
     const colors = ['#16A34A', '#84CC16', '#0B5D3B', '#F59E0B', '#3B82F6', '#10B981', '#FBBF24'];
     this.particles = [];
@@ -84,3 +88,6 @@ export class ConfettiManager {
 }
 
 export const Confetti = new ConfettiManager();
+
+// Inline HTML onclick handlers reference Confetti directly — expose on window.
+window.Confetti = Confetti;

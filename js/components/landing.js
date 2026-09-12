@@ -66,7 +66,7 @@ export const LandingPage = {
               <div class="hero-visual" style="position: relative;">
                 
                 <!-- Main workflow card -->
-                <div class="glass-card glass-card-navy" style="padding: 2.25rem; border-radius: var(--radius-xl); position: relative; overflow: hidden;">
+                <div class="neu-card neu-card-navy" style="padding: 2.25rem; border-radius: var(--radius-xl); position: relative; overflow: hidden;">
                   <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.75rem;">
                     <div style="font-size: 0.85rem; font-weight: 700; color: #84CC16; text-transform: uppercase; letter-spacing: 0.08em;">
                       VERIFIED RECOVERY WORKFLOW
@@ -130,7 +130,7 @@ export const LandingPage = {
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.5rem;">
               
               <!-- Step 1 -->
-              <div class="glass-card" style="padding: 1.75rem 1.25rem; text-align: center;">
+              <div class="neu-card neu-card-raised" style="padding: 1.75rem 1.25rem; text-align: center;">
                 <div style="width: 48px; height: 48px; border-radius: 50%; background: #DCFCE7; color: var(--color-primary-dark); font-size: 1.4rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto;">
                   <span class="process-step-marker">01</span>
                 </div>
@@ -139,7 +139,7 @@ export const LandingPage = {
               </div>
 
               <!-- Step 2 -->
-              <div class="glass-card" style="padding: 1.75rem 1.25rem; text-align: center;">
+              <div class="neu-card neu-card-raised" style="padding: 1.75rem 1.25rem; text-align: center;">
                 <div style="width: 48px; height: 48px; border-radius: 50%; background: #DBEAFE; color: #1E40AF; font-size: 1.4rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto;">
                   <span class="process-step-marker is-info">02</span>
                 </div>
@@ -148,7 +148,7 @@ export const LandingPage = {
               </div>
 
               <!-- Step 3 -->
-              <div class="glass-card" style="padding: 1.75rem 1.25rem; text-align: center;">
+              <div class="neu-card neu-card-raised" style="padding: 1.75rem 1.25rem; text-align: center;">
                 <div style="width: 48px; height: 48px; border-radius: 50%; background: #FEF3C7; color: #B45309; font-size: 1.4rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto;">
                   <span class="process-step-marker is-warning">03</span>
                 </div>
@@ -157,7 +157,7 @@ export const LandingPage = {
               </div>
 
               <!-- Step 4 -->
-              <div class="glass-card" style="padding: 1.75rem 1.25rem; text-align: center;">
+              <div class="neu-card neu-card-raised" style="padding: 1.75rem 1.25rem; text-align: center;">
                 <div style="width: 48px; height: 48px; border-radius: 50%; background: #EDE9FE; color: #6D28D9; font-size: 1.4rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto;">
                   <span class="process-step-marker">04</span>
                 </div>
@@ -166,7 +166,7 @@ export const LandingPage = {
               </div>
 
               <!-- Step 5 -->
-              <div class="glass-card" style="padding: 1.75rem 1.25rem; text-align: center; border: 1.5px solid var(--color-primary); background: #F0FDF4;">
+              <div class="neu-card neu-card-raised" style="padding: 1.75rem 1.25rem; text-align: center; border: 1.5px solid var(--color-primary); background: #F0FDF4;">
                 <div style="width: 48px; height: 48px; border-radius: 50%; background: #16A34A; color: #FFFFFF; font-size: 1.4rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);">
                   <span class="process-step-marker is-recovery">05</span>
                 </div>
@@ -191,7 +191,7 @@ export const LandingPage = {
             <div class="grid-cols-3">
               
               <!-- 🟢 WET WASTE -->
-              <div class="category-card category-card-wet glass-card">
+              <div class="category-card category-card-wet neu-card neu-card-raised">
                 <div>
                   <div class="flex-between" style="margin-bottom: 1.5rem;">
                     <div class="category-icon-wrapper">🍏</div>
@@ -220,7 +220,7 @@ export const LandingPage = {
               </div>
 
               <!-- 🔵 DRY WASTE -->
-              <div class="category-card category-card-dry glass-card">
+              <div class="category-card category-card-dry neu-card neu-card-raised">
                 <div>
                   <div class="flex-between" style="margin-bottom: 1.5rem;">
                     <div class="category-icon-wrapper">📦</div>
@@ -249,7 +249,7 @@ export const LandingPage = {
               </div>
 
               <!-- 🔴 HARMFUL WASTE -->
-              <div class="category-card category-card-harmful glass-card">
+              <div class="category-card category-card-harmful neu-card neu-card-raised">
                 <div>
                   <div class="flex-between" style="margin-bottom: 1.5rem;">
                     <div class="category-icon-wrapper">⚠️</div>
@@ -315,7 +315,7 @@ export const LandingPage = {
               </div>
 
               <!-- Interactive Simulator Card -->
-              <div class="glass-card" style="background: rgba(255,255,255,0.96); padding: 2.25rem; border-radius: var(--radius-xl); color: var(--text-main);">
+              <div class="neu-card neu-card-raised" style="padding: 2.25rem; border-radius: var(--radius-xl); color: var(--text-main);">
                 <h3 style="color: var(--color-navy); margin-bottom: 1.25rem;">Estimate Your Monthly Earnings</h3>
                 
                 <div class="form-group">

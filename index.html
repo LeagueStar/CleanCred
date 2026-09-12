@@ -1,153 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>CleanCred — Smart Waste Management</title>
-  <meta name="description" content="CleanCred is a verified, traceable municipal waste-management platform that helps citizens report waste and track its recovery journey.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%20100%20100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%2314532D%22/><path d=%22M28%2070C28%2044%2043%2027%2072%2025C70%2052%2053%2069%2028%2070Z%22 fill=%22%23DCFCE7%22/></svg>">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CleanCred — Verified Waste Action & Green Credits Platform (SIH 2026)</title>
+  <meta name="description" content="CleanCred: National Smart India Hackathon platform for verified municipal waste segregation, citizen tracking, and EPR Green Credits. Report → Verify → Collect → Record → Earn.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%20100%20100%22><circle cx=%2250%22 cy=%2250%22 r=%2246%22 fill=%22%23059669%22 stroke=%22%23FFFFFF%22 stroke-width=%224%22/><text x=%2250%22 y=%2265%22 font-size=%2245%22 text-anchor=%22middle%22 fill=%22white%22>🌱</text></svg>">
 
-  <!-- Leaflet CSS for Interactive Maps -->
+  <!-- Tailwind CSS CDN (Utility Classes) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brandGreen: '#059669',
+            brandNavy: '#0F172A',
+            brandBlue: '#0891B2',
+            canvas: '#E0E5EC'
+          },
+          fontFamily: {
+            heading: ['Outfit', 'sans-serif'],
+            body: ['Plus Jakarta Sans', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Leaflet CSS for Map Views -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-  
-  <!-- Core Design System & Components CSS -->
+
+  <!-- Design System Stylesheets -->
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/responsive.css">
 
-  <!-- Chart.js for City Analytics & Waste Trends -->
+  <!-- Chart.js for Municipal Analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- Leaflet JS for Geolocation & Fleet Tracking -->
+  <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-  <!-- qrcode-generator for rendering pickup QR codes (citizen side) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+  <!-- QR Code Generator & Scanner -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 
-  <!-- jsQR for live camera QR scanning (collector side) -->
-  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-
-  <!-- Lucide provides the shared navigation icon set. -->
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
+  <!-- Floating Surreal Abstract Background Shapes -->
+  <div class="surreal-blob surreal-blob-green" aria-hidden="true"></div>
+  <div class="surreal-blob surreal-blob-cyan" aria-hidden="true"></div>
+  <div class="surreal-blob surreal-blob-orange" aria-hidden="true"></div>
+
   <!-- Confetti Canvas Layer -->
   <canvas id="confetti-canvas"></canvas>
 
-  <!-- Fixed Top Header Navigation -->
-  <header class="app-header glass-nav">
-    <div class="app-container header-container">
+  <!-- ==========================================================================
+       TOP MUNICIPAL NAVIGATION BAR (SOLID MATTE NEUMORPHIC)
+       ========================================================================== -->
+  <header class="app-topbar">
+    <div class="app-container topbar-content">
       
-      <!-- Brand Logo -->
-      <a href="#landing" class="brand-logo" onclick="window.AppRouter.navigate('landing')">
-        <div class="logo-icon" aria-hidden="true">C</div>
+      <!-- Brand Logo Cluster -->
+      <div class="brand-cluster" onclick="window.AppRouter.navigate('dashboard')">
+        <div class="brand-icon-wrapper">
+          <i data-lucide="leaf" style="width: 22px; height: 22px; stroke-width: 2.5;"></i>
+        </div>
         <div>
-          <span>CleanCred</span>
-          <span class="brand-tagline">Verified waste recovery</span>
-        </div>
-      </a>
-
-      <!-- Desktop Nav Links -->
-      <nav class="desktop-only-nav">
-        <ul class="nav-links">
-          <li class="nav-item active" data-route="landing" onclick="window.AppRouter.navigate('landing')">Home</li>
-          <li class="nav-item" data-route="report-waste" onclick="window.AppRouter.navigate('report-waste')">Report Waste</li>
-          <li class="nav-item" data-route="live-tracking" onclick="window.AppRouter.navigate('live-tracking')">Track</li>
-          <li class="nav-item" data-route="rewards" onclick="window.AppRouter.navigate('rewards')">Green Credits</li>
-          <li class="nav-item" data-route="impact" onclick="window.AppRouter.navigate('impact')">Impact</li>
-        </ul>
-      </nav>
-
-      <!-- Right Header Actions -->
-      <div class="header-actions">
-        
-        <!-- Live Role Switcher (For Pitch & Demo Presentation) -->
-        <div class="role-pill-selector">
-          <span class="demo-mode-label">Demo mode</span>
-          <select id="app-role-select" onchange="window.AppRouter.handleRoleChange(this.value)">
-            <option value="citizen">Citizen</option>
-            <option value="worker">Worker</option>
-            <option value="admin">City Admin</option>
-            <option value="institution">Institution</option>
-          </select>
-        </div>
-
-        <!-- Green Credits Pill (Citizen) -->
-        <div class="badge badge-points" id="nav-user-points" style="cursor: pointer;" onclick="window.AppRouter.navigate('rewards')">
-          1,250 GC
-        </div>
-
-        <!-- Notification Bell -->
-        <div style="position: relative;">
-          <button class="notification-bell-btn" id="notif-bell-btn" onclick="window.AppRouter.toggleNotificationTray()">
-            <i data-lucide="bell" aria-hidden="true"></i><span class="sr-only">Notifications</span>
-            <span class="notification-badge-dot" id="notif-dot"></span>
-          </button>
-
-          <!-- Notifications Dropdown Tray -->
-          <div id="notifications-tray" class="glass-card" style="display: none; position: absolute; top: calc(100% + 12px); right: 0; width: 320px; max-height: 400px; overflow-y: auto; z-index: 2000; box-shadow: var(--shadow-lg); border: 1px solid var(--color-border); padding: 0;">
-            <div class="flex-between" style="padding: 0.85rem 1rem; border-bottom: 1px solid var(--color-border); background: #F8FAFC;">
-              <strong style="font-size: 0.85rem; color: var(--color-navy);">Civic Notifications</strong>
-              <span style="font-size: 0.72rem; color: var(--color-primary-dark); font-weight: 700;">Live Feed</span>
-            </div>
-            <div id="notif-tray-list"></div>
+          <div class="brand-title">
+            <span>CleanCred</span>
+            <span class="brand-badge">SBM-U 2.0</span>
           </div>
         </div>
+      </div>
 
-        <!-- User Avatar Button -->
-        <button class="user-avatar-btn" onclick="window.AppRouter.navigate('profile')">
-          <div class="avatar-img">SP</div>
+      <!-- Center 3-Role View Switcher (Lucide Controls) -->
+      <div class="role-switcher-nav" id="main-role-switcher">
+        <button class="role-tab-btn active" id="btn-mode-citizen" onclick="window.AppRouter.switchExperience('citizen')" title="Citizen Mobile Experience">
+          <i data-lucide="user" class="lucide-icon"></i>
+          <span>Citizen</span>
         </button>
+        <button class="role-tab-btn" id="btn-mode-worker" onclick="window.AppRouter.switchExperience('worker')" title="Municipal Worker Portal">
+          <i data-lucide="truck" class="lucide-icon"></i>
+          <span>Worker</span>
+        </button>
+        <button class="role-tab-btn" id="btn-mode-admin" onclick="window.AppRouter.switchExperience('admin')" title="City Command Center">
+          <i data-lucide="building-2" class="lucide-icon"></i>
+          <span>Command</span>
+        </button>
+      </div>
 
+      <!-- Right Action Cluster -->
+      <div class="topbar-right-cluster">
+        <div class="points-pill-top" id="topbar-user-points" onclick="window.AppRouter.navigate('rewards')" title="View Green Wallet & Rewards">
+          <i data-lucide="coins" class="lucide-icon"></i>
+          <span id="user-points-counter-top">1,250 GC</span>
+        </div>
+        <button class="topbar-profile-btn" id="btn-topbar-profile" onclick="window.AppRouter.navigate('profile')" title="Citizen Profile & Municipal KYC">
+          <i data-lucide="user-check" class="lucide-icon-sm"></i>
+          <span>Profile</span>
+        </button>
+        <button class="demo-reset-btn" id="btn-demo-reset" onclick="window.State.resetState()" title="Reset session to clean seed state">
+          <i data-lucide="rotate-ccw" class="lucide-icon-sm"></i>
+          <span>Reset</span>
+        </button>
       </div>
 
     </div>
   </header>
 
-  <!-- Main View Container -->
+  <!-- ==========================================================================
+       MAIN VIEW CONTAINERS (ALL ROUTES PERSISTED)
+       ========================================================================== -->
   <main class="main-content">
-    <div id="view-landing" class="view-section active"></div>
-    <div id="view-dashboard" class="view-section"></div>
+    <!-- Citizen Mobile Home Experience -->
+    <div id="view-dashboard" class="view-section active"></div>
+
+    <!-- 5-Step Verified Waste Reporting Flow -->
     <div id="view-report-waste" class="view-section"></div>
-    <div id="view-live-tracking" class="view-section"></div>
-    <div id="view-rewards" class="view-section"></div>
-    <div id="view-leaderboard" class="view-section"></div>
+
+    <!-- Municipal Worker Portal -->
     <div id="view-worker" class="view-section"></div>
+
+    <!-- Municipal Admin Dashboard -->
     <div id="view-admin" class="view-section"></div>
-    <div id="view-institutions" class="view-section"></div>
-    <div id="view-illegal-dumping" class="view-section"></div>
+
+    <!-- Fintech Green Wallet & Rewards -->
+    <div id="view-rewards" class="view-section"></div>
+
+    <!-- Live GPS & Status Tracking -->
+    <div id="view-live-tracking" class="view-section"></div>
+
+    <!-- Community Leaderboard -->
+    <div id="view-leaderboard" class="view-section"></div>
+
+    <!-- Environmental Impact Analytics -->
     <div id="view-impact" class="view-section"></div>
+
+    <!-- Citizen Account & KYC Profile -->
     <div id="view-profile" class="view-section"></div>
+
+    <!-- Illegal Dumping Hotline -->
+    <div id="view-illegal-dumping" class="view-section"></div>
+
+    <!-- Institution / School / Bulk Generator Portal -->
+    <div id="view-institutions" class="view-section"></div>
   </main>
 
-  <!-- Mobile Bottom Navigation (Responsive Mobile View) -->
-  <nav class="mobile-bottom-nav">
-    <ul class="mobile-nav-items">
-      <li class="mobile-nav-btn active" data-route="dashboard" onclick="window.AppRouter.navigate('dashboard')">
-        <i class="mobile-nav-icon" data-lucide="house" aria-hidden="true"></i>
-        <span>Home</span>
-      </li>
-      <li class="mobile-nav-btn" data-route="report-waste" onclick="window.AppRouter.navigate('report-waste')">
-        <i class="mobile-nav-icon" data-lucide="plus-circle" aria-hidden="true"></i>
-        <span>Report</span>
-      </li>
-      <li class="mobile-nav-btn" data-route="rewards" onclick="window.AppRouter.navigate('rewards')">
-        <i class="mobile-nav-icon" data-lucide="wallet-cards" aria-hidden="true"></i>
-        <span>Credits</span>
-      </li>
-      <li class="mobile-nav-btn" data-route="live-tracking" onclick="window.AppRouter.navigate('live-tracking')">
-        <i class="mobile-nav-icon" data-lucide="map-pin" aria-hidden="true"></i>
-        <span>Track</span>
-      </li>
-      <li class="mobile-nav-btn" data-route="profile" onclick="window.AppRouter.navigate('profile')">
-        <i class="mobile-nav-icon" data-lucide="menu" aria-hidden="true"></i>
-        <span>More</span>
-      </li>
-    </ul>
-  </nav>
+  <!-- Interactive Modal Container -->
+  <div id="modal-scan-container" style="display: none;"></div>
 
   <!-- ES6 Module App Entrypoint -->
   <script type="module" src="js/app.js"></script>
-  <script>window.addEventListener('DOMContentLoaded', () => window.lucide?.createIcons());</script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) window.lucide.createIcons();
+    });
+  </script>
 </body>
 </html>

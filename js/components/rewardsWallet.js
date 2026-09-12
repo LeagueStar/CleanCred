@@ -1,5 +1,6 @@
 /* ==========================================================================
-   GREEN LEGACY — FINTECH GREEN WALLET & REWARDS STORE
+   CLEANCRED — FINTECH GREEN WALLET & REWARDS STORE
+   Tactile Neumorphism + Civic Technology
    Points Conversion: 100 Green Credits = ₹10 INR
    ========================================================================== */
 
@@ -18,9 +19,7 @@ export const RewardsWallet = {
     const user = State.state.user;
     const inrValue = Formatters.gpToInr(user.greenPoints);
 
-    // Derive lifetime earnings / redeemed value from the actual
-    // transaction ledger instead of hardcoded figures, so they always
-    // match the ledger shown below and update after every redemption.
+    // Derive lifetime earnings / redeemed value from ledger
     const lifetimeEarnedGp = State.state.transactions
       .filter(t => t.type === 'credit')
       .reduce((sum, t) => sum + t.amountGp, 0);
@@ -35,78 +34,93 @@ export const RewardsWallet = {
     const totalRedeemedInr = Formatters.gpToInr(totalRedeemedGp);
 
     container.innerHTML = `
-      <div class="app-container">
+      <div class="app-container" style="max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem 4rem 1rem;">
         
         <!-- Header -->
         <div class="flex-between" style="margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
           <div>
-            <div class="badge badge-green" style="margin-bottom: 0.35rem;">
-              CleanCred rewards account
+            <div class="badge badge-green" style="margin-bottom: 0.35rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+              <i data-lucide="wallet" class="lucide-icon-sm"></i>
+              <span>CleanCred Rewards Account</span>
             </div>
-            <h2>Green Credits</h2>
-            <p>Your balance, activity and available rewards for verified collections.</p>
+            <h2 style="color: var(--color-navy); font-size: 1.85rem; font-weight: 800; margin: 0.25rem 0;">Green Credits Wallet</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">Verified recovery balance, municipal credits, and civic redemption catalog.</p>
           </div>
 
           <!-- Fast Conversion Banner -->
-          <div style="background: rgba(22, 163, 74, 0.1); border: 1.5px solid var(--color-primary); padding: 0.5rem 1rem; border-radius: var(--radius-full); font-size: 0.85rem; font-weight: 700; color: var(--color-primary-dark);">
-            Rate: 100 GC = ₹10
+          <div class="neu-card-inset" style="padding: 0.6rem 1.25rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 700; color: var(--color-primary-dark); display: inline-flex; align-items: center; gap: 0.5rem;">
+            <i data-lucide="scale" class="lucide-icon-sm"></i>
+            <span>Standard Rate: 100 GC = ₹10 INR</span>
           </div>
         </div>
 
         <!-- 3-Card Wallet Overview -->
-        <div class="grid-cols-3" style="margin-bottom: 2.5rem;">
+        <div class="grid-cols-3" style="margin-bottom: 2.5rem; gap: 1.25rem;">
           
-          <!-- Balance Card -->
-          <div class="glass-card glass-card-emerald" style="padding: 2rem; border-radius: var(--radius-xl);">
+          <!-- Balance Card (Forest Raised) -->
+          <div class="neu-card neu-card-forest" style="padding: 2rem; border-radius: var(--radius-xl); color: #FFFFFF;">
             <div class="flex-between" style="margin-bottom: 1rem;">
-              <span style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #DCFCE7;">Available balance</span>
-              <span class="account-marker">GC</span>
+              <span style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #DCFCE7;">Available Balance</span>
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center;">
+                <i data-lucide="coins" class="lucide-icon-sm" style="color: #FFFFFF;"></i>
+              </div>
             </div>
-            <div style="font-size: 2.8rem; font-weight: 900; color: #FFFFFF; line-height: 1;">
-              ${Formatters.formatNumber(user.greenPoints)} <span style="font-size: 1.25rem; font-weight: 600;">GC</span>
+            <div style="font-size: 2.8rem; font-weight: 900; line-height: 1; margin-bottom: 0.5rem;">
+              ${Formatters.formatNumber(user.greenPoints)} <span style="font-size: 1.25rem; font-weight: 600; opacity: 0.9;">GC</span>
             </div>
-            <div style="margin-top: 0.75rem; font-size: 1.05rem; font-weight: 700; color: #DCFCE7;">
-              ≈ ${Formatters.formatCurrency(inrValue)} available value
+            <div style="font-size: 1rem; font-weight: 700; color: #DCFCE7;">
+              ≈ ${Formatters.formatCurrency(inrValue)} real value
             </div>
             <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
-              <button class="btn btn-secondary btn-sm" style="background: #FFFFFF; color: var(--color-primary-dark);" onclick="window.RewardsWallet.openRechargeModal()">
-                Recharge
+              <button class="btn btn-secondary btn-sm" style="background: #FFFFFF; color: var(--color-primary-dark); font-weight: 800; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.15);" onclick="window.RewardsWallet.openRechargeModal()">
+                <i data-lucide="smartphone" class="lucide-icon-sm"></i>
+                <span>Recharge</span>
               </button>
-              <button class="btn btn-secondary btn-sm" style="background: rgba(255,255,255,0.2); color: #FFFFFF; border: 1px solid rgba(255,255,255,0.4);" onclick="window.RewardsWallet.openBillsModal()">
-                Pay bills
+              <button class="btn btn-secondary btn-sm" style="background: rgba(255,255,255,0.18); color: #FFFFFF; border: 1px solid rgba(255,255,255,0.35);" onclick="window.RewardsWallet.openBillsModal()">
+                <i data-lucide="file-text" class="lucide-icon-sm"></i>
+                <span>Pay Bills</span>
               </button>
             </div>
           </div>
 
-          <!-- Total Earned All-Time -->
-          <div class="glass-card" style="padding: 2rem; border-radius: var(--radius-xl);">
+          <!-- Total Earned All-Time (Raised Tactile) -->
+          <div class="neu-card neu-card-raised" style="padding: 2rem; border-radius: var(--radius-xl);">
             <div class="flex-between" style="margin-bottom: 1rem;">
-              <span style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Lifetime Earnings</span>
-              <span class="account-marker">↑</span>
+              <span style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">Lifetime Earnings</span>
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center;">
+                <i data-lucide="trending-up" class="lucide-icon-sm"></i>
+              </div>
             </div>
-            <div style="font-size: 2.8rem; font-weight: 900; color: var(--color-navy); line-height: 1;">
+            <div style="font-size: 2.8rem; font-weight: 900; color: var(--color-navy); line-height: 1; margin-bottom: 0.5rem;">
               ${Formatters.formatNumber(lifetimeEarnedGp)} <span style="font-size: 1.25rem; font-weight: 600; color: var(--text-muted);">GC</span>
             </div>
-            <div style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--color-primary); font-weight: 700;">
-              ≈ ${Formatters.formatCurrency(lifetimeEarnedInr)} Earned via ${user.pickupsCompleted} Pickups
+            <div style="font-size: 0.9rem; color: var(--color-primary-dark); font-weight: 700;">
+              ≈ ${Formatters.formatCurrency(lifetimeEarnedInr)} via ${user.pickupsCompleted} verified pickups
             </div>
-            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 1rem;">Average earning: ${Formatters.formatCurrency(avgEarningPerPickupInr)} per verified pickup.</p>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 1rem; line-height: 1.4;">
+              Average earning: ${Formatters.formatCurrency(avgEarningPerPickupInr)} per verified collection.
+            </p>
           </div>
 
-          <!-- Total Redeemed -->
-          <div class="glass-card" style="padding: 2rem; border-radius: var(--radius-xl);">
+          <!-- Total Redeemed (Raised Tactile) -->
+          <div class="neu-card neu-card-raised" style="padding: 2rem; border-radius: var(--radius-xl);">
             <div class="flex-between" style="margin-bottom: 1rem;">
-              <span style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Redeemed Value</span>
-              <span class="account-marker">✓</span>
+              <span style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">Redeemed Value</span>
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: #DBEAFE; color: #1E40AF; display: flex; align-items: center; justify-content: center;">
+                <i data-lucide="check-circle-2" class="lucide-icon-sm"></i>
+              </div>
             </div>
-            <div style="font-size: 2.8rem; font-weight: 900; color: var(--color-navy); line-height: 1;">
+            <div style="font-size: 2.8rem; font-weight: 900; color: var(--color-navy); line-height: 1; margin-bottom: 0.5rem;">
               ${Formatters.formatNumber(totalRedeemedGp)} <span style="font-size: 1.25rem; font-weight: 600; color: var(--text-muted);">GC</span>
             </div>
-            <div style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">
-              ${Formatters.formatCurrency(totalRedeemedInr)} Redeemed (Recharge & Vouchers)
+            <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">
+              ${Formatters.formatCurrency(totalRedeemedInr)} redeemed (Recharge & Vouchers)
             </div>
             <div style="margin-top: 1.25rem;">
-              <span class="badge badge-green">Verified account</span>
+              <span class="badge badge-green" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                <i data-lucide="shield-check" class="lucide-icon-sm"></i>
+                <span>Aadhaar KYC Verified</span>
+              </span>
             </div>
           </div>
 
@@ -114,24 +128,25 @@ export const RewardsWallet = {
 
         <!-- Reward Store Catalogue Sections -->
         <div style="margin-bottom: 3.5rem;">
-          <h3 style="color: var(--color-navy); margin-bottom: 1.5rem;">Explore Instant Redemptions</h3>
+          <h3 style="color: var(--color-navy); font-size: 1.35rem; font-weight: 800; margin-bottom: 1.5rem;">Explore Instant Redemptions</h3>
 
           <!-- Category 1: Mobile Recharge -->
           <div style="margin-bottom: 2.5rem;">
             <div class="flex-between" style="margin-bottom: 1rem;">
-              <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <span style="font-size: 1.4rem;">📱</span>
-                <strong style="font-size: 1.15rem; color: var(--color-navy);">Mobile Prepaid Recharges</strong>
+              <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <div style="width: 28px; height: 28px; border-radius: 6px; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center;">
+                  <i data-lucide="smartphone" class="lucide-icon-sm"></i>
+                </div>
+                <strong style="font-size: 1.1rem; color: var(--color-navy);">Mobile Prepaid Recharges</strong>
               </div>
-              <span style="font-size: 0.8rem; color: var(--text-muted);">Instant OTP Credit (Jio, Airtel, Vi)</span>
+              <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Instant Telecom Credit (Jio, Airtel, Vi)</span>
             </div>
 
-            <div class="grid-cols-4">
-              
+            <div class="grid-cols-4" style="gap: 1rem;">
               <!-- ₹10 Plan -->
-              <div class="glass-card" style="padding: 1.25rem; text-align: center; border-top: 4px solid var(--color-primary);">
-                <div style="font-size: 1.6rem; font-weight: 800; color: var(--color-navy); margin-bottom: 0.25rem;">₹10</div>
-                <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem;">Talktime / Topup</div>
+              <div class="neu-card neu-card-raised" style="padding: 1.25rem; text-align: center; border-top: 3px solid var(--color-primary);">
+                <div style="font-size: 1.5rem; font-weight: 900; color: var(--color-navy); margin-bottom: 0.25rem;">₹10</div>
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.85rem;">Talktime / Topup</div>
                 <div class="badge badge-points" style="margin-bottom: 1rem;">100 GC</div>
                 <button class="btn btn-primary btn-sm btn-block" onclick="window.RewardsWallet.redeemQuick('RECHARGE', 'Mobile Topup ₹10', 100)">
                   Redeem ₹10
@@ -139,9 +154,9 @@ export const RewardsWallet = {
               </div>
 
               <!-- ₹50 Plan -->
-              <div class="glass-card" style="padding: 1.25rem; text-align: center; border-top: 4px solid var(--color-primary);">
-                <div style="font-size: 1.6rem; font-weight: 800; color: var(--color-navy); margin-bottom: 0.25rem;">₹50</div>
-                <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem;">Talktime + 5GB Data</div>
+              <div class="neu-card neu-card-raised" style="padding: 1.25rem; text-align: center; border-top: 3px solid var(--color-primary);">
+                <div style="font-size: 1.5rem; font-weight: 900; color: var(--color-navy); margin-bottom: 0.25rem;">₹50</div>
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.85rem;">Talktime + 5GB Data</div>
                 <div class="badge badge-points" style="margin-bottom: 1rem;">500 GC</div>
                 <button class="btn btn-primary btn-sm btn-block" onclick="window.RewardsWallet.redeemQuick('RECHARGE', 'Mobile Data Pack ₹50', 500)">
                   Redeem ₹50
@@ -149,9 +164,9 @@ export const RewardsWallet = {
               </div>
 
               <!-- ₹100 Plan -->
-              <div class="glass-card" style="padding: 1.25rem; text-align: center; border-top: 4px solid var(--color-primary);">
-                <div style="font-size: 1.6rem; font-weight: 800; color: var(--color-navy); margin-bottom: 0.25rem;">₹100</div>
-                <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem;">Full Talktime Pack</div>
+              <div class="neu-card neu-card-raised" style="padding: 1.25rem; text-align: center; border-top: 3px solid var(--color-primary);">
+                <div style="font-size: 1.5rem; font-weight: 900; color: var(--color-navy); margin-bottom: 0.25rem;">₹100</div>
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.85rem;">Full Talktime Pack</div>
                 <div class="badge badge-points" style="margin-bottom: 1rem;">1,000 GC</div>
                 <button class="btn btn-primary btn-sm btn-block" onclick="window.RewardsWallet.redeemQuick('RECHARGE', 'Full Talktime Pack ₹100', 1000)">
                   Redeem ₹100
@@ -159,32 +174,35 @@ export const RewardsWallet = {
               </div>
 
               <!-- ₹200 Plan -->
-              <div class="glass-card" style="padding: 1.25rem; text-align: center; border-top: 4px solid var(--color-primary);">
-                <div style="font-size: 1.6rem; font-weight: 800; color: var(--color-navy); margin-bottom: 0.25rem;">₹200</div>
-                <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem;">Unlimited 28-Day Plan</div>
+              <div class="neu-card neu-card-raised" style="padding: 1.25rem; text-align: center; border-top: 3px solid var(--color-primary);">
+                <div style="font-size: 1.5rem; font-weight: 900; color: var(--color-navy); margin-bottom: 0.25rem;">₹200</div>
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.85rem;">Unlimited 28-Day Plan</div>
                 <div class="badge badge-points" style="margin-bottom: 1rem;">2,000 GC</div>
                 <button class="btn btn-secondary btn-sm btn-block" onclick="window.RewardsWallet.redeemQuick('RECHARGE', 'Unlimited 28-Day Plan ₹200', 2000)">
                   Redeem ₹200
                 </button>
               </div>
-
             </div>
           </div>
 
           <!-- Category 2: Utility Bills & Municipal Fees -->
           <div style="margin-bottom: 2.5rem;">
             <div class="flex-between" style="margin-bottom: 1rem;">
-              <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <span style="font-size: 1.4rem;">💡</span>
-                <strong style="font-size: 1.15rem; color: var(--color-navy);">Utility Bills & Municipal Services</strong>
+              <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <div style="width: 28px; height: 28px; border-radius: 6px; background: #FEF3C7; color: #B45309; display: flex; align-items: center; justify-content: center;">
+                  <i data-lucide="lightbulb" class="lucide-icon-sm"></i>
+                </div>
+                <strong style="font-size: 1.1rem; color: var(--color-navy);">Utility Bills & Municipal Services</strong>
               </div>
-              <span style="font-size: 0.8rem; color: var(--text-muted);">Direct Bill Deduction</span>
+              <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Direct Municipal Bill Credit</span>
             </div>
 
-            <div class="grid-cols-4">
-              
-              <div class="glass-card" style="padding: 1.25rem; text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 0.35rem;">⚡</div>
+            <div class="grid-cols-4" style="gap: 1rem;">
+              <!-- Electricity -->
+              <div class="neu-card neu-card-raised" style="padding: 1.25rem; text-align: center;">
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: #FEF3C7; color: #B45309; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
+                  <i data-lucide="zap" class="lucide-icon-md"></i>
+                </div>
                 <strong style="color: var(--color-navy); display: block; font-size: 0.95rem;">Electricity Bill</strong>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.85rem;">Tata Power / BESCOM / Adani</p>
                 <div class="badge badge-points" style="margin-bottom: 1rem;">₹50 Off (500 GC)</div>
@@ -193,8 +211,11 @@ export const RewardsWallet = {
                 </button>
               </div>
 
-              <div class="glass-card" style="padding: 1.25rem; text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 0.35rem;">💧</div>
+              <!-- Water -->
+              <div class="neu-card neu-card-raised" style="padding: 1.25rem; text-align: center;">
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: #DBEAFE; color: #1E40AF; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
+                  <i data-lucide="droplets" class="lucide-icon-md"></i>
+                </div>
                 <strong style="color: var(--color-navy); display: block; font-size: 0.95rem;">Water Board Bill</strong>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.85rem;">Municipal Corporation Jal Board</p>
                 <div class="badge badge-points" style="margin-bottom: 1rem;">₹50 Off (500 GC)</div>
@@ -203,8 +224,11 @@ export const RewardsWallet = {
                 </button>
               </div>
 
-              <div class="glass-card" style="padding: 1.25rem; text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 0.35rem;">🔥</div>
+              <!-- Piped Gas -->
+              <div class="neu-card neu-card-raised" style="padding: 1.25rem; text-align: center;">
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: #FEE2E2; color: #DC2626; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
+                  <i data-lucide="flame" class="lucide-icon-md"></i>
+                </div>
                 <strong style="color: var(--color-navy); display: block; font-size: 0.95rem;">Piped Gas Bill</strong>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.85rem;">Mahanagar Gas / IGL / Adani</p>
                 <div class="badge badge-points" style="margin-bottom: 1rem;">₹50 Off (500 GC)</div>
@@ -213,8 +237,11 @@ export const RewardsWallet = {
                 </button>
               </div>
 
-              <div class="glass-card" style="padding: 1.25rem; text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 0.35rem;">🌐</div>
+              <!-- Broadband -->
+              <div class="neu-card neu-card-raised" style="padding: 1.25rem; text-align: center;">
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: #EDE9FE; color: #6D28D9; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
+                  <i data-lucide="wifi" class="lucide-icon-md"></i>
+                </div>
                 <strong style="color: var(--color-navy); display: block; font-size: 0.95rem;">Broadband Bill</strong>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.85rem;">Airtel Fiber / JioFiber / ACT</p>
                 <div class="badge badge-points" style="margin-bottom: 1rem;">₹100 Off (1,000 GC)</div>
@@ -222,24 +249,24 @@ export const RewardsWallet = {
                   Pay Bill
                 </button>
               </div>
-
             </div>
           </div>
 
           <!-- Category 3: Eco Shopping & Cafes -->
           <div>
             <div class="flex-between" style="margin-bottom: 1rem;">
-              <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <span style="font-size: 1.4rem;">🛍️</span>
-                <strong style="font-size: 1.15rem; color: var(--color-navy);">Eco-Friendly Brand Vouchers & Cafes</strong>
+              <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <div style="width: 28px; height: 28px; border-radius: 6px; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center;">
+                  <i data-lucide="shopping-bag" class="lucide-icon-sm"></i>
+                </div>
+                <strong style="font-size: 1.1rem; color: var(--color-navy);">Eco-Friendly Brand Vouchers & Cafes</strong>
               </div>
-              <span style="font-size: 0.8rem; color: var(--text-muted);">Partner Discounts</span>
+              <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">EPR Partner Merchant Network</span>
             </div>
 
-            <div class="grid-cols-4">
-              
-              <div class="glass-card" style="padding: 1.25rem;">
-                <div class="badge badge-green" style="margin-bottom: 0.5rem;">Organic Store</div>
+            <div class="grid-cols-4" style="gap: 1rem;">
+              <div class="neu-card neu-card-raised" style="padding: 1.25rem;">
+                <div class="badge badge-green" style="margin-bottom: 0.5rem;">Organic Grocery</div>
                 <strong style="color: var(--color-navy); display: block;">BigBasket Organic</strong>
                 <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">₹100 Voucher on min ₹500 grocery.</p>
                 <div class="flex-between">
@@ -250,7 +277,7 @@ export const RewardsWallet = {
                 </div>
               </div>
 
-              <div class="glass-card" style="padding: 1.25rem;">
+              <div class="neu-card neu-card-raised" style="padding: 1.25rem;">
                 <div class="badge" style="background: #FEF3C7; color: #B45309; margin-bottom: 0.5rem;">Sustainable</div>
                 <strong style="color: var(--color-navy); display: block;">Bamboo India Store</strong>
                 <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">₹50 Gift Card for eco toothbrushes & kits.</p>
@@ -262,7 +289,7 @@ export const RewardsWallet = {
                 </div>
               </div>
 
-              <div class="glass-card" style="padding: 1.25rem;">
+              <div class="neu-card neu-card-raised" style="padding: 1.25rem;">
                 <div class="badge badge-navy" style="margin-bottom: 0.5rem;">Cafe Partner</div>
                 <strong style="color: var(--color-navy); display: block;">Starbucks Coffee</strong>
                 <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">Free reusable bamboo tumbler with refill.</p>
@@ -274,7 +301,7 @@ export const RewardsWallet = {
                 </div>
               </div>
 
-              <div class="glass-card" style="padding: 1.25rem;">
+              <div class="neu-card neu-card-raised" style="padding: 1.25rem;">
                 <div class="badge badge-green" style="margin-bottom: 0.5rem;">Healthy Food</div>
                 <strong style="color: var(--color-navy); display: block;">Subway Green Meal</strong>
                 <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">₹50 discount on organic salad subs.</p>
@@ -285,21 +312,19 @@ export const RewardsWallet = {
                   </button>
                 </div>
               </div>
-
             </div>
           </div>
-
         </div>
 
         <!-- Real-Time Transaction Ledger -->
-        <div class="glass-card" style="padding: 2rem;">
+        <div class="neu-card neu-card-raised" style="padding: 2rem; border-radius: var(--radius-xl);">
           <div class="flex-between" style="margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
             <div>
-              <h3 style="color: var(--color-navy);">Wallet Transaction Ledger</h3>
-              <p style="font-size: 0.85rem;">Transparent record of all waste earnings and reward disbursements.</p>
+              <h3 style="color: var(--color-navy); font-size: 1.3rem; font-weight: 800; margin: 0 0 0.25rem 0;">Wallet Transaction Ledger</h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">Immutable client-side record of verified waste earnings and civic redemptions.</p>
             </div>
 
-            <!-- Filters -->
+            <!-- Filter Tabs -->
             <div style="display: flex; gap: 0.5rem;">
               <button class="btn btn-sm ${this.currentTab === 'all' ? 'btn-primary' : 'btn-secondary'}" onclick="window.RewardsWallet.filterLedger('all')">
                 All
@@ -317,10 +342,10 @@ export const RewardsWallet = {
             ${State.state.transactions
               .filter(t => this.currentTab === 'all' || t.type === this.currentTab)
               .map(t => `
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; background: #F8FAFC; border: 1px solid var(--color-border); border-radius: var(--radius-md);">
+                <div class="neu-card-flat" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; border-radius: var(--radius-md);">
                   <div style="display: flex; align-items: center; gap: 1rem;">
-                    <div style="width: 42px; height: 42px; border-radius: 50%; background: ${t.type === 'credit' ? '#DCFCE7' : '#FEE2E2'}; color: ${t.type === 'credit' ? '#16A34A' : '#EF4444'}; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; font-weight: 800;">
-                      ${t.type === 'credit' ? '↓' : '↑'}
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: ${t.type === 'credit' ? '#DCFCE7' : '#FEE2E2'}; color: ${t.type === 'credit' ? '#16A34A' : '#EF4444'}; display: flex; align-items: center; justify-content: center; font-weight: 800;">
+                      <i data-lucide="${t.type === 'credit' ? 'arrow-down-left' : 'arrow-up-right'}" class="lucide-icon-sm"></i>
                     </div>
                     <div>
                       <strong style="color: var(--color-navy); font-size: 0.95rem; display: block;">${t.title}</strong>
@@ -347,25 +372,29 @@ export const RewardsWallet = {
 
       <!-- Mobile Recharge Modal Shell -->
       <div class="modal-overlay" id="recharge-modal">
-        <div class="modal-content">
-          <div class="modal-close-btn" onclick="window.RewardsWallet.closeModals()">✕</div>
+        <div class="modal-content neu-card neu-card-raised" style="max-width: 460px;">
+          <div class="modal-close-btn" onclick="window.RewardsWallet.closeModals()">
+            <i data-lucide="x" class="lucide-icon-sm"></i>
+          </div>
           
           <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
-            <span style="font-size: 2rem;">📱</span>
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center;">
+              <i data-lucide="smartphone" class="lucide-icon-md"></i>
+            </div>
             <div>
-              <h3 style="color: var(--color-navy);">Instant Mobile Recharge</h3>
-              <p style="font-size: 0.85rem;">Recharge prepaid numbers using your Green Credits balance.</p>
+              <h3 style="color: var(--color-navy); margin: 0; font-size: 1.2rem;">Instant Mobile Recharge</h3>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.2rem 0 0 0;">Recharge prepaid numbers using your Green Credits balance.</p>
             </div>
           </div>
 
           <div class="form-group">
             <label class="form-label">Mobile Number</label>
-            <input type="tel" class="form-input" id="recharge-phone" placeholder="Enter 10-digit mobile number" value="9876543210">
+            <input type="tel" class="form-input neu-input" id="recharge-phone" placeholder="Enter 10-digit mobile number" value="9876543210">
           </div>
 
           <div class="form-group">
             <label class="form-label">Telecom Operator</label>
-            <select class="form-select" id="recharge-operator">
+            <select class="form-select neu-input" id="recharge-operator">
               <option value="Jio">Reliance Jio Prepaid</option>
               <option value="Airtel">Bharti Airtel</option>
               <option value="Vi">Vodafone Idea (Vi)</option>
@@ -375,7 +404,7 @@ export const RewardsWallet = {
 
           <div class="form-group">
             <label class="form-label">Select Recharge Plan</label>
-            <select class="form-select" id="recharge-amount">
+            <select class="form-select neu-input" id="recharge-amount">
               <option value="100">₹10 Talktime (100 Green Credits)</option>
               <option value="500">₹50 Data Pack (500 Green Credits)</option>
               <option value="1000">₹100 Full Talktime (1,000 Green Credits)</option>
@@ -383,35 +412,39 @@ export const RewardsWallet = {
             </select>
           </div>
 
-          <div style="background: var(--waste-wet-bg); border: 1.5px solid var(--waste-wet-border); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.5rem; font-size: 0.85rem;">
+          <div class="neu-card-inset" style="padding: 0.85rem 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; font-size: 0.85rem;">
             <div class="flex-between">
-              <span>Your GC Balance:</span>
-              <strong>${user.greenPoints} GC (₹${inrValue})</strong>
+              <span style="color: var(--text-muted);">Current Available Balance:</span>
+              <strong style="color: var(--color-primary-dark);">${user.greenPoints} GC (₹${inrValue})</strong>
             </div>
           </div>
 
           <button class="btn btn-primary btn-block btn-lg" onclick="window.RewardsWallet.submitRecharge()">
-            Proceed & Deduct Points ⚡
+            Proceed & Deduct Points
           </button>
         </div>
       </div>
 
       <!-- Utility Bills Modal Shell -->
       <div class="modal-overlay" id="bills-modal">
-        <div class="modal-content">
-          <div class="modal-close-btn" onclick="window.RewardsWallet.closeModals()">✕</div>
+        <div class="modal-content neu-card neu-card-raised" style="max-width: 460px;">
+          <div class="modal-close-btn" onclick="window.RewardsWallet.closeModals()">
+            <i data-lucide="x" class="lucide-icon-sm"></i>
+          </div>
           
           <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
-            <span style="font-size: 2rem;">💡</span>
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: #FEF3C7; color: #B45309; display: flex; align-items: center; justify-content: center;">
+              <i data-lucide="lightbulb" class="lucide-icon-md"></i>
+            </div>
             <div>
-              <h3 style="color: var(--color-navy);">Pay Utility Bill</h3>
-              <p style="font-size: 0.85rem;">Apply Green Credits as direct discount on municipal bills.</p>
+              <h3 style="color: var(--color-navy); margin: 0; font-size: 1.2rem;">Pay Utility Bill</h3>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.2rem 0 0 0;">Apply Green Credits as direct discount on municipal bills.</p>
             </div>
           </div>
 
           <div class="form-group">
             <label class="form-label">Service Type</label>
-            <select class="form-select" id="bill-service">
+            <select class="form-select neu-input" id="bill-service">
               <option value="Electricity">Electricity Board (Tata Power / BESCOM)</option>
               <option value="Water">Municipal Water Board</option>
               <option value="Gas">Piped Gas (MGL / IGL)</option>
@@ -421,29 +454,36 @@ export const RewardsWallet = {
 
           <div class="form-group">
             <label class="form-label">Consumer / Account ID</label>
-            <input type="text" class="form-input" id="bill-consumer-id" placeholder="e.g. 1029481029" value="1092834019">
+            <input type="text" class="form-input neu-input" id="bill-consumer-id" placeholder="e.g. 1029481029" value="1092834019">
           </div>
 
           <div class="form-group">
             <label class="form-label">Redeem Value</label>
-            <select class="form-select" id="bill-gp-amount">
+            <select class="form-select neu-input" id="bill-gp-amount">
               <option value="500">₹50 Bill Discount (500 Green Credits)</option>
               <option value="1000">₹100 Bill Discount (1,000 Green Credits)</option>
             </select>
           </div>
 
           <button class="btn btn-primary btn-block btn-lg" onclick="window.RewardsWallet.submitBillPayment()">
-            Confirm Bill Payment ⚡
+            Confirm Bill Payment
           </button>
         </div>
       </div>
     `;
+
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
   },
 
   openRechargeModal() {
     SoundFX.playClick();
     const modal = document.getElementById('recharge-modal');
-    if (modal) modal.classList.add('active');
+    if (modal) {
+      modal.classList.add('active');
+      if (window.lucide) window.lucide.createIcons();
+    }
   },
 
   openBillsModal(serviceName = null) {
@@ -455,6 +495,7 @@ export const RewardsWallet = {
         if (select) select.value = serviceName;
       }
       modal.classList.add('active');
+      if (window.lucide) window.lucide.createIcons();
     }
   },
 
@@ -468,6 +509,7 @@ export const RewardsWallet = {
     if (res.success) {
       SoundFX.playRedeemCash();
       Confetti.trigger(75);
+      window.AppRouter.showToast(`Redeemed ${title} (-${amountGp} GC)`);
       this.render();
     } else {
       alert(res.message || 'Insufficient Green Credits balance');
@@ -484,6 +526,7 @@ export const RewardsWallet = {
       this.closeModals();
       SoundFX.playRedeemCash();
       Confetti.trigger(90);
+      window.AppRouter.showToast(`Recharge of ₹${Formatters.gpToInr(amountGp)} successful!`);
       this.render();
     } else {
       alert(res.message);
@@ -500,6 +543,7 @@ export const RewardsWallet = {
       this.closeModals();
       SoundFX.playRedeemCash();
       Confetti.trigger(90);
+      window.AppRouter.showToast(`${service} bill discount applied (-${amountGp} GC)`);
       this.render();
     } else {
       alert(res.message);

@@ -1,82 +1,101 @@
 /* ==========================================================================
-   GREEN LEGACY — CSS DESIGN SYSTEM & TOKENS
-   Tagline: EARN. RECYCLE. REWARD.
+   CLEANCRED — SURREALISM × NEUMORPHISM × CIVIC TECH
+   Smart India Hackathon 2026 // Team GreenLegacy
+   Solid Matte Dimensional Surfaces // Zero Glassmorphism
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* Primary Brand Colors */
-  --color-primary-dark: #14532D;     /* CleanCred forest */
-  --color-primary: #16A34A;          /* Emerald Green */
-  --color-primary-light: #86EFAC;    /* restrained green highlight */
-  --color-primary-subtle: #DCFCE7;   /* Mint Tint */
-  --color-primary-glow: rgba(22, 163, 74, 0.25);
+  /* Warm Eco-Neutral Solid Matte Canvas */
+  --bg-canvas: #EEF3F8;
+  --bg-surface: #EEF3F8;
+  --bg-surface-pure: #FFFFFF;
+  --bg-surface-elevated: #F4F7FB;
+  --bg-sunken: #E3E9F1;
 
-  /* Dark Navy & Neutrals */
-  --color-navy: #17211B;             /* Primary text */
-  --color-navy-light: #1E3A5F;
-  --color-navy-dark: #0A1929;
-  --color-bg: #F7F9F7;               /* Clean civic canvas */
-  --color-surface: #FFFFFF;          /* Pure Card White */
-  --color-surface-translucent: rgba(255, 255, 255, 0.88);
-  --color-border: #DCE5DD;
-  --color-border-hover: #B9CBBB;
+  /* Sophisticated Neumorphic Directional Lighting (135° Natural Source) */
+  --shadow-light: #FFFFFF;
+  --shadow-dark: #D1D9E6;
+  --shadow-dark-deep: #BCC7D7;
 
-  /* Typography Colors */
-  --text-main: #17211B;
-  --text-muted: #52605A;
-  --text-light: #718078;
-  --text-inverse: #FFFFFF;
+  /* State 1: RAISED (Soft Directional Elevation) */
+  --neu-raised: 6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
+  --neu-raised-sm: 3px 3px 8px var(--shadow-dark), -3px -3px 8px var(--shadow-light);
+  --neu-raised-lg: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+  --neu-raised-subtle: 2px 2px 5px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
 
-  /* Waste Category Specific Colors */
-  --waste-wet: #16A34A;              /* Green (10 Points) */
-  --waste-wet-bg: #ECFDF5;
+  /* State 2: PRESSED / INSET (Recessed Tactile Depth) */
+  --neu-inset: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+  --neu-inset-deep: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light);
+  --neu-inset-sm: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+
+  /* State 3: FLAT (Minimal Elevation for Dense Data) */
+  --neu-flat: 0 1px 2px rgba(15, 23, 42, 0.05);
+
+  /* Deep Environmental Green (Primary) & Fresh Emerald (Secondary) */
+  --color-primary: #059669;
+  --color-primary-dark: #064E3B;
+  --color-primary-light: #D1FAE5;
+  --color-primary-subtle: #ECFDF5;
+
+  --color-emerald: #10B981;
+  --color-emerald-dark: #047857;
+
+  /* Authoritative Municipal Deep Navy */
+  --color-navy: #0F172A;
+  --color-navy-light: #1E293B;
+  --text-primary: #0F172A;
+  --text-secondary: #334155;
+  --text-muted: #64748B;
+  --text-subtle: #94A3B8;
+
+  /* Waste Category System (SIH Taxonomy) */
+  --waste-wet: #059669;
+  --waste-wet-bg: #E8F5EE;
   --waste-wet-border: #A7F3D0;
-  
-  --waste-dry: #2563EB;              /* Blue (7 Points) */
-  --waste-dry-bg: #EFF6FF;
-  --waste-dry-border: #BFDBFE;
 
-  --waste-harmful: #EF4444;          /* Red / Amber (5 Points) */
-  --waste-harmful-bg: #FEF2F2;
+  --waste-dry: #0284C7;
+  --waste-dry-bg: #EAF4FB;
+  --waste-dry-border: #BAE6FD;
+
+  --waste-harmful: #DC2626;
+  --waste-harmful-bg: #FDE8E8;
   --waste-harmful-border: #FECACA;
 
-  /* Status Colors */
-  --status-pending: #F59E0B;
-  --status-pending-bg: #FEF3C7;
-  --status-verified: #10B981;
-  --status-verified-bg: #D1FAE5;
-  --status-rejected: #EF4444;
-  --status-rejected-bg: #FEE2E2;
-  --status-info: #3B82F6;
-  --status-info-bg: #DBEAFE;
+  /* Accent Tones */
+  --color-amber: #D97706;
+  --color-amber-bg: #FEF3C7;
+  --color-amber-border: #FDE68A;
 
-  /* Elevation Shadows */
-  --shadow-xs: 0 1px 2px 0 rgba(16, 42, 67, 0.05);
-  --shadow-sm: 0 1px 3px rgba(23, 33, 27, 0.06);
-  --shadow-md: 0 3px 10px rgba(23, 33, 27, 0.08);
-  --shadow-lg: 0 8px 20px rgba(23, 33, 27, 0.1);
-  --shadow-glow: none;
+  --color-cyan: #0284C7;
+  --color-cyan-bg: #E0F2FE;
 
-  /* Radius Tokens */
-  --radius-sm: 8px;
-  --radius-md: 8px;
-  --radius-lg: 10px;
-  --radius-xl: 12px;
+  /* Borders (Highlight Edges) */
+  --color-border: #DDE4ED;
+  --color-border-highlight: rgba(255, 255, 255, 0.85);
+  --color-border-strong: #CBD5E1;
+
+  /* Typography */
+  --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Organic Tactile Radii */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
   --radius-full: 9999px;
 
-  /* Layout */
-  --nav-height: 72px;
-  --mobile-nav-height: 64px;
-  --container-max: 1280px;
-
-  /* Font Families */
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-display: var(--font-sans);
+  /* Micro-Interactions */
+  --spring-tactile: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Global Reset & Base */
+/* ==========================================================================
+   GLOBAL RESET & SURREAL ECO ATMOSPHERE
+   ========================================================================== */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -85,11 +104,11 @@
 }
 
 html {
-  font-size: 16px;
+  font-size: 15px;
   scroll-behavior: smooth;
-  font-family: var(--font-sans);
-  background-color: var(--color-bg);
-  color: var(--text-main);
+  font-family: var(--font-body);
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
@@ -99,66 +118,68 @@ body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
-  background-color: var(--color-bg);
-  background-image: none;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  /* Subtle Environmental Aura in deep background — solid cards sit above */
+  background-image: 
+    radial-gradient(at 15% 15%, rgba(5, 150, 105, 0.08) 0px, transparent 55%),
+    radial-gradient(at 85% 25%, rgba(2, 132, 199, 0.07) 0px, transparent 55%),
+    radial-gradient(at 50% 80%, rgba(16, 185, 129, 0.06) 0px, transparent 60%);
+  background-attachment: fixed;
 }
 
-/* Typography Defaults */
+/* Typography Hierarchy */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  font-weight: 700;
+  font-family: var(--font-heading);
+  font-weight: 800;
   color: var(--color-navy);
   line-height: 1.25;
+  letter-spacing: -0.025em;
 }
 
-h1 { font-size: clamp(2rem, 4vw + 1rem, 3.2rem); letter-spacing: -0.025em; }
-h2 { font-size: clamp(1.5rem, 2.5vw + 0.8rem, 2.2rem); letter-spacing: -0.02em; }
-h3 { font-size: clamp(1.2rem, 1.8vw + 0.6rem, 1.6rem); }
-h4 { font-size: 1.15rem; }
+h1 { font-size: clamp(1.8rem, 3.2vw, 2.4rem); }
+h2 { font-size: clamp(1.35rem, 2.2vw, 1.75rem); }
+h3 { font-size: 1.2rem; }
+h4 { font-size: 1.05rem; }
 
-p {
-  color: var(--text-muted);
-  line-height: 1.65;
-  font-size: 0.975rem;
+p, span, label {
+  color: var(--text-secondary);
+  line-height: 1.55;
 }
 
 a {
-  color: inherit;
+  color: var(--color-primary);
   text-decoration: none;
-  transition: all 0.2s ease;
 }
 
-button, input, select, textarea {
-  font-family: inherit;
-  font-size: inherit;
-  border: none;
-  outline: none;
+a:hover {
+  text-decoration: underline;
 }
 
-button {
-  cursor: pointer;
-  background: none;
-}
-
-/* Layout Utilities */
+/* ==========================================================================
+   APP CONTAINER & LAYOUT
+   ========================================================================== */
 .app-container {
-  width: 100%;
-  max-width: var(--container-max);
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 1.25rem;
+  width: 100%;
 }
 
 .main-content {
+  margin-top: 74px;
+  padding-bottom: 5.5rem;
   flex: 1;
-  padding-top: calc(var(--nav-height) + 1.5rem);
-  padding-bottom: 3rem;
-  width: 100%;
+  position: relative;
+  z-index: 10;
 }
 
-.flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.view-section {
+  display: none;
+}
+
+.view-section.active {
+  display: block;
 }
 
 .flex-between {
@@ -167,6 +188,286 @@ button {
   justify-content: space-between;
 }
 
+/* ==========================================================================
+   SOPHISTICATED NEUMORPHIC SURFACES (SOLID MATTE // ZERO GLASS)
+   ========================================================================== */
+/* Primary Raised Card */
+.neu-card,
+.neu-card-raised {
+  background: var(--bg-surface);
+  box-shadow: var(--neu-raised);
+  border: 1px solid var(--color-border-highlight);
+  border-radius: var(--radius-lg);
+  color: var(--text-primary);
+  transition: var(--spring-tactile);
+  position: relative;
+}
+
+.neu-card-interactive {
+  cursor: pointer;
+  user-select: none;
+}
+
+.neu-card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--neu-raised-lg);
+}
+
+.neu-card-interactive:active {
+  transform: translateY(1px);
+  box-shadow: var(--neu-inset);
+}
+
+/* Sunken / Inset Recessed Well */
+.neu-card-sunken,
+.card-sunken {
+  background: var(--bg-sunken);
+  box-shadow: var(--neu-inset);
+  border: 1px solid rgba(209, 217, 230, 0.5);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  position: relative;
+}
+
+/* Flat Card for Dense Data Modules */
+.neu-card-flat {
+  background: var(--bg-surface-pure);
+  box-shadow: var(--neu-flat);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+}
+
+/* Deep Environmental Navy Card */
+.neu-card-navy {
+  background: linear-gradient(145deg, #0F172A, #1E293B) !important;
+  color: #FFFFFF !important;
+  border: 1px solid #334155 !important;
+  box-shadow: 6px 6px 16px rgba(15, 23, 42, 0.25), -4px -4px 12px var(--shadow-light) !important;
+}
+
+.neu-card-navy h2,
+.neu-card-navy h3,
+.neu-card-navy p,
+.neu-card-navy span {
+  color: #FFFFFF;
+}
+
+/* Rich Emerald Card */
+.neu-card-forest {
+  background: linear-gradient(145deg, #065F46, #047857) !important;
+  color: #FFFFFF !important;
+  border: 1px solid #059669 !important;
+  box-shadow: 6px 6px 16px rgba(6, 95, 70, 0.25), -4px -4px 12px var(--shadow-light) !important;
+}
+
+.neu-card-forest h2,
+.neu-card-forest h3,
+.neu-card-forest p,
+.neu-card-forest span {
+  color: #FFFFFF;
+}
+
+/* Surreal Organic Design Tokens */
+:root {
+  --radius-surreal: 22px 30px 18px 26px;
+  --radius-surreal-sm: 12px 18px 10px 16px;
+}
+
+.neu-card-surreal {
+  border-radius: var(--radius-surreal);
+}
+
+/* Backward-compatibility aliases mapped strictly to solid matte neumorphic */
+.glass-card,
+.glass-panel,
+.glass-surface {
+  background: var(--bg-surface) !important;
+  box-shadow: var(--neu-raised) !important;
+  border: 1px solid var(--color-border-highlight) !important;
+  border-radius: var(--radius-lg) !important;
+  color: var(--text-primary) !important;
+}
+
+.glass-card-navy {
+  background: linear-gradient(145deg, #0F172A, #1E293B) !important;
+  color: #FFFFFF !important;
+  border: 1px solid #334155 !important;
+  box-shadow: 6px 6px 16px var(--shadow-dark), -4px -4px 12px var(--shadow-light) !important;
+}
+
+.glass-card-emerald,
+.glass-card-forest {
+  background: linear-gradient(145deg, #065F46, #047857) !important;
+  color: #FFFFFF !important;
+  border: 1px solid #059669 !important;
+  box-shadow: 6px 6px 16px var(--shadow-dark), -4px -4px 12px var(--shadow-light) !important;
+}
+
+/* ==========================================================================
+   TACTILE NEUMORPHIC BUTTONS
+   ========================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 0.7rem 1.4rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-highlight);
+  cursor: pointer;
+  user-select: none;
+  transition: var(--spring-tactile);
+  text-decoration: none;
+  line-height: 1.2;
+  box-shadow: var(--neu-raised-sm);
+}
+
+.btn:hover {
+  text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: var(--neu-raised);
+}
+
+.btn:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: var(--neu-inset);
+}
+
+.btn-primary {
+  background: linear-gradient(145deg, #059669, #047857);
+  color: #FFFFFF !important;
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 4px 4px 10px rgba(5, 150, 105, 0.35), -3px -3px 8px var(--shadow-light);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(145deg, #10B981, #059669);
+  box-shadow: 6px 6px 14px rgba(5, 150, 105, 0.45), -4px -4px 10px var(--shadow-light);
+}
+
+.btn-primary:active {
+  box-shadow: inset 3px 3px 6px rgba(4, 120, 87, 0.6), inset -2px -2px 4px rgba(16, 185, 129, 0.4) !important;
+}
+
+.btn-secondary {
+  background: var(--bg-surface);
+  color: var(--color-navy) !important;
+  border-color: var(--color-border-highlight);
+}
+
+.btn-secondary:hover {
+  color: var(--color-primary-dark) !important;
+}
+
+.btn-sm {
+  padding: 0.45rem 0.95rem;
+  font-size: 0.8rem;
+  border-radius: var(--radius-full);
+}
+
+.btn-lg {
+  padding: 0.9rem 1.8rem;
+  font-size: 1rem;
+  border-radius: var(--radius-full);
+}
+
+.btn-full {
+  width: 100%;
+}
+
+/* ==========================================================================
+   NEUMORPHIC INSET INPUTS & FORMS
+   ========================================================================== */
+.neu-input,
+.neu-select,
+.form-input,
+.form-select {
+  width: 100%;
+  background: var(--bg-sunken);
+  box-shadow: var(--neu-inset-sm);
+  border: 1px solid rgba(209, 217, 230, 0.7);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-navy);
+  outline: none;
+  transition: var(--transition-smooth);
+}
+
+.neu-input:focus,
+.neu-select:focus,
+.form-input:focus,
+.form-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: var(--neu-inset), 0 0 0 2px rgba(5, 150, 105, 0.15);
+}
+
+/* ==========================================================================
+   BADGES & PILLS
+   ========================================================================== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  border: 1px solid transparent;
+  box-shadow: var(--neu-raised-subtle);
+}
+
+.badge-green {
+  background: var(--waste-wet-bg);
+  color: var(--waste-wet);
+  border-color: var(--waste-wet-border);
+}
+
+.badge-blue {
+  background: var(--waste-dry-bg);
+  color: var(--waste-dry);
+  border-color: var(--waste-dry-border);
+}
+
+.badge-red {
+  background: var(--waste-harmful-bg);
+  color: var(--waste-harmful);
+  border-color: var(--waste-harmful-border);
+}
+
+.badge-amber {
+  background: var(--color-amber-bg);
+  color: var(--color-amber);
+  border-color: var(--color-amber-border);
+}
+
+.badge-navy {
+  background: #E2E8F0;
+  color: var(--color-navy);
+  border-color: #CBD5E1;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-dot.green { background: #10B981; }
+.status-dot.amber { background: #F59E0B; }
+.status-dot.blue  { background: #0284C7; }
+.status-dot.red   { background: #DC2626; }
+
+/* ==========================================================================
+   GRID LAYOUTS
+   ========================================================================== */
 .grid-cols-2 {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -185,65 +486,26 @@ button {
   gap: 1.25rem;
 }
 
-/* Badges & Tags */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.8rem;
-  border-radius: var(--radius-full);
-  font-size: 0.775rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 1.75rem;
 }
 
-.badge-green {
-  background: var(--color-primary-subtle);
-  color: var(--color-primary-dark);
-  border: 1px solid rgba(22, 163, 74, 0.2);
+@media (max-width: 960px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+  .grid-cols-3,
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
-.badge-navy {
-  background: rgba(16, 42, 67, 0.08);
-  color: var(--color-navy);
-}
-
-.badge-points {
-  background: var(--color-primary-dark);
-  color: #FFFFFF;
-  font-weight: 700;
-  box-shadow: none;
-}
-
-.badge-streak {
-  background: #B45309;
-  color: #FFFFFF;
-  font-weight: 700;
-  box-shadow: 0 2px 8px rgba(255, 107, 0, 0.3);
-}
-
-/* View Sections */
-.view-section {
-  display: none;
-  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.view-section.active {
-  display: block;
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.03);
-}
-::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
-  border-radius: var(--radius-full);
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
+@media (max-width: 640px) {
+  .grid-cols-2,
+  .grid-cols-3,
+  .grid-cols-4 {
+    grid-template-columns: 1fr;
+  }
 }

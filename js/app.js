@@ -1,6 +1,7 @@
 /* ==========================================================================
-   GREEN LEGACY — MAIN APPLICATION ROUTER & CONTROLLER
-   Tagline: EARN. RECYCLE. REWARD.
+   CLEANCRED — FRONTEND ROUTER & APP CONTROLLER
+   Smart India Hackathon 2026 // Team GreenLegacy
+   Client-Side Architecture for Static GitHub Pages Deployment
    ========================================================================== */
 
 import { State } from './state.js';
@@ -8,50 +9,88 @@ import { Formatters } from './utils/formatters.js';
 import { Confetti } from './utils/confetti.js';
 import { SoundFX } from './utils/audio.js';
 
-// Components
-import { LandingPage } from './components/landing.js';
+// Component Views
 import { DashboardView } from './components/dashboard.js';
 import { ReportWasteView } from './components/reportWaste.js';
-import { LiveTrackingView } from './components/liveTracking.js';
-import { RewardsWallet } from './components/rewardsWallet.js';
-import { LeaderboardView } from './components/leaderboard.js';
-import { WorkerPortalView } from './components/workerPortal.js';
 import { AdminDashboardView } from './components/adminDashboard.js';
-import { InstitutionPortalView } from './components/institutionPortal.js';
-import { IllegalDumpingView } from './components/illegalDumping.js';
+import { RewardsWallet } from './components/rewardsWallet.js';
+import { LiveTrackingView } from './components/liveTracking.js';
+import { WorkerPortalView } from './components/workerPortal.js';
+import { LeaderboardView } from './components/leaderboard.js';
 import { ImpactDashboardView } from './components/impactDashboard.js';
 import { ProfileView } from './components/profile.js';
+import { IllegalDumpingView } from './components/illegalDumping.js';
+import { InstitutionPortalView } from './components/institutionPortal.js';
 
 class AppRouterManager {
   constructor() {
-    this.currentRoute = 'landing';
+    this.currentRoute = 'dashboard'; // Default to Citizen Home
     this.init();
   }
 
+  normalizeRoute(route) {
+    if (!route || route === 'citizen' || route === 'home' || route === 'dashboard') {
+      return 'dashboard';
+    }
+    const knownRoutes = [
+      'dashboard',
+      'report-waste',
+      'worker',
+      'admin',
+      'rewards',
+      'live-tracking',
+      'leaderboard',
+      'impact',
+      'profile',
+      'illegal-dumping',
+      'institutions'
+    ];
+    if (knownRoutes.includes(route)) {
+      return route;
+    }
+    return 'dashboard';
+  }
+
   init() {
-    // Listen for state changes to re-render active view and notification counts
+    // Listen for state changes to re-render navbar and active view
     State.subscribe(() => {
       this.updateNavbarHeader();
       this.renderCurrentView();
     });
 
-    // Close notifications tray on outside click
-    document.addEventListener('click', (e) => {
-      const tray = document.getElementById('notifications-tray');
-      const bell = document.getElementById('notif-bell-btn');
-      if (tray && bell && !tray.contains(e.target) && !bell.contains(e.target)) {
-        tray.style.display = 'none';
+    // Auto-detect initial route from hash or default to dashboard
+    const rawHash = window.location.hash.replace('#', '');
+    if (rawHash) {
+      this.navigate(rawHash);
+    } else {
+      this.navigate('dashboard');
+    }
+
+    // Listen to browser hash changes
+    window.addEventListener('hashchange', () => {
+      const newHash = window.location.hash.replace('#', '') || 'dashboard';
+      const norm = this.normalizeRoute(newHash);
+      if (norm !== this.currentRoute) {
+        this.navigate(newHash);
       }
     });
+  }
 
-    // Handle initial route
-    const hash = window.location.hash.replace('#', '') || 'landing';
-    this.navigate(hash);
+  switchExperience(role) {
+    SoundFX.playClick();
+    if (role === 'worker') {
+      this.navigate('worker');
+    } else if (role === 'admin') {
+      this.navigate('admin');
+    } else {
+      this.navigate('dashboard');
+    }
   }
 
   navigate(route, params = {}) {
     SoundFX.playClick();
-    this.currentRoute = route;
+    const targetRoute = this.normalizeRoute(route);
+    this.currentRoute = targetRoute;
     window.location.hash = route;
 
     // Hide all view sections
@@ -60,55 +99,65 @@ class AppRouterManager {
     });
 
     // Show target section
-    const targetSection = document.getElementById(`view-${route}`);
+    const targetSection = document.getElementById(`view-${targetRoute}`);
     if (targetSection) {
       targetSection.classList.add('active');
     }
 
-    // Update active nav items
-    document.querySelectorAll('.nav-item').forEach(el => {
-      if (el.dataset.route === route) {
-        el.classList.add('active');
-      } else {
-        el.classList.remove('active');
-      }
-    });
+    // Update Topbar View Mode Switcher Active State
+    const btnCitizen = document.getElementById('btn-mode-citizen');
+    const btnWorker = document.getElementById('btn-mode-worker');
+    const btnAdmin = document.getElementById('btn-mode-admin');
 
-    // Update mobile bottom nav
-    document.querySelectorAll('.mobile-nav-btn').forEach(el => {
-      if (el.dataset.route === route) {
-        el.classList.add('active');
+    if (btnCitizen && btnWorker && btnAdmin) {
+      btnCitizen.classList.remove('active');
+      btnWorker.classList.remove('active');
+      btnAdmin.classList.remove('active');
+
+      if (targetRoute === 'worker') {
+        btnWorker.classList.add('active');
+      } else if (targetRoute === 'admin') {
+        btnAdmin.classList.add('active');
       } else {
-        el.classList.remove('active');
+        btnCitizen.classList.add('active');
       }
-    });
+    }
+
+    const btnProfile = document.getElementById('btn-topbar-profile');
+    if (btnProfile) {
+      if (targetRoute === 'profile') {
+        btnProfile.classList.add('active');
+      } else {
+        btnProfile.classList.remove('active');
+      }
+    }
+
+    // Update Points display in topbar
+    this.updateNavbarHeader();
 
     // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'auto' });
 
-    // Render Component
+    // Render Target View Component
     this.renderCurrentView(params);
+
+    // Re-create icons if Lucide is loaded
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
   }
 
   renderCurrentView(params = {}) {
     switch (this.currentRoute) {
-      case 'landing':
-        LandingPage.render();
-        break;
       case 'dashboard':
-        DashboardView.render();
+        DashboardView.render(params);
         break;
       case 'report-waste':
-        ReportWasteView.render(params);
-        break;
-      case 'live-tracking':
-        LiveTrackingView.render();
-        break;
-      case 'rewards':
-        RewardsWallet.render();
-        break;
-      case 'leaderboard':
-        LeaderboardView.render();
+        if (typeof ReportWasteView.startNewReport === 'function') {
+          ReportWasteView.startNewReport(params);
+        } else {
+          ReportWasteView.render(params);
+        }
         break;
       case 'worker':
         WorkerPortalView.render();
@@ -116,11 +165,14 @@ class AppRouterManager {
       case 'admin':
         AdminDashboardView.render();
         break;
-      case 'institutions':
-        InstitutionPortalView.render();
+      case 'rewards':
+        RewardsWallet.render();
         break;
-      case 'illegal-dumping':
-        IllegalDumpingView.render();
+      case 'live-tracking':
+        LiveTrackingView.render();
+        break;
+      case 'leaderboard':
+        LeaderboardView.render();
         break;
       case 'impact':
         ImpactDashboardView.render();
@@ -128,87 +180,42 @@ class AppRouterManager {
       case 'profile':
         ProfileView.render();
         break;
+      case 'illegal-dumping':
+        IllegalDumpingView.render();
+        break;
+      case 'institutions':
+        InstitutionPortalView.render();
+        break;
       default:
-        LandingPage.render();
+        DashboardView.render(params);
     }
   }
 
-  handleRoleChange(role) {
-    SoundFX.playClick();
-    State.setRole(role);
-
-    // Auto-navigate to the primary view for that role
-    if (role === 'worker') {
-      this.navigate('worker');
-    } else if (role === 'admin') {
-      this.navigate('admin');
-    } else if (role === 'institution') {
-      this.navigate('institutions');
-    } else {
-      this.navigate('dashboard');
+  showToast(message, type = 'info') {
+    let toast = document.getElementById('app-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'app-toast';
+      toast.style.cssText = 'position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #0F172A; color: #FFFFFF; padding: 0.65rem 1.25rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 700; z-index: 9999; box-shadow: 0 4px 14px rgba(15,23,42,0.25); transition: opacity 0.3s ease; opacity: 0; pointer-events: none;';
+      document.body.appendChild(toast);
     }
+    toast.innerText = message;
+    toast.style.opacity = '1';
+    setTimeout(() => {
+      if (toast) toast.style.opacity = '0';
+    }, 2800);
   }
 
   updateNavbarHeader() {
     const user = State.state.user;
-    const notifs = State.state.notifications;
-    const unreadCount = notifs.filter(n => !n.read).length;
-
-    // Update user points chip in navbar
-    const pointsChip = document.getElementById('nav-user-points');
-    if (pointsChip) {
-      pointsChip.textContent = `${Formatters.formatNumber(user.greenPoints)} GC`;
+    const topCounter = document.getElementById('user-points-counter-top');
+    if (topCounter && user) {
+      const pts = user.greenPoints || 1250;
+      topCounter.innerText = `${Formatters.formatNumber(pts)} GC`;
     }
-
-    // Update notification dot
-    const notifDot = document.getElementById('notif-dot');
-    if (notifDot) {
-      notifDot.style.display = unreadCount > 0 ? 'block' : 'none';
-    }
-
-    // Update notification tray list
-    const notifList = document.getElementById('notif-tray-list');
-    if (notifList) {
-      notifList.innerHTML = notifs.map(n => `
-        <div style="padding: 0.75rem 1rem; border-bottom: 1px solid var(--color-border); background: ${n.read ? '#FFFFFF' : '#F0FDF4'};">
-          <strong style="font-size: 0.85rem; color: var(--color-navy); display: block; margin-bottom: 0.2rem;">${n.title}</strong>
-          <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4;">${n.message}</p>
-          <span style="font-size: 0.7rem; color: var(--text-light); margin-top: 0.35rem; display: block;">${Formatters.formatRelativeTime(n.timestamp)}</span>
-        </div>
-      `).join('');
-    }
-  }
-
-  toggleNotificationTray() {
-    SoundFX.playClick();
-    const tray = document.getElementById('notifications-tray');
-    if (tray) {
-      const isHidden = tray.style.display === 'none' || !tray.style.display;
-      tray.style.display = isHidden ? 'block' : 'none';
-      if (isHidden) {
-        State.markAllNotificationsRead();
-      }
-    }
-  }
-
-  showToast(message, type = 'success') {
-    let container = document.querySelector('.toast-container');
-    if (!container) {
-      container = document.createElement('div');
-      container.className = 'toast-container';
-      document.body.appendChild(container);
-    }
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.innerHTML = `<strong>${message}</strong>`;
-    container.appendChild(toast);
-    window.setTimeout(() => toast.remove(), 3200);
   }
 }
 
-// Global initialization
-window.addEventListener('DOMContentLoaded', () => {
-  window.AppRouter = new AppRouterManager();
-  window.Confetti = Confetti;
-  window.SoundFX = SoundFX;
-});
+// Instantiate and expose globally
+window.AppRouter = new AppRouterManager();
+export { AppRouterManager };

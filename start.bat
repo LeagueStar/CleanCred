@@ -1,8 +1,8 @@
 @echo off
-title GREEN LEGACY Platform
+title CLEANCRED — Municipal Waste Command Center
 echo ===================================================
-echo   Starting GREEN LEGACY Platform...
-echo   Tagline: EARN. RECYCLE. REWARD.
+echo   Starting CLEANCRED Platform...
+echo   ISRO Telemetry Command Center Aesthetic
 echo ===================================================
 
 cd /d "%~dp0"

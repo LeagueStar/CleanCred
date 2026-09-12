@@ -66,8 +66,8 @@ class CleanCredHandler(http.server.SimpleHTTPRequestHandler):
 
 def run_server():
     os.chdir(DIRECTORY)
-    socketserver.TCPServer.allow_reuse_address = True
-    with socketserver.TCPServer(("", PORT), CleanCredHandler) as httpd:
+    socketserver.ThreadingTCPServer.allow_reuse_address = True
+    with socketserver.ThreadingTCPServer(("", PORT), CleanCredHandler) as httpd:
         print("==================================================")
         print("  CleanCred Web Platform Running")
         print("  Tagline: Verified waste recovery")
@@ -81,3 +81,4 @@ def run_server():
 
 if __name__ == "__main__":
     run_server()
+

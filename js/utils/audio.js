@@ -113,3 +113,6 @@ class SoundEffectsManager {
 }
 
 export const SoundFX = new SoundEffectsManager();
+
+// Inline HTML onclick handlers reference SoundFX directly — expose on window.
+window.SoundFX = SoundFX;

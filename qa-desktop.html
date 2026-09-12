@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CleanCred — Desktop QA Harness (1440 &amp; 1280)</title>
+<style>
+  body { margin: 0; background: #26292e; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 8px; font-family: monospace; }
+  .label { color: #d7dce2; font-size: 11px; }
+  .frame-wrap { overflow: hidden; border-radius: 6px; box-shadow: 0 0 0 2px #4a4f57; }
+  iframe { border: 0; transform-origin: 0 0; background: #E0E5EC; }
+  #f1440 { width: 1440px; height: 1100px; transform: scale(0.29); }
+  #f1280 { width: 1280px; height: 1100px; transform: scale(0.29); }
+</style>
+</head>
+<body>
+  <div class="label">1440 × 1100 (scaled 0.29)</div>
+  <div class="frame-wrap" style="width: 418px; height: 319px;"><iframe id="f1440" src="/index.html#admin"></iframe></div>
+  <div class="label">1280 × 1100 (scaled 0.29)</div>
+  <div class="frame-wrap" style="width: 371px; height: 319px;"><iframe id="f1280" src="/index.html#admin"></iframe></div>
+  <script>
+    // Re-render each frame after fonts settle so charts and text layout are final
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.querySelectorAll('iframe').forEach(f => {
+          try { f.contentWindow.location.reload(); } catch (e) {}
+        });
+      }, 2500);
+    });
+  </script>
+</body>
+</html>
