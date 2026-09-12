@@ -1,108 +1,205 @@
 <div align="center">
-  <h1>🌍 CleanCred</h1>
-  <p><b>An Intelligent, Gamified Waste Management & Tracking Platform</b></p>
-  <p>Developed by <b>Team GreenLegacy</b></p>
-  <p>
-    <a href="https://leaguestar.github.io/CleanCred/"><b>🌐 View Live Website</b></a> •
-    <a href="#-features--portals"><b>Features</b></a> •
-    <a href="#-installation--local-setup"><b>Installation</b></a>
-  </p>
+
+# 🌍 CleanCred
+### Verified Waste Action & Green Credits Platform
+
+**Smart India Hackathon 2026** · Problem Statement **SIH26195** · Team **GreenLegacy** (ID: GSIH26015)
+Theme: *Clean & Green Technology* · Category: *Software*
+
+[![Live Demo](https://img.shields.io/badge/Live-Demo-059669?style=for-the-badge&logo=googlechrome&logoColor=white)](https://leaguestar.github.io/CleanCred/)
+[![SIH 2026](https://img.shields.io/badge/SIH-2026-0891B2?style=for-the-badge)](#-about)
+[![License](https://img.shields.io/badge/License-Proprietary-0F172A?style=for-the-badge)](#%EF%B8%8F-license--copyright)
+
+[🌐 Live Website](https://leaguestar.github.io/CleanCred/) · [✨ Features](#-features--portals) · [⚙️ How It Works](#%EF%B8%8F-how-it-works) · [🛠️ Tech Stack](#%EF%B8%8F-technology-stack) · [🚀 Setup](#-installation--local-setup) · [👥 Team](#-team-greenlegacy)
+
 </div>
 
 ---
 
 ## 📖 About
 
-**CleanCred** is a comprehensive, multi-portal waste management ecosystem designed to incentivize environmental cleanliness and accountability. By combining real-time reporting, geolocation tracking, and a gamified rewards system, the platform bridges the gap between citizens, sanitation workers, and governing institutions. 
+**CleanCred** is a **proof-backed waste management and collection platform** built for Smart India Hackathon 2026. Instead of rewarding citizens for simply *reporting* waste, CleanCred only issues **Green Credits** once an action is independently **verified** — turning municipal waste tracking into a closed-loop, auditable system.
 
-The goal is simple: reward users for responsible waste disposal while providing administrators and sanitation teams with actionable, data-driven insights into city-wide environmental impacts. Whether it is tracking smart bin usage via QR codes, reporting illegal dumping sites, or analyzing an organization's ecological footprint, CleanCred digitizes and rewards the entire waste management lifecycle.
+Every claimed action is checked against multiple independent signals before a credit is minted, which means the credit ledger reflects real, confirmed cleanup activity rather than self-reported claims. This gives municipalities a trustworthy dataset for monitoring, accountability, and planning — while giving citizens a transparent, gamified reason to participate.
+
+> **Report → Verify → Collect → Record → Earn**
+
+## 🚨 The Problem
+
+Most civic waste-reporting apps stop at "report" — a citizen submits a complaint or photo, and there's no reliable way to confirm the waste was actually segregated, collected, or resolved. This creates:
+
+- Reward systems that can be gamed with fake or duplicate submissions
+- No verifiable link between a citizen's claimed action and the outcome on the ground
+- Municipalities with reporting data but no confidence in its accuracy
+
+## 💡 Our Solution
+
+CleanCred closes that gap with **multi-signal verification** — a claim only becomes a credit once it clears every checkpoint in the pipeline:
+
+| Signal | What It Confirms |
+| :--- | :--- |
+| 🤖 **AI Segregation Check** | Whether the submitted waste is properly segregated |
+| 📍 **GPS Proximity** | That the citizen was actually at the reported location |
+| ⏱️ **Timestamp Verification** | That the action happened when it was claimed to |
+| 🔳 **QR-Based Collection** | Sanitation staff confirm physical collection at source |
+
+### Why It's Different
+
+- **Proof-backed action** — every credit is tied to verifiable evidence, not a self-report
+- **Multi-signal verification** — AI + GPS + QR + timestamp working together, not any single check alone
+- **Closed-loop accountability** — a full Report → Verify → Collect → Record cycle, not a one-way complaint box
+- **Behaviour-linked rewards** — credits are issued *after* verification, never merely for submitting
+- **Municipal visibility** — the same verified event doubles as clean data for monitoring and analytics
 
 ## ✨ Features & Portals
 
-The application architecture is divided into specialized modules and dedicated dashboards to serve various stakeholders effectively:
+CleanCred is a multi-portal ecosystem, with a dedicated experience for every stakeholder in the waste-management lifecycle:
 
-| Feature/Module | Description |
+| Portal / Module | Description |
 | :--- | :--- |
-| **Citizen & User Dashboard** | Empowers users to log in, view their profiles, and navigate the platform. |
-| **Waste & Dumping Reporting** | Allows citizens to report standard waste or flag illegal dumping sites with geolocation. |
-| **Gamified Rewards Wallet** | Incentivizes users by awarding credits for verified green actions, complete with interactive audio and visual confetti feedback. |
-| **Live Tracking & Mapping** | Real-time monitoring of waste collection routes and worker deployments using map utilities. |
-| **Smart QR Integration** | Facilitates smart bin usage and quick verification through built-in QR generation and scanning capabilities. |
-| **Worker & Institution Portals** | Dedicated interfaces for sanitation staff to track tasks, and institutions to manage local sustainability goals. |
-| **Admin & Impact Analytics** | High-level overviews of system metrics, user engagement, and measurable environmental impact. |
+| 🧑‍🤝‍🧑 **Citizen Dashboard** | Login, profile, and a central home to track activity and impact |
+| 📝 **Waste & Dumping Reporting** | Report standard waste or flag illegal dumping sites with geolocation |
+| 🎁 **Rewards Wallet** | Verified green actions earn Green Credits, with confetti + audio feedback |
+| 🏆 **Leaderboard** | Community rankings that drive friendly competition and engagement |
+| 🗺️ **Live Tracking & Mapping** | Real-time view of collection routes and worker deployment |
+| 🔳 **Smart QR Integration** | QR generation and in-browser scanning for smart-bin and collection verification |
+| 🧹 **Worker Portal** | Sanitation staff view assigned tasks and mark bins/sites as cleared |
+| 🏢 **Institution Portal** | Institutions manage local sustainability goals and participation |
+| 📊 **Admin & Impact Analytics** | System-wide metrics, verified-report oversight, and environmental impact tracking |
+
+## ⚙️ How It Works
+
+```
+   ┌────────────┐     ┌─────────────┐     ┌────────────┐     ┌────────────┐     ┌──────────┐
+   │  1. REPORT │ ──▶ │  2. VERIFY  │ ──▶ │ 3. COLLECT │ ──▶ │ 4. RECORD  │ ──▶ │ 5. EARN  │
+   └────────────┘     └─────────────┘     └────────────┘     └────────────┘     └──────────┘
+   Citizen submits     AI + GPS +          Sanitation staff    Verified event      Green Credits
+   evidence of a       Timestamp check     confirm pickup      logged for city-    minted to the
+   segregated/         the claim           via QR scan         wide analytics      citizen's wallet
+   disposed action
+```
+
+1. **Report** — A citizen submits evidence (photo + location) of waste segregation, disposal, or an illegal dumping site.
+2. **Verify** — The system checks AI-based segregation quality, GPS proximity to the reported site, and timestamp authenticity.
+3. **Collect** — A waste collector arrives and confirms pickup by scanning a QR code, closing the loop physically.
+4. **Record** — The verified event is logged into city-wide monitoring and impact-analytics dashboards.
+5. **Earn** — Only now are Green Credits issued to the citizen's Rewards Wallet.
 
 ## 🛠️ Technology Stack
 
-CleanCred utilizes a lightweight yet robust stack, prioritizing a smooth UI and rapid deployment:
+CleanCred uses a lightweight, dependency-light stack chosen for a smooth UI and rapid, judge-friendly deployment:
 
-*   **Frontend UI:** Pure HTML5, enhanced with a modern UI relying on custom styling techniques and responsive layouts.
-*   **Aesthetics:** Modern frosted-glass visual effects (`glassmorphism.css`) and dynamic transitions (`animations.css`).
-*   **State Management & Logic:** Modular Vanilla JavaScript handling global state and core application flow.
-*   **Backend / Server:** Python-based server architecture (`server.py`).
+| Layer | Technology |
+| :--- | :--- |
+| **Structure** | Semantic HTML5 |
+| **Styling** | Tailwind CSS (utility layer) + custom `main.css`, `components.css`, `animations.css`, `responsive.css` |
+| **Application Logic** | Modular Vanilla JavaScript — a lightweight client-side router and global state manager |
+| **Interactivity** | Custom utilities for QR generation/scanning, live-map rendering, confetti, and audio feedback |
+| **Backend / Local Server** | Python (`server.py`) — a zero-dependency HTTP server for local hosting and API endpoints |
+| **Deployment** | Static hosting via GitHub Pages |
 
 ## 📂 Project Structure
 
 ```bash
 CleanCred/
-├── index.html                   # Main entry point
-├── server.py                    # Python backend server
-├── start.bat                    # Windows startup script
-├── css/                         
-│   ├── animations.css           # UI transitions and keyframes
-│   ├── components.css           # Modular styling for components
-│   ├── glassmorphism.css        # Frosted glass UI effects
-│   ├── main.css                 # Global stylesheets
-│   └── responsive.css           # Mobile/tablet responsiveness
+├── index.html                  # Main entry point & app shell
+├── server.py                   # Python local dev / API server
+├── start.bat                   # Windows one-click startup script
+├── css/
+│   ├── main.css                 # Global styles & design tokens
+│   ├── components.css           # Component-level styling
+│   ├── animations.css           # Transitions & keyframes
+│   └── responsive.css           # Mobile / tablet responsiveness
 └── js/
-    ├── app.js                   # Application initialization    
+    ├── app.js                   # App router & controller
     ├── state.js                 # Global state management
-    ├── components/              # Specialized UI modules (dashboards, portals, reports)
-    └── utils/                   # Helpers (audio, confetti, maps, QR code/scanner)
+    ├── components/               # One module per portal/view
+    │   ├── dashboard.js              # Citizen dashboard
+    │   ├── reportWaste.js            # Waste reporting flow
+    │   ├── illegalDumping.js         # Illegal dumping reports
+    │   ├── rewardsWallet.js          # Green Credits wallet
+    │   ├── leaderboard.js            # Community leaderboard
+    │   ├── liveTracking.js           # Live collection map
+    │   ├── workerPortal.js           # Sanitation worker portal
+    │   ├── institutionPortal.js      # Institution portal
+    │   ├── adminDashboard.js         # Admin controls
+    │   ├── impactDashboard.js        # Analytics & impact
+    │   ├── profile.js                # User profile
+    │   └── landing.js                # Landing page
+    └── utils/                     # Shared helpers
+        ├── qrCode.js                  # QR code generation
+        ├── qrScanner.js               # In-browser QR scanning
+        ├── mapHelper.js               # Map rendering utilities
+        ├── confetti.js                # Reward celebration effects
+        ├── audio.js                   # Sound feedback
+        └── formatters.js              # Shared formatting helpers
 ```
+
 ## 🚀 Installation & Local Setup
 
-To run CleanCred locally on your machine for development or evaluation:
+**Prerequisites:** [Python 3.x](https://www.python.org/downloads/) installed on your system.
 
-1.  **Clone the Repository:**
-    ```bash
-    git clone [https://github.com/LeagueStar/CleanCred.git](https://github.com/LeagueStar/CleanCred.git)
-    cd CleanCred
-    ```
-2.  **Launch the Environment:**
-    *   **Windows:** Execute the provided batch script by double-clicking `start.bat` or running it from the command line.
-    *   **Manual/Cross-Platform:** Run the Python server directly to host the application:
-        ```bash
-        python server.py
-        ```
-        *(Ensure you have Python 3.x installed on your system)*.
-3.  **Access the Application:**
-    Open your preferred web browser and navigate to the local port hosted by the Python server (typically `http://localhost:8000` or as defined in the server output).
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/LeagueStar/CleanCred.git
+   cd CleanCred
+   ```
 
-## 💡 Usage Workflow
+2. **Launch the server**
 
-1. **Citizens:** Log in, scan smart bin QR codes, or snap photos of illegal dumping sites to report them. Track your earned CleanCreds and leaderboard ranking in the Gamified Wallet.
-2. **Sanitation Workers:** Access the Worker Portal to view active tasks, follow optimized collection routes via live tracking, and mark bins or dumping sites as cleared.
-3. **Institutions & Admins:** Use the Admin & Impact Dashboards to monitor city-wide cleanliness, verify user reports, distribute rewards, and analyze sustainability metrics.
+   - **Windows** — double-click `start.bat`, or run it from the command line
+   - **macOS / Linux / manual** —
+     ```bash
+     python3 server.py
+     ```
+
+3. **Open the app**
+
+   Navigate to `http://localhost:8081` (or the port printed in the server output).
+
+No build step, no package manager, no external services required — clone and run.
+
+## 🧭 Usage Workflow
+
+| Role | What They Do |
+| :--- | :--- |
+| **Citizens** | Log in, report waste or dumping sites with photo evidence, and track Green Credits and leaderboard rank in the Rewards Wallet |
+| **Sanitation Workers** | Open the Worker Portal to view assigned tasks, follow live collection routes, and confirm pickup via QR scan |
+| **Institutions** | Manage local sustainability goals and monitor participation from the Institution Portal |
+| **Admins** | Use the Admin & Impact Dashboards to verify reports, oversee credit distribution, and analyze city-wide environmental impact |
+
+## 🗺️ Roadmap
+
+- [ ] Live backend integration for persistent credit ledger and user accounts
+- [ ] Production AI model for automated segregation-quality scoring
+- [ ] Municipal-grade analytics exports for civic bodies
+- [ ] Native mobile app for on-the-go citizen reporting
 
 ## 🤝 Contributing
 
-This is an exclusive project developed for the Smart India Hackathon (SIH). Outside contributions, pull requests, and forks are currently not permitted to maintain project integrity.
+This project was developed exclusively for the **Smart India Hackathon 2026**. Outside contributions, pull requests, and forks are not accepted, in order to preserve the integrity of the submission.
 
 ## 🛡️ License & Copyright
 
-**Copyright (c) 2026 Team GreenLegacy. All Rights Reserved.**
+**Copyright © 2026 Team GreenLegacy. All Rights Reserved.**
 
-This project was developed by Team GreenLegacy for the Smart India Hackathon (SIH). This source code is proprietary and confidential. No part of this software, code, or design may be copied, reproduced, distributed, published, or modified, in whole or in part, in any form or by any means, without the prior written, explicit permission of the copyright owners. 
+This project was developed by **Team GreenLegacy** for the Smart India Hackathon (SIH) 2026. This source code is proprietary and confidential. No part of this software, code, or design may be copied, reproduced, distributed, published, or modified — in whole or in part, in any form or by any means — without the prior written, explicit permission of the copyright owners.
 
 Unauthorized copying, cloning, or use of this project is strictly prohibited.
 
-## 📞 Team GreenLegacy
+## 👥 Team GreenLegacy
 
-* **Kartik Devdhawala (LeagueStar)** - [@LeagueStar](https://github.com/LeagueStar)
-* **Harshprit Bagga**
-* **Shivansh Prajapati**
-* **Suraj Singh**
-* **Satyam Gupta**
-* **Kreya Patel**
+| Member | GitHub |
+| :--- | :--- |
+| **Kartik Devdhawala** | [@LeagueStar](https://github.com/LeagueStar) |
+| **Harshprit Bagga** | — |
+| **Shivansh Prajapati** | — |
+| **Suraj Singh** | — |
+| **Satyam Gupta** | — |
+| **Kreya Patel** | — |
 
-**Live Website:** [CleanCred Live](https://leaguestar.github.io/CleanCred/)
+<div align="center">
+
+**🌐 [Live Website](https://leaguestar.github.io/CleanCred/)** · Built with 💚 for a cleaner tomorrow
+
+</div>
