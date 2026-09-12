@@ -39,7 +39,7 @@ export const IllegalDumpingView = {
         </div>
 
         <!-- 2-Column: Report Form (Left) & Active Status Tracker (Right) -->
-        <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 1.75rem;" class="hero-grid">
+        <div class="hero-grid hero-grid-dumping" style="gap: 1.75rem;">
           
           <!-- Left: Submission Form -->
           <div class="neu-card neu-card-raised" style="padding: 2rem; border-radius: var(--radius-xl);">

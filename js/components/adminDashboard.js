@@ -192,7 +192,7 @@ export const AdminDashboardView = {
             </div>
 
             <!-- ROW 2: DUAL CHARTS (WEEKLY DIVERSION + SEGREGATION TAXONOMY) -->
-            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.25rem;" class="hero-grid">
+            <div class="hero-grid hero-grid-admin" style="gap: 1.25rem;">
               
               <!-- Chart 1: Weekly Trends Line Chart -->
               <div class="neu-card neu-card-raised" style="padding: 1.5rem; border-radius: var(--radius-xl);">

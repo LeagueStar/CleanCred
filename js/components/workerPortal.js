@@ -198,7 +198,7 @@ export const WorkerPortalView = {
         </div>
 
         <!-- Action Buttons -->
-        <div style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 0.85rem;">
+        <div class="modal-actions-grid">
           <button class="btn btn-secondary" style="border-color: #EF4444; color: #EF4444;" onclick="window.WorkerPortalView.processVerification('${item.id}', false)">
             <i data-lucide="x-circle" class="lucide-icon-sm"></i>
             <span>Reject Waste</span>

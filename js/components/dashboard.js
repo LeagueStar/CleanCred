@@ -284,7 +284,7 @@ export const DashboardView = {
         </div>
 
         <!-- 6. QUICK CIVIC LINKS -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2rem; gap: 1rem;">
+        <div class="dashboard-quick-links-grid">
           <div class="neu-card neu-card-raised" style="padding: 1.25rem; border-radius: var(--radius-lg); cursor: pointer;" onclick="window.AppRouter.navigate('leaderboard')">
             <div style="width: 38px; height: 38px; border-radius: 50%; background: #FEF3C7; color: #B45309; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem;">
               <i data-lucide="trophy" class="lucide-icon-sm"></i>

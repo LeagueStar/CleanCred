@@ -28,7 +28,7 @@ export const ProfileView = {
         </div>
 
         <!-- 2-Column Profile Layout -->
-        <div style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 1.75rem;" class="hero-grid">
+        <div class="hero-grid hero-grid-profile" style="gap: 1.75rem;">
           
           <!-- Left: Profile Summary Card -->
           <div class="neu-card neu-card-raised" style="padding: 2rem; text-align: center; border-radius: var(--radius-xl);">

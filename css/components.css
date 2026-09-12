@@ -938,3 +938,98 @@
   height: 14px;
   vertical-align: middle;
 }
+
+/* ==========================================================================
+   HERO GRID VARIANTS & RESPONSIVE COMPONENT GRIDS
+   ========================================================================== */
+
+/* Hero Grid Column Overrides (Desktop) */
+.hero-grid-profile {
+  grid-template-columns: 1fr 1.6fr;
+}
+
+.hero-grid-admin {
+  grid-template-columns: 1.5fr 1fr;
+}
+
+.hero-grid-dumping {
+  grid-template-columns: 1.1fr 0.9fr;
+}
+
+.hero-grid-landing {
+  grid-template-columns: 1.15fr 0.85fr;
+}
+
+.hero-grid-leaderboard {
+  grid-template-columns: 1.15fr 0.85fr;
+}
+
+.hero-grid-2col {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Component Action & Step Grids */
+.step-nav-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 0.75rem;
+}
+
+.modal-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 0.85rem;
+}
+
+.card-actions-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.process-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1.5rem;
+}
+
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.dashboard-quick-links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* Responsive Collapse Rules */
+@media (max-width: 960px) {
+  .hero-grid-profile,
+  .hero-grid-admin,
+  .hero-grid-dumping,
+  .hero-grid-landing,
+  .hero-grid-leaderboard,
+  .hero-grid-2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .step-nav-grid,
+  .modal-actions-grid,
+  .dashboard-quick-links-grid,
+  .process-steps-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-actions-grid-2col {
+    grid-template-columns: 1fr;
+  }
+}

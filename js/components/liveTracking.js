@@ -64,7 +64,7 @@ export const LiveTrackingView = {
         </div>
 
         <!-- 2-Column Layout: Map (Left) & Status Timeline + Worker Card (Right) -->
-        <div style="display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 1.75rem;" class="hero-grid">
+        <div class="hero-grid" style="gap: 1.75rem;">
           
           <!-- Left Column: Map -->
           <div class="neu-card neu-card-raised" style="padding: 1.25rem; overflow: hidden; border-radius: var(--radius-xl);">
@@ -134,7 +134,7 @@ export const LiveTrackingView = {
               </div>
               `}
 
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+              <div class="card-actions-grid-2col">
                 <button class="btn btn-secondary btn-sm" onclick="window.AppRouter.showToast('Calling Ramesh Kumar at ${pickup.workerPhone || '+91 98111 22334'}...')">
                   <i data-lucide="phone" class="lucide-icon-sm"></i>
                   <span>Call Worker</span>

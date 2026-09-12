@@ -352,7 +352,7 @@ export const ReportWasteView = {
               </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 0.75rem; margin-top: 1.5rem;">
+            <div class="step-nav-grid" style="margin-top: 1.5rem;">
               <button class="btn btn-secondary btn-lg" onclick="window.ReportWasteView.goToStep(1)">
                 <i data-lucide="arrow-left" class="lucide-icon-sm"></i>
                 <span>Back</span>
@@ -428,7 +428,7 @@ export const ReportWasteView = {
               <input type="text" class="form-input neu-input" value="${this.formData.notes}" oninput="window.ReportWasteView.formData.notes = this.value" placeholder="e.g. Leave at gate or ring bell">
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 0.75rem;">
+            <div class="step-nav-grid">
               <button class="btn btn-secondary btn-lg" onclick="window.ReportWasteView.goToStep(2)">
                 <i data-lucide="arrow-left" class="lucide-icon-sm"></i>
                 <span>Back</span>
@@ -493,7 +493,7 @@ export const ReportWasteView = {
               </span>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 0.75rem;">
+            <div class="step-nav-grid">
               <button class="btn btn-secondary btn-lg" onclick="window.ReportWasteView.goToStep(3)">
                 <i data-lucide="arrow-left" class="lucide-icon-sm"></i>
                 <span>Edit</span>

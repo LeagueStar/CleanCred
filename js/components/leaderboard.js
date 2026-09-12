@@ -153,7 +153,7 @@ export const LeaderboardView = {
         </div>
 
         <!-- 2-Column Section: Detailed Ranked List (Left) & Collectible Badges + Challenges (Right) -->
-        <div style="display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 1.75rem;" class="hero-grid">
+        <div class="hero-grid hero-grid-leaderboard" style="gap: 1.75rem;">
           
           <!-- Left: Full Leaderboard List -->
           <div class="neu-card neu-card-raised" style="padding: 1.75rem; border-radius: var(--radius-xl);">
@@ -201,7 +201,7 @@ export const LeaderboardView = {
                 <span class="badge badge-green">4 / 7 Unlocked</span>
               </div>
 
-              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 0.75rem; text-align: center;">
+              <div class="badges-grid">
                 ${State.state.badges.map(b => `
                   <div class="${b.unlocked ? 'neu-card-flat' : 'neu-card-inset'}" style="padding: 0.85rem 0.5rem; border-radius: var(--radius-md); opacity: ${b.unlocked ? '1' : '0.6'}; cursor: pointer;" onclick="window.LeaderboardView.showBadgeDetails('${b.id}')">
                     <div style="width: 36px; height: 36px; border-radius: 50%; background: ${b.unlocked ? '#DCFCE7' : '#E2E8F0'}; color: ${b.unlocked ? 'var(--color-primary-dark)' : '#64748B'}; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.35rem auto;">

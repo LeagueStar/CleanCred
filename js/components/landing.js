@@ -16,7 +16,7 @@ export const LandingPage = {
         <!-- Hero Section -->
         <section class="hero-section" style="padding: 2.5rem 0 4rem 0; position: relative;">
           <div class="app-container">
-            <div class="hero-grid" style="display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 3.5rem; align-items: center;">
+            <div class="hero-grid hero-grid-landing" style="gap: 3.5rem; align-items: center;">
               
               <!-- Left Column: Copy & CTAs -->
               <div class="hero-content">
@@ -127,7 +127,7 @@ export const LandingPage = {
             </div>
 
             <!-- 5 Steps Grid -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.5rem;">
+            <div class="process-steps-grid">
               
               <!-- Step 1 -->
               <div class="neu-card neu-card-raised" style="padding: 1.75rem 1.25rem; text-align: center;">
@@ -288,7 +288,7 @@ export const LandingPage = {
         <!-- Interactive Points & Reward Conversion Calculator -->
         <section style="padding: 4rem 0; background: #173A26; color: #FFFFFF;">
           <div class="app-container">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;" class="hero-grid">
+            <div class="hero-grid hero-grid-2col" style="gap: 3rem; align-items: center;">
               <div>
                 <div class="badge" style="background: rgba(132, 204, 22, 0.2); color: #84CC16; border: 1px solid #84CC16; margin-bottom: 1rem;">
                   GREEN CREDITS, SIMPLY EXPLAINED
