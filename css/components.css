@@ -26,6 +26,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  overflow: hidden;
 }
 
 .brand-cluster {
@@ -272,6 +273,194 @@
   border-radius: var(--radius-full);
   box-shadow: 0 1px 3px rgba(5, 150, 105, 0.4);
   transition: width 0.4s ease;
+}
+
+/* ==========================================================================
+   HERO SCAN COMPONENT (TACTILE CIRCULAR PRE-CHECK BUTTON)
+   Solid Matte Neumorphic Surface // Zero Glass // Zero Backdrop-Filter
+   ========================================================================== */
+.hero-scan-circle-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 1.75rem auto 2rem auto;
+  text-align: center;
+  width: 100%;
+}
+
+.btn-hero-scan-circular {
+  position: relative;
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 4px solid var(--color-border-highlight);
+  box-shadow: 10px 10px 24px var(--shadow-dark), -8px -8px 20px var(--shadow-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+  user-select: none;
+  padding: 1rem;
+}
+
+.btn-hero-scan-circular:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 14px 14px 30px var(--shadow-dark), -10px -10px 24px var(--shadow-light);
+}
+
+.btn-hero-scan-circular:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: inset 4px 4px 10px var(--shadow-dark), inset -3px -3px 8px var(--shadow-light);
+}
+
+.scan-icon-bubble {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #DCFCE7;
+  color: var(--color-primary-dark);
+  box-shadow: inset 2px 2px 5px rgba(22, 163, 74, 0.2), 0 4px 12px rgba(22, 163, 74, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.6rem;
+  transition: transform 0.3s ease;
+}
+
+.btn-hero-scan-circular:hover .scan-icon-bubble {
+  transform: scale(1.08);
+}
+
+.scan-icon-bubble svg {
+  width: 28px;
+  height: 28px;
+}
+
+.scan-btn-label {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: var(--color-navy);
+  margin-bottom: 0.15rem;
+}
+
+.scan-btn-sublabel {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-primary-dark);
+  text-transform: uppercase;
+}
+
+.scan-supporting-note {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 0.85rem;
+  max-width: 420px;
+  line-height: 1.4;
+}
+
+.scan-supporting-note .mobile-note {
+  display: none;
+}
+
+.scan-supporting-note .desktop-note {
+  display: inline;
+}
+
+/* Hero Scan Pulse Ring */
+.hero-scan-pulse::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid rgba(5, 150, 105, 0.35);
+  animation: neuPulse 3s infinite ease-out;
+  pointer-events: none;
+}
+
+@keyframes neuPulse {
+  0% { transform: scale(0.97); opacity: 0.8; }
+  50% { transform: scale(1.03); opacity: 0.3; }
+  100% { transform: scale(0.97); opacity: 0.8; }
+}
+
+/* Mobile Primary CTA Button */
+.mobile-primary-cta-container {
+  display: none;
+}
+
+.btn-mobile-report-waste {
+  width: 100%;
+  height: 52px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* Mobile Segmented Role Strip (Fixed Beneath Topbar Header on Mobile) */
+.mobile-role-strip {
+  display: none;
+}
+
+.mobile-role-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 380px;
+  background: var(--bg-sunken);
+  box-shadow: var(--neu-inset-sm);
+  border: 1px solid rgba(209, 217, 230, 0.6);
+  padding: 3px;
+  border-radius: var(--radius-full);
+}
+
+.mobile-role-tabs .role-tab-btn {
+  flex: 1;
+  text-align: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  padding: 0.4rem 0.6rem;
+}
+
+/* Dashboard Metrics Grid (Responsive 3-to-2 Column) */
+.dashboard-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* Helper Utilities for Responsive Cleanliness */
+.show-on-mobile {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+  .show-on-mobile {
+    display: flex !important;
+  }
+  .show-on-mobile.block {
+    display: block !important;
+  }
 }
 
 /* Active Pickup Card */
@@ -859,6 +1048,51 @@
   box-shadow: var(--neu-inset-sm);
 }
 
+/* AI Scan Viewfinder Modal & Camera Preview Box */
+.scan-viewfinder-modal {
+  background: var(--bg-surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border-highlight);
+  box-shadow: 12px 12px 32px rgba(15, 23, 42, 0.35), -6px -6px 20px var(--shadow-light);
+  width: 100%;
+  max-width: 440px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.camera-preview-box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #0D1117;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid #1E293B;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.celebration-reward-card {
+  background: var(--bg-surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border-highlight);
+  box-shadow: 12px 12px 32px rgba(15, 23, 42, 0.35), -6px -6px 20px var(--shadow-light);
+  width: 100%;
+  max-width: 440px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 2rem 1.5rem;
+  box-sizing: border-box;
+  text-align: center;
+}
+
 /* ==========================================================================
    8. TIMELINE & LIVE TRACKING
    ========================================================================== */
@@ -1033,3 +1267,227 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================================================
+   10. REWARDS OVERVIEW GRID (3-CARD DESKTOP, ADAPTIVE MOBILE)
+   ========================================================================== */
+.rewards-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.rewards-card-primary,
+.rewards-card-compact {
+  box-sizing: border-box;
+}
+
+.rewards-card-amount {
+  font-size: 2.8rem;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+/* ==========================================================================
+   11. COMMAND TOOLS SECTION (MOBILE FULL-WIDTH TACTILE ROWS)
+   ========================================================================== */
+.command-tools-section {
+  display: none; /* Shown on <= 768px via responsive.css */
+  padding: 1.5rem;
+  border-radius: var(--radius-xl);
+  margin-bottom: 1.5rem;
+  box-sizing: border-box;
+}
+
+.command-tools-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin: 0 0 1rem 0;
+}
+
+.command-tools-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.command-tool-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  border: 1px solid var(--color-border-highlight);
+  box-shadow: var(--neu-raised-sm);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.command-tool-row:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--neu-raised);
+}
+
+.command-tool-row:active {
+  transform: translateY(1px);
+  box-shadow: var(--neu-inset-sm);
+}
+
+.command-tool-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.command-tool-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.command-tool-info strong {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--color-navy);
+  margin-bottom: 0.15rem;
+}
+
+.command-tool-info span {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.command-tool-row .tool-arrow {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   12. MOBILE BOTTOM DOCK (BASE ARCHITECTURE)
+   ========================================================================== */
+.mobile-bottom-dock {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: calc(64px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: var(--bg-surface);
+  border-top: 1px solid var(--color-border);
+  box-shadow: 0 -4px 14px var(--shadow-dark), 0 -1px 0 var(--color-border-highlight);
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+.dock-nav-group {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 100%;
+}
+
+.dock-item-btn {
+  flex: 1;
+  padding: 0.35rem 0.2rem;
+  gap: 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.dock-item-btn.active {
+  color: var(--color-primary-dark);
+}
+
+.dock-item-btn .dock-lucide-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.dock-center-slot {
+  position: relative;
+  width: 64px;
+  flex: 0 0 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  padding-bottom: 6px;
+  box-sizing: border-box;
+}
+
+.dock-floating-fab {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: -22px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #FFFFFF;
+  border: 3.5px solid var(--bg-surface);
+  box-shadow: 0 6px 16px rgba(5, 150, 105, 0.42), var(--neu-raised-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+  z-index: 1001;
+}
+
+.dock-floating-fab:hover {
+  transform: translateX(-50%) scale(1.08);
+  box-shadow: 0 8px 20px rgba(5, 150, 105, 0.5);
+}
+
+.dock-floating-fab:active {
+  transform: translateX(-50%) scale(0.94);
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.4);
+}
+
+.dock-floating-fab .dock-fab-icon {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2.5;
+  color: #FFFFFF;
+}
+
+.dock-fab-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--color-primary-dark);
+  letter-spacing: 0.02em;
+  margin-top: 2px;
+}
+

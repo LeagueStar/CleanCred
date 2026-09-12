@@ -18,7 +18,7 @@ export const DashboardView = {
     if (!container) return;
 
     const user = State.state.user;
-    const activePickup = State.state.pickups.find(p => ['on_the_way', 'assigned', 'created'].includes(p.status));
+    const activePickups = State.state.pickups.filter(p => ['on_the_way', 'assigned', 'created'].includes(p.status));
     const balance = user.greenPoints || 1250;
     const inrValue = Formatters.gpToInr(balance);
     const nextTierGc = 1500;
@@ -28,30 +28,30 @@ export const DashboardView = {
       <div class="app-container citizen-dashboard animate-fade-in" style="padding-bottom: 5.5rem;">
         
         <!-- TOP GREETING & STREAK BANNER -->
-        <div class="flex-between" style="flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; align-items: flex-start;">
+        <div class="flex-between dashboard-heading" style="margin-bottom: 1.25rem; align-items: flex-start;">
           <div>
             <div class="eyebrow" style="color: var(--color-primary-dark); font-weight: 800; display: flex; align-items: center; gap: 0.35rem;">
               <i data-lucide="map-pin" class="lucide-icon-sm"></i>
-              <span>Ward 4B &bull; Bandra West, Mumbai</span>
+              <span>Ward 4B &bull; Bandra West</span>
             </div>
-            <h1 style="color: var(--color-navy); font-size: clamp(1.8rem, 3.5vw, 2.4rem); margin-top: 0.25rem;">
+            <h1 style="color: var(--color-navy); font-size: clamp(1.75rem, 3.5vw, 2.4rem); margin: 0.2rem 0;">
               Good morning, ${user.name.split(' ')[0]}
             </h1>
-            <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.25rem;">
-              ${activePickup ? 'Your municipal collection is in progress. Hand over waste upon arrival to release credits.' : 'Keep your household waste segregated and earn verified Green Credits.'}
+            <p class="hide-on-mobile" style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.25rem;">
+              ${activePickups.length > 0 ? 'Your municipal collection is in progress. Hand over waste upon arrival to release credits.' : 'Keep your household waste segregated and earn verified Green Credits.'}
             </p>
           </div>
 
-          <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-            <button class="btn btn-secondary btn-sm" onclick="window.AppRouter.navigate('profile')" title="View Citizen Profile & Settings" style="padding: 0.45rem 0.85rem;">
+          <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
+            <button class="btn btn-secondary btn-sm hide-on-mobile" onclick="window.AppRouter.navigate('profile')" title="View Citizen Profile & Settings" style="padding: 0.45rem 0.85rem;">
               <i data-lucide="user" class="lucide-icon-sm"></i>
               <span>${user.name.split(' ')[0]}</span>
             </button>
-            <div class="badge badge-amber" style="padding: 0.5rem 0.9rem; font-size: 0.85rem; border-radius: var(--radius-full); display: flex; align-items: center; gap: 0.35rem;">
+            <div class="badge badge-amber" style="padding: 0.45rem 0.85rem; font-size: 0.82rem; border-radius: var(--radius-full); display: flex; align-items: center; gap: 0.35rem;">
               <i data-lucide="flame" class="lucide-icon-sm"></i>
               <span>${user.greenStreakDays} Day Streak</span>
             </div>
-            <button class="btn btn-primary" onclick="window.AppRouter.navigate('report-waste')" style="font-size: 0.9rem; padding: 0.65rem 1.25rem;">
+            <button class="btn btn-primary hide-on-mobile" onclick="window.AppRouter.navigate('report-waste')" style="font-size: 0.9rem; padding: 0.65rem 1.25rem;">
               <i data-lucide="plus" class="lucide-icon-sm"></i>
               <span>Report Waste</span>
             </button>
@@ -64,7 +64,7 @@ export const DashboardView = {
             <span style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">
               Available Green Credits
             </span>
-            <span class="badge badge-green" style="display: flex; align-items: center; gap: 0.3rem;">
+            <span class="badge badge-green hide-on-mobile" style="display: flex; align-items: center; gap: 0.3rem;">
               <i data-lucide="shield-check" class="lucide-icon-sm"></i>
               <span>Level 4 Eco Citizen</span>
             </span>
@@ -77,8 +77,8 @@ export const DashboardView = {
 
           <div style="margin-top: 0.25rem;">
             <div class="flex-between" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.35rem;">
-              <span>Next Reward Tier: ${Formatters.formatNumber(nextTierGc)} GC</span>
-              <span style="color: var(--color-primary-dark); font-weight: 800;">${progressPct}% Reached</span>
+              <span>Next reward: ${Formatters.formatNumber(nextTierGc)} GC</span>
+              <span class="hide-on-mobile" style="color: var(--color-primary-dark); font-weight: 800;">${progressPct}% Reached</span>
             </div>
             <div class="progress-track neu-card-inset" role="progressbar" aria-valuenow="${progressPct}" aria-valuemin="0" aria-valuemax="100">
               <div class="progress-fill" style="width: ${progressPct}%"></div>
@@ -87,60 +87,58 @@ export const DashboardView = {
 
           <div class="flex-between" style="margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid var(--color-border); font-size: 0.85rem; font-weight: 700;">
             <span style="color: var(--text-muted);">
-              Estimated INR Value: <strong style="color: var(--color-navy);">₹${inrValue}</strong>
+              <span class="hide-on-mobile">Estimated INR Value: </span><strong style="color: var(--color-navy);">₹${inrValue} value</strong>
             </span>
             <button class="btn btn-secondary btn-sm" onclick="window.AppRouter.navigate('rewards')" style="color: var(--color-primary-dark); font-weight: 800;">
-              <span>Redeem Rewards & Vouchers</span>
+              <span>Redeem</span>
               <i data-lucide="arrow-right" class="lucide-icon-sm"></i>
             </button>
           </div>
         </div>
 
-        <!-- 1b. HERO FEATURE: TACTILE CIRCULAR "SCAN WASTE PRE-CHECK" BUTTON -->
-        <div class="hero-scan-circle-container">
-          <button class="btn-hero-scan-circular hero-scan-pulse" id="btn-hero-scan" onclick="window.DashboardView.startMockScan()" aria-label="Scan Waste for AI Pre-Check">
-            <div class="scan-icon-bubble">
-              <i data-lucide="camera" class="lucide-icon-lg"></i>
-            </div>
-            <span class="scan-btn-label">AI PRE-CHECK</span>
-            <span class="scan-btn-sublabel">SCAN & STAGE PICKUP</span>
+        <!-- PRIMARY REPORT WASTE ACTION (MOBILE FULL-WIDTH CTA) -->
+        <div class="mobile-primary-cta-container">
+          <button class="btn btn-primary btn-mobile-report-waste" onclick="window.AppRouter.navigate('report-waste')">
+            <i data-lucide="plus-circle" class="lucide-icon-md"></i>
+            <span>+ Report Waste</span>
           </button>
-          <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-align: center; margin-top: 0.9rem;">
-            Computer-vision purity pre-check &bull; Credits awarded on physical worker verification
-          </div>
         </div>
 
-        <!-- 2. ACTIVE PICKUP CARD (SWIGGY/UBER STYLE) -->
-        ${activePickup ? `
-          <div class="pickup-status-card neu-card neu-card-raised">
-            <div class="pickup-status-info">
-              <div class="flex-between" style="margin-bottom: 0.4rem;">
-                <span class="badge ${activePickup.category === 'wet' ? 'badge-green' : activePickup.category === 'dry' ? 'badge-blue' : 'badge-red'}">
-                  ${activePickup.categoryName || 'Segregated Collection'}
-                </span>
-                <span style="font-size: 0.78rem; font-weight: 700; color: var(--color-primary-dark); display: flex; align-items: center; gap: 0.3rem;">
-                  <i data-lucide="clock" class="lucide-icon-sm"></i>
-                  <span>En Route &bull; ETA ${activePickup.etaMinutes || 12} mins</span>
-                </span>
-              </div>
-              <strong style="font-size: 1.15rem; color: var(--color-navy); display: block;">
-                Request #${activePickup.id} &bull; ${activePickup.subType || 'Household Waste'}
-              </strong>
-              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">
-                Assigned Worker: <strong>${activePickup.workerName || 'Ramesh Kumar'}</strong> (${activePickup.vehicleNo || 'Electric Van MH-02-GK-4091'})
-              </p>
-            </div>
+        <!-- 2. ACTIVE PICKUP CARDS (MULTI-REPORT COMPACT STACKING) -->
+        ${activePickups.length > 0 ? `
+          <div style="margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+            ${activePickups.map(p => `
+              <div class="pickup-status-card neu-card neu-card-raised">
+                <div class="pickup-status-info">
+                  <div class="flex-between" style="margin-bottom: 0.4rem;">
+                    <span class="badge ${p.category === 'wet' ? 'badge-green' : p.category === 'dry' ? 'badge-blue' : 'badge-red'}">
+                      ${p.status === 'on_the_way' ? 'COLLECTION IN PROGRESS' : p.status === 'assigned' ? 'WORKER ASSIGNED' : 'COLLECTION STAGED'}
+                    </span>
+                    <span style="font-size: 0.78rem; font-weight: 700; color: var(--color-primary-dark); display: flex; align-items: center; gap: 0.3rem;">
+                      <i data-lucide="clock" class="lucide-icon-sm"></i>
+                      <span>ETA ${p.etaMinutes || 18} mins</span>
+                    </span>
+                  </div>
+                  <strong style="font-size: 1.15rem; color: var(--color-navy); display: block;">
+                    Request #${p.id} &bull; ${p.subType || p.categoryName}
+                  </strong>
+                  <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                    Assigned Worker: <strong>${p.workerName || 'Ramesh Kumar'}</strong> (${p.vehicleNo || 'Electric Van MH-02-GK-4091'})
+                  </p>
+                </div>
 
-            <div class="pickup-status-actions">
-              <div class="pickup-otp-pill neu-card-inset">
-                <div class="pickup-otp-label">Handover OTP</div>
-                <div class="pickup-otp-val">${activePickup.otp || '8492'}</div>
+                <div class="pickup-status-actions">
+                  <button class="btn btn-primary" onclick="window.AppRouter.navigate('live-tracking')">
+                    <i data-lucide="navigation" class="lucide-icon-sm"></i>
+                    <span>Track Live Pickup</span>
+                  </button>
+                  <div class="pickup-otp-pill neu-card-inset">
+                    <span class="pickup-otp-label">Handover OTP</span>
+                    <span class="pickup-otp-val">${p.otp || '8492'}</span>
+                  </div>
+                </div>
               </div>
-              <button class="btn btn-primary" onclick="window.AppRouter.navigate('live-tracking')">
-                <i data-lucide="navigation" class="lucide-icon-sm"></i>
-                <span>Track Live Pickup</span>
-              </button>
-            </div>
+            `).join('')}
           </div>
         ` : `
           <div class="pickup-status-card neu-card neu-card-raised" style="border-left-color: var(--color-border-strong);">
@@ -158,28 +156,43 @@ export const DashboardView = {
           </div>
         `}
 
-        <!-- 3. VERIFIED CITIZEN IMPACT METRICS -->
-        <div class="grid-cols-3" style="margin-bottom: 2rem; gap: 1rem;">
+        <!-- 3. HERO FEATURE: TACTILE CIRCULAR "SCAN WASTE PRE-CHECK" BUTTON -->
+        <div class="hero-scan-circle-container">
+          <button class="btn-hero-scan-circular hero-scan-pulse" id="btn-hero-scan" onclick="window.DashboardView.startMockScan()" aria-label="Scan Waste for AI Pre-Check">
+            <div class="scan-icon-bubble">
+              <i data-lucide="camera" class="lucide-icon-lg"></i>
+            </div>
+            <span class="scan-btn-label">AI PRE-CHECK</span>
+            <span class="scan-btn-sublabel">SCAN &amp; STAGE PICKUP</span>
+          </button>
+          <div class="scan-supporting-note">
+            <span class="desktop-note">Computer-vision purity pre-check &bull; Credits awarded on physical worker verification</span>
+            <span class="mobile-note">Credits are awarded after worker verification.</span>
+          </div>
+        </div>
+
+        <!-- 4. VERIFIED CITIZEN IMPACT METRICS -->
+        <div class="dashboard-metrics-grid">
           <div class="metric-card neu-card neu-card-flat">
-            <span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 700;">Landfill Waste Diverted</span>
-            <strong style="font-size: 1.8rem; font-weight: 900; color: var(--color-navy); margin: 0.25rem 0;">
+            <span>Landfill Waste Diverted</span>
+            <strong>
               ${user.lifetimeWasteKg} <small style="font-size: 0.95rem; font-weight: 700; color: var(--text-muted);">kg</small>
             </strong>
-            <em style="font-style: normal; font-size: 0.78rem; color: var(--color-primary-dark); font-weight: 700;">${user.pickupsCompleted} verified collections</em>
+            <em>${user.pickupsCompleted} verified collections</em>
           </div>
           <div class="metric-card neu-card neu-card-flat">
-            <span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 700;">Emissions Avoided</span>
-            <strong style="font-size: 1.8rem; font-weight: 900; color: var(--color-navy); margin: 0.25rem 0;">
+            <span>Emissions Avoided</span>
+            <strong>
               ${user.co2SavedKg} <small style="font-size: 0.95rem; font-weight: 700; color: var(--text-muted);">kg CO₂</small>
             </strong>
-            <em style="font-style: normal; font-size: 0.78rem; color: var(--color-primary-dark); font-weight: 700;">Equiv. to ${user.treesEquivalent} urban trees</em>
+            <em>Equiv. to ${user.treesEquivalent} urban trees</em>
           </div>
           <div class="metric-card neu-card neu-card-flat">
-            <span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 700;">Groundwater Protected</span>
-            <strong style="font-size: 1.8rem; font-weight: 900; color: #2563EB; margin: 0.25rem 0;">
+            <span>Groundwater Protected</span>
+            <strong style="color: #2563EB;">
               ${user.waterSavedLitres || 480} <small style="font-size: 0.95rem; font-weight: 700; color: var(--text-muted);">L</small>
             </strong>
-            <em style="font-style: normal; font-size: 0.78rem; color: #2563EB; font-weight: 700;">Safe hazardous extraction</em>
+            <em style="color: #2563EB;">Safe hazardous extraction</em>
           </div>
         </div>
 
@@ -316,29 +329,6 @@ export const DashboardView = {
         </div>
 
       </div>
-
-      <!-- MOBILE BOTTOM DOCK (tactile silicone tray + raised Scan FAB) -->
-      <nav class="mobile-bottom-dock" aria-label="Mobile Navigation">
-        <button class="dock-item-btn active" onclick="window.AppRouter.navigate('dashboard')">
-          <i data-lucide="home" class="lucide-icon-md"></i>
-          <span>Home</span>
-        </button>
-        <button class="dock-item-btn" onclick="window.AppRouter.navigate('report-waste')">
-          <i data-lucide="plus-circle" class="lucide-icon-md"></i>
-          <span>Report</span>
-        </button>
-        <button class="dock-scan-btn-center" onclick="window.DashboardView.startMockScan()" aria-label="Scan Waste Pre-Check">
-          <i data-lucide="camera" class="lucide-icon-md"></i>
-        </button>
-        <button class="dock-item-btn" onclick="window.AppRouter.navigate('rewards')">
-          <i data-lucide="wallet" class="lucide-icon-md"></i>
-          <span>Wallet</span>
-        </button>
-        <button class="dock-item-btn" onclick="window.AppRouter.navigate('profile')">
-          <i data-lucide="user" class="lucide-icon-md"></i>
-          <span>Profile</span>
-        </button>
-      </nav>
     `;
 
     if (window.lucide) window.lucide.createIcons();
@@ -446,23 +436,23 @@ export const DashboardView = {
     if (!modalContainer) return;
 
     modalContainer.innerHTML = `
-      <div class="celebration-reward-card neu-card neu-card-raised animate-pop-in" role="dialog" aria-label="Scan pre-check confirmation" style="max-width: 440px;">
-        <div style="width: 72px; height: 72px; border-radius: 50%; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.25);">
+      <div class="celebration-reward-card neu-card neu-card-raised animate-pop-in" role="dialog" aria-label="Scan pre-check confirmation" style="max-width: 380px;">
+        <div style="width: 58px; height: 58px; border-radius: 50%; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);">
           <i data-lucide="check-circle-2" class="lucide-icon-lg"></i>
         </div>
         
-        <div class="badge badge-green" style="margin-bottom: 0.5rem;">AI Purity Pre-Check Passed (98.4%)</div>
-        <h3 style="font-size: 1.5rem; font-weight: 900; color: var(--color-navy); margin: 0;">Pickup Staged</h3>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.35rem 0 1rem 0; line-height: 1.4;">
-          Request <strong>#${newReq.id}</strong> has been created. A municipal worker will collect your bag and perform scale verification to disburse <strong>+10 Green Credits</strong>.
+        <div class="badge badge-green" style="margin-bottom: 0.4rem;">AI Purity Pre-Check Passed (98.4%)</div>
+        <h3 style="font-size: 1.35rem; font-weight: 900; color: var(--color-navy); margin: 0;">Pickup Staged</h3>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.3rem 0 0.85rem 0; line-height: 1.35;">
+          Request <strong>#${newReq.id}</strong> scheduled. Hand over bag to collector to disburse <strong>+10 Green Credits</strong>.
         </p>
 
         <!-- Handover OTP Pill -->
-        <div class="neu-card-inset" style="margin: 0 auto 1.25rem auto; padding: 0.85rem 1.25rem; border-radius: var(--radius-md); text-align: center;">
-          <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;">
+        <div class="neu-card-inset" style="margin: 0 auto 1rem auto; padding: 0.75rem 1rem; border-radius: var(--radius-md); text-align: center;">
+          <div style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;">
             Handover OTP for Collector
           </div>
-          <div style="font-family: var(--font-heading); font-size: 2.2rem; font-weight: 900; letter-spacing: 0.15em; color: var(--color-primary-dark); margin: 0.2rem 0;">
+          <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: 900; letter-spacing: 0.15em; color: var(--color-primary-dark); margin: 0.15rem 0;">
             ${newReq.otp}
           </div>
           <div style="font-size: 0.72rem; color: var(--text-muted);">
@@ -470,7 +460,7 @@ export const DashboardView = {
           </div>
         </div>
 
-        <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
           <button class="btn btn-primary btn-block" onclick="window.DashboardView.closeModal(); window.AppRouter.navigate('live-tracking');">
             <i data-lucide="navigation" class="lucide-icon-sm"></i>
             <span>Track Pickup On Live Map</span>

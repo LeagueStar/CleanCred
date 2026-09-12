@@ -34,7 +34,7 @@ export const RewardsWallet = {
     const totalRedeemedInr = Formatters.gpToInr(totalRedeemedGp);
 
     container.innerHTML = `
-      <div class="app-container" style="max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem 4rem 1rem;">
+      <div class="app-container" style="max-width: 1100px; margin: 0 auto; padding-top: 1rem; padding-bottom: 4rem;">
         
         <!-- Header -->
         <div class="flex-between" style="margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
@@ -48,30 +48,30 @@ export const RewardsWallet = {
           </div>
 
           <!-- Fast Conversion Banner -->
-          <div class="neu-card-inset" style="padding: 0.6rem 1.25rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 700; color: var(--color-primary-dark); display: inline-flex; align-items: center; gap: 0.5rem;">
+          <div class="neu-card-inset" style="padding: 0.6rem 1rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 700; color: var(--color-primary-dark); display: inline-flex; align-items: center; gap: 0.5rem; max-width: 100%; box-sizing: border-box;">
             <i data-lucide="scale" class="lucide-icon-sm"></i>
             <span>Standard Rate: 100 GC = ₹10 INR</span>
           </div>
         </div>
 
         <!-- 3-Card Wallet Overview -->
-        <div class="grid-cols-3" style="margin-bottom: 2.5rem; gap: 1.25rem;">
+        <div class="rewards-overview-grid">
           
           <!-- Balance Card (Forest Raised) -->
-          <div class="neu-card neu-card-forest" style="padding: 2rem; border-radius: var(--radius-xl); color: #FFFFFF;">
+          <div class="neu-card neu-card-forest rewards-card-primary" style="color: #FFFFFF;">
             <div class="flex-between" style="margin-bottom: 1rem;">
               <span style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #DCFCE7;">Available Balance</span>
               <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center;">
                 <i data-lucide="coins" class="lucide-icon-sm" style="color: #FFFFFF;"></i>
               </div>
             </div>
-            <div style="font-size: 2.8rem; font-weight: 900; line-height: 1; margin-bottom: 0.5rem;">
+            <div class="rewards-card-amount">
               ${Formatters.formatNumber(user.greenPoints)} <span style="font-size: 1.25rem; font-weight: 600; opacity: 0.9;">GC</span>
             </div>
             <div style="font-size: 1rem; font-weight: 700; color: #DCFCE7;">
               ≈ ${Formatters.formatCurrency(inrValue)} real value
             </div>
-            <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+            <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap;">
               <button class="btn btn-secondary btn-sm" style="background: #FFFFFF; color: var(--color-primary-dark); font-weight: 800; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.15);" onclick="window.RewardsWallet.openRechargeModal()">
                 <i data-lucide="smartphone" class="lucide-icon-sm"></i>
                 <span>Recharge</span>
@@ -84,14 +84,14 @@ export const RewardsWallet = {
           </div>
 
           <!-- Total Earned All-Time (Raised Tactile) -->
-          <div class="neu-card neu-card-raised" style="padding: 2rem; border-radius: var(--radius-xl);">
+          <div class="neu-card neu-card-raised rewards-card-compact">
             <div class="flex-between" style="margin-bottom: 1rem;">
               <span style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">Lifetime Earnings</span>
               <div style="width: 32px; height: 32px; border-radius: 50%; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center;">
                 <i data-lucide="trending-up" class="lucide-icon-sm"></i>
               </div>
             </div>
-            <div style="font-size: 2.8rem; font-weight: 900; color: var(--color-navy); line-height: 1; margin-bottom: 0.5rem;">
+            <div class="rewards-card-amount" style="color: var(--color-navy);">
               ${Formatters.formatNumber(lifetimeEarnedGp)} <span style="font-size: 1.25rem; font-weight: 600; color: var(--text-muted);">GC</span>
             </div>
             <div style="font-size: 0.9rem; color: var(--color-primary-dark); font-weight: 700;">
@@ -103,14 +103,14 @@ export const RewardsWallet = {
           </div>
 
           <!-- Total Redeemed (Raised Tactile) -->
-          <div class="neu-card neu-card-raised" style="padding: 2rem; border-radius: var(--radius-xl);">
+          <div class="neu-card neu-card-raised rewards-card-compact">
             <div class="flex-between" style="margin-bottom: 1rem;">
               <span style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">Redeemed Value</span>
               <div style="width: 32px; height: 32px; border-radius: 50%; background: #DBEAFE; color: #1E40AF; display: flex; align-items: center; justify-content: center;">
                 <i data-lucide="check-circle-2" class="lucide-icon-sm"></i>
               </div>
             </div>
-            <div style="font-size: 2.8rem; font-weight: 900; color: var(--color-navy); line-height: 1; margin-bottom: 0.5rem;">
+            <div class="rewards-card-amount" style="color: var(--color-navy);">
               ${Formatters.formatNumber(totalRedeemedGp)} <span style="font-size: 1.25rem; font-weight: 600; color: var(--text-muted);">GC</span>
             </div>
             <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">
@@ -132,7 +132,7 @@ export const RewardsWallet = {
 
           <!-- Category 1: Mobile Recharge -->
           <div style="margin-bottom: 2.5rem;">
-            <div class="flex-between" style="margin-bottom: 1rem;">
+            <div class="flex-between" style="margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
               <div style="display: flex; align-items: center; gap: 0.6rem;">
                 <div style="width: 28px; height: 28px; border-radius: 6px; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center;">
                   <i data-lucide="smartphone" class="lucide-icon-sm"></i>
@@ -144,7 +144,7 @@ export const RewardsWallet = {
 
             <div class="grid-cols-4" style="gap: 1rem;">
               <!-- ₹10 Plan -->
-              <div class="neu-card neu-card-raised" style="padding: 1.25rem; text-align: center; border-top: 3px solid var(--color-primary);">
+              <div class="neu-card neu-card-raised" style="text-align: center; border-top: 3px solid var(--color-primary);">
                 <div style="font-size: 1.5rem; font-weight: 900; color: var(--color-navy); margin-bottom: 0.25rem;">₹10</div>
                 <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.85rem;">Talktime / Topup</div>
                 <div class="badge badge-points" style="margin-bottom: 1rem;">100 GC</div>
@@ -154,7 +154,7 @@ export const RewardsWallet = {
               </div>
 
               <!-- ₹50 Plan -->
-              <div class="neu-card neu-card-raised" style="padding: 1.25rem; text-align: center; border-top: 3px solid var(--color-primary);">
+              <div class="neu-card neu-card-raised" style="text-align: center; border-top: 3px solid var(--color-primary);">
                 <div style="font-size: 1.5rem; font-weight: 900; color: var(--color-navy); margin-bottom: 0.25rem;">₹50</div>
                 <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.85rem;">Talktime + 5GB Data</div>
                 <div class="badge badge-points" style="margin-bottom: 1rem;">500 GC</div>
@@ -164,7 +164,7 @@ export const RewardsWallet = {
               </div>
 
               <!-- ₹100 Plan -->
-              <div class="neu-card neu-card-raised" style="padding: 1.25rem; text-align: center; border-top: 3px solid var(--color-primary);">
+              <div class="neu-card neu-card-raised" style="text-align: center; border-top: 3px solid var(--color-primary);">
                 <div style="font-size: 1.5rem; font-weight: 900; color: var(--color-navy); margin-bottom: 0.25rem;">₹100</div>
                 <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.85rem;">Full Talktime Pack</div>
                 <div class="badge badge-points" style="margin-bottom: 1rem;">1,000 GC</div>
@@ -174,7 +174,7 @@ export const RewardsWallet = {
               </div>
 
               <!-- ₹200 Plan -->
-              <div class="neu-card neu-card-raised" style="padding: 1.25rem; text-align: center; border-top: 3px solid var(--color-primary);">
+              <div class="neu-card neu-card-raised" style="text-align: center; border-top: 3px solid var(--color-primary);">
                 <div style="font-size: 1.5rem; font-weight: 900; color: var(--color-navy); margin-bottom: 0.25rem;">₹200</div>
                 <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.85rem;">Unlimited 28-Day Plan</div>
                 <div class="badge badge-points" style="margin-bottom: 1rem;">2,000 GC</div>
@@ -187,19 +187,19 @@ export const RewardsWallet = {
 
           <!-- Category 2: Utility Bills & Municipal Fees -->
           <div style="margin-bottom: 2.5rem;">
-            <div class="flex-between" style="margin-bottom: 1rem;">
+            <div class="flex-between" style="margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
               <div style="display: flex; align-items: center; gap: 0.6rem;">
                 <div style="width: 28px; height: 28px; border-radius: 6px; background: #FEF3C7; color: #B45309; display: flex; align-items: center; justify-content: center;">
                   <i data-lucide="lightbulb" class="lucide-icon-sm"></i>
                 </div>
-                <strong style="font-size: 1.1rem; color: var(--color-navy);">Utility Bills & Municipal Services</strong>
+                <strong style="font-size: 1.1rem; color: var(--color-navy);">Utility Bills &amp; Municipal Services</strong>
               </div>
               <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Direct Municipal Bill Credit</span>
             </div>
 
             <div class="grid-cols-4" style="gap: 1rem;">
               <!-- Electricity -->
-              <div class="neu-card neu-card-raised" style="padding: 1.25rem; text-align: center;">
+              <div class="neu-card neu-card-raised" style="text-align: center;">
                 <div style="width: 44px; height: 44px; border-radius: 50%; background: #FEF3C7; color: #B45309; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
                   <i data-lucide="zap" class="lucide-icon-md"></i>
                 </div>
@@ -212,7 +212,7 @@ export const RewardsWallet = {
               </div>
 
               <!-- Water -->
-              <div class="neu-card neu-card-raised" style="padding: 1.25rem; text-align: center;">
+              <div class="neu-card neu-card-raised" style="text-align: center;">
                 <div style="width: 44px; height: 44px; border-radius: 50%; background: #DBEAFE; color: #1E40AF; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
                   <i data-lucide="droplets" class="lucide-icon-md"></i>
                 </div>
@@ -225,7 +225,7 @@ export const RewardsWallet = {
               </div>
 
               <!-- Piped Gas -->
-              <div class="neu-card neu-card-raised" style="padding: 1.25rem; text-align: center;">
+              <div class="neu-card neu-card-raised" style="text-align: center;">
                 <div style="width: 44px; height: 44px; border-radius: 50%; background: #FEE2E2; color: #DC2626; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
                   <i data-lucide="flame" class="lucide-icon-md"></i>
                 </div>
@@ -238,7 +238,7 @@ export const RewardsWallet = {
               </div>
 
               <!-- Broadband -->
-              <div class="neu-card neu-card-raised" style="padding: 1.25rem; text-align: center;">
+              <div class="neu-card neu-card-raised" style="text-align: center;">
                 <div style="width: 44px; height: 44px; border-radius: 50%; background: #EDE9FE; color: #6D28D9; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
                   <i data-lucide="wifi" class="lucide-icon-md"></i>
                 </div>
@@ -254,7 +254,7 @@ export const RewardsWallet = {
 
           <!-- Category 3: Eco Shopping & Cafes -->
           <div>
-            <div class="flex-between" style="margin-bottom: 1rem;">
+            <div class="flex-between" style="margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
               <div style="display: flex; align-items: center; gap: 0.6rem;">
                 <div style="width: 28px; height: 28px; border-radius: 6px; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center;">
                   <i data-lucide="shopping-bag" class="lucide-icon-sm"></i>
@@ -265,7 +265,7 @@ export const RewardsWallet = {
             </div>
 
             <div class="grid-cols-4" style="gap: 1rem;">
-              <div class="neu-card neu-card-raised" style="padding: 1.25rem;">
+              <div class="neu-card neu-card-raised">
                 <div class="badge badge-green" style="margin-bottom: 0.5rem;">Organic Grocery</div>
                 <strong style="color: var(--color-navy); display: block;">BigBasket Organic</strong>
                 <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">₹100 Voucher on min ₹500 grocery.</p>
@@ -277,7 +277,7 @@ export const RewardsWallet = {
                 </div>
               </div>
 
-              <div class="neu-card neu-card-raised" style="padding: 1.25rem;">
+              <div class="neu-card neu-card-raised">
                 <div class="badge" style="background: #FEF3C7; color: #B45309; margin-bottom: 0.5rem;">Sustainable</div>
                 <strong style="color: var(--color-navy); display: block;">Bamboo India Store</strong>
                 <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">₹50 Gift Card for eco toothbrushes & kits.</p>
@@ -289,7 +289,7 @@ export const RewardsWallet = {
                 </div>
               </div>
 
-              <div class="neu-card neu-card-raised" style="padding: 1.25rem;">
+              <div class="neu-card neu-card-raised">
                 <div class="badge badge-navy" style="margin-bottom: 0.5rem;">Cafe Partner</div>
                 <strong style="color: var(--color-navy); display: block;">Starbucks Coffee</strong>
                 <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">Free reusable bamboo tumbler with refill.</p>
@@ -301,7 +301,7 @@ export const RewardsWallet = {
                 </div>
               </div>
 
-              <div class="neu-card neu-card-raised" style="padding: 1.25rem;">
+              <div class="neu-card neu-card-raised">
                 <div class="badge badge-green" style="margin-bottom: 0.5rem;">Healthy Food</div>
                 <strong style="color: var(--color-navy); display: block;">Subway Green Meal</strong>
                 <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">₹50 discount on organic salad subs.</p>
@@ -317,7 +317,7 @@ export const RewardsWallet = {
         </div>
 
         <!-- Real-Time Transaction Ledger -->
-        <div class="neu-card neu-card-raised" style="padding: 2rem; border-radius: var(--radius-xl);">
+        <div class="neu-card neu-card-raised" style="border-radius: var(--radius-xl);">
           <div class="flex-between" style="margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
             <div>
               <h3 style="color: var(--color-navy); font-size: 1.3rem; font-weight: 800; margin: 0 0 0.25rem 0;">Wallet Transaction Ledger</h3>
@@ -325,7 +325,7 @@ export const RewardsWallet = {
             </div>
 
             <!-- Filter Tabs -->
-            <div style="display: flex; gap: 0.5rem;">
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
               <button class="btn btn-sm ${this.currentTab === 'all' ? 'btn-primary' : 'btn-secondary'}" onclick="window.RewardsWallet.filterLedger('all')">
                 All
               </button>
@@ -342,20 +342,20 @@ export const RewardsWallet = {
             ${State.state.transactions
               .filter(t => this.currentTab === 'all' || t.type === this.currentTab)
               .map(t => `
-                <div class="neu-card-flat" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; border-radius: var(--radius-md);">
-                  <div style="display: flex; align-items: center; gap: 1rem;">
-                    <div style="width: 40px; height: 40px; border-radius: 50%; background: ${t.type === 'credit' ? '#DCFCE7' : '#FEE2E2'}; color: ${t.type === 'credit' ? '#16A34A' : '#EF4444'}; display: flex; align-items: center; justify-content: center; font-weight: 800;">
+                <div class="neu-card-flat" style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; border-radius: var(--radius-md); flex-wrap: wrap; gap: 0.75rem;">
+                  <div style="display: flex; align-items: center; gap: 0.75rem; min-width: 0; flex: 1 1 130px;">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: ${t.type === 'credit' ? '#DCFCE7' : '#FEE2E2'}; color: ${t.type === 'credit' ? '#16A34A' : '#EF4444'}; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0;">
                       <i data-lucide="${t.type === 'credit' ? 'arrow-down-left' : 'arrow-up-right'}" class="lucide-icon-sm"></i>
                     </div>
-                    <div>
+                    <div style="min-width: 0; word-break: break-word;">
                       <strong style="color: var(--color-navy); font-size: 0.95rem; display: block;">${t.title}</strong>
-                      <div style="font-size: 0.78rem; color: var(--text-muted);">
+                      <div style="font-size: 0.75rem; color: var(--text-muted); word-break: break-all;">
                         ${Formatters.formatDateTime(t.date)} &bull; Ref: ${t.id} ${t.meta ? `&bull; ${t.meta}` : ''}
                       </div>
                     </div>
                   </div>
 
-                  <div style="text-align: right;">
+                  <div style="text-align: right; margin-left: auto;">
                     <div style="font-size: 1.15rem; font-weight: 800; color: ${t.type === 'credit' ? 'var(--color-primary-dark)' : '#EF4444'};">
                       ${t.type === 'credit' ? '+' : '-'}${t.amountGp} GC
                     </div>

@@ -104,24 +104,47 @@ class AppRouterManager {
       targetSection.classList.add('active');
     }
 
-    // Update Topbar View Mode Switcher Active State
-    const btnCitizen = document.getElementById('btn-mode-citizen');
-    const btnWorker = document.getElementById('btn-mode-worker');
-    const btnAdmin = document.getElementById('btn-mode-admin');
+    // Update View Mode Switcher Active State (Desktop & Mobile Strip)
+    const roleButtons = [
+      { id: 'btn-mode-citizen', role: 'citizen' },
+      { id: 'btn-mode-worker', role: 'worker' },
+      { id: 'btn-mode-admin', role: 'admin' },
+      { id: 'btn-mode-citizen-m', role: 'citizen' },
+      { id: 'btn-mode-worker-m', role: 'worker' },
+      { id: 'btn-mode-admin-m', role: 'admin' }
+    ];
 
-    if (btnCitizen && btnWorker && btnAdmin) {
-      btnCitizen.classList.remove('active');
-      btnWorker.classList.remove('active');
-      btnAdmin.classList.remove('active');
-
-      if (targetRoute === 'worker') {
-        btnWorker.classList.add('active');
-      } else if (targetRoute === 'admin') {
-        btnAdmin.classList.add('active');
-      } else {
-        btnCitizen.classList.add('active');
+    const activeRole = targetRoute === 'worker' ? 'worker' : targetRoute === 'admin' ? 'admin' : 'citizen';
+    roleButtons.forEach(btnInfo => {
+      const el = document.getElementById(btnInfo.id);
+      if (el) {
+        if (btnInfo.role === activeRole) {
+          el.classList.add('active');
+        } else {
+          el.classList.remove('active');
+        }
       }
-    }
+    });
+
+    // Update Mobile Bottom Dock Active State
+    const dockButtons = [
+      { id: 'dock-btn-dashboard', routes: ['dashboard'] },
+      { id: 'dock-btn-report-waste', routes: ['report-waste'] },
+      { id: 'dock-btn-live-tracking', routes: ['live-tracking'] },
+      { id: 'dock-btn-rewards', routes: ['rewards'] },
+      { id: 'dock-btn-profile', routes: ['profile'] }
+    ];
+
+    dockButtons.forEach(dock => {
+      const el = document.getElementById(dock.id);
+      if (el) {
+        if (dock.routes.includes(targetRoute)) {
+          el.classList.add('active');
+        } else {
+          el.classList.remove('active');
+        }
+      }
+    });
 
     const btnProfile = document.getElementById('btn-topbar-profile');
     if (btnProfile) {

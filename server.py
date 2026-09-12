@@ -38,14 +38,28 @@ class CleanCredHandler(http.server.SimpleHTTPRequestHandler):
         self.send_response(200)
         self.end_headers()
 
+    def do_POST(self):
+        parsed_url = urllib.parse.urlparse(self.path)
+        if parsed_url.path == '/api/report_test':
+            content_length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(content_length)
+            with open(os.path.join(DIRECTORY, 'test_results.json'), 'wb') as f:
+                f.write(body)
+            resp_data = b'{"status":"received"}'
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Content-Length', str(len(resp_data)))
+            self.end_headers()
+            self.wfile.write(resp_data)
+            return
+        self.send_response(404)
+        self.end_headers()
+
     def do_GET(self):
         parsed_url = urllib.parse.urlparse(self.path)
         
         # API Health Check
         if parsed_url.path == '/api/health':
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
             response = {
                 "status": "healthy",
                 "environment": "local_demo",
@@ -59,7 +73,12 @@ class CleanCredHandler(http.server.SimpleHTTPRequestHandler):
                     "mrf_network": "Demo Dataset"
                 }
             }
-            self.wfile.write(json.dumps(response, indent=2).encode('utf-8'))
+            resp_bytes = json.dumps(response, indent=2).encode('utf-8')
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Content-Length', str(len(resp_bytes)))
+            self.end_headers()
+            self.wfile.write(resp_bytes)
             return
             
         return super().do_GET()

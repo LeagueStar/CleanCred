@@ -70,8 +70,8 @@ export const LiveTrackingView = {
           <div class="neu-card neu-card-raised" style="padding: 1.25rem; overflow: hidden; border-radius: var(--radius-xl);">
             <div id="live-tracking-map" style="height: 520px; width: 100%; border-radius: var(--radius-lg); border: 1.5px solid #CBD5E1; box-shadow: inset 0 2px 6px rgba(0,0,0,0.06);"></div>
             
-            <div class="flex-between" style="margin-top: 1rem; padding: 0.75rem 1rem; background: var(--bg-surface-elevated); border-radius: var(--radius-md); font-size: 0.8rem; color: var(--text-muted); border: 1px solid var(--color-border);">
-              <span style="display: flex; align-items: center; gap: 0.35rem; max-width: 45%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            <div class="flex-between" style="margin-top: 1rem; padding: 0.75rem 1rem; background: var(--bg-surface-elevated); border-radius: var(--radius-md); font-size: 0.8rem; color: var(--text-muted); border: 1px solid var(--color-border); flex-wrap: wrap; gap: 0.6rem;">
+              <span style="display: flex; align-items: center; gap: 0.35rem; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                 <i data-lucide="map-pin" class="lucide-icon-sm" style="color: var(--color-primary-dark);"></i>
                 <span title="${pickup.address}">Pickup: ${pickup.address || 'Flat 402, Ward 4B'}</span>
               </span>
@@ -81,7 +81,7 @@ export const LiveTrackingView = {
               </span>
               <span style="display: flex; align-items: center; gap: 0.35rem;">
                 <i data-lucide="activity" class="lucide-icon-sm" style="color: var(--color-primary);"></i>
-                <span>Telemetry: Simulated</span>
+                <span>Telemetry: Live Sync</span>
               </span>
             </div>
           </div>

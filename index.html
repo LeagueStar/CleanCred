@@ -119,6 +119,24 @@
     </div>
   </header>
 
+  <!-- Mobile Segmented Role Strip (Visible on mobile <= 768px beneath fixed header) -->
+  <div class="mobile-role-strip" id="mobile-role-strip" role="tablist" aria-label="Role Switcher">
+    <div class="role-switcher-nav mobile-role-tabs">
+      <button class="role-tab-btn active" id="btn-mode-citizen-m" onclick="window.AppRouter.switchExperience('citizen')" title="Citizen Mobile Experience">
+        <i data-lucide="user" class="lucide-icon-sm"></i>
+        <span>Citizen</span>
+      </button>
+      <button class="role-tab-btn" id="btn-mode-worker-m" onclick="window.AppRouter.switchExperience('worker')" title="Municipal Worker Portal">
+        <i data-lucide="truck" class="lucide-icon-sm"></i>
+        <span>Worker</span>
+      </button>
+      <button class="role-tab-btn" id="btn-mode-admin-m" onclick="window.AppRouter.switchExperience('admin')" title="City Command Center">
+        <i data-lucide="building-2" class="lucide-icon-sm"></i>
+        <span>Command</span>
+      </button>
+    </div>
+  </div>
+
   <!-- ==========================================================================
        MAIN VIEW CONTAINERS (ALL ROUTES PERSISTED)
        ========================================================================== -->
@@ -156,6 +174,39 @@
     <!-- Institution / School / Bulk Generator Portal -->
     <div id="view-institutions" class="view-section"></div>
   </main>
+
+  <!-- Global Mobile Bottom Navigation Dock (Solid Matte Neumorphic) -->
+  <nav class="mobile-bottom-dock" id="global-mobile-dock" aria-label="Mobile Navigation">
+    <div class="dock-nav-group dock-left-group">
+      <button class="dock-item-btn active" id="dock-btn-dashboard" onclick="window.AppRouter.navigate('dashboard')" title="Home">
+        <i data-lucide="home" class="dock-lucide-icon"></i>
+        <span>Home</span>
+      </button>
+      <button class="dock-item-btn" id="dock-btn-live-tracking" onclick="window.AppRouter.navigate('live-tracking')" title="Live Activity Tracking">
+        <i data-lucide="activity" class="dock-lucide-icon"></i>
+        <span>Activity</span>
+      </button>
+    </div>
+
+    <!-- Center Floating Action Button (Physically centered at 50vw, floating above dock) -->
+    <div class="dock-center-slot">
+      <button class="dock-floating-fab" id="dock-btn-report-waste" onclick="window.AppRouter.navigate('report-waste')" title="Report Waste" aria-label="Report Waste">
+        <i data-lucide="plus" class="dock-fab-icon"></i>
+      </button>
+      <span class="dock-fab-label">Report</span>
+    </div>
+
+    <div class="dock-nav-group dock-right-group">
+      <button class="dock-item-btn" id="dock-btn-rewards" onclick="window.AppRouter.navigate('rewards')" title="Green Wallet">
+        <i data-lucide="wallet" class="dock-lucide-icon"></i>
+        <span>Rewards</span>
+      </button>
+      <button class="dock-item-btn" id="dock-btn-profile" onclick="window.AppRouter.navigate('profile')" title="Citizen Profile">
+        <i data-lucide="user" class="dock-lucide-icon"></i>
+        <span>Profile</span>
+      </button>
+    </div>
+  </nav>
 
   <!-- Interactive Modal Container -->
   <div id="modal-scan-container" style="display: none;"></div>

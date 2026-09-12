@@ -20,82 +20,603 @@
 
 /* Breakpoint: Mobile Viewport (<= 768px) */
 @media (max-width: 768px) {
+  /* Prevent horizontal overflow globally */
+  html,
+  body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  /* Safe container guttering */
+  .app-container {
+    padding-left: 16px;
+    padding-right: 16px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Top Municipal Navigation Bar */
+  .app-topbar,
+  .silicone-topbar {
+    min-height: 64px;
+    height: auto;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: 6px;
+    box-sizing: border-box;
+  }
+
+  .topbar-content {
+    overflow: hidden;
+  }
+
+  /* Hide center role switcher in topbar row (moved to .mobile-role-strip) */
+  .topbar-content .role-switcher-nav {
+    display: none !important;
+  }
+
+  .brand-badge {
+    display: none !important; /* Hide SBM-U 2.0 pill on mobile */
+  }
+
+  .demo-reset-btn {
+    display: none !important; /* Hide demo reset from topbar on mobile */
+  }
+
+  .topbar-profile-btn span {
+    display: none !important; /* Icon-only profile button on mobile */
+  }
+
+  .topbar-profile-btn {
+    padding: 0.4rem 0.6rem;
+  }
+
+  .points-pill-top {
+    padding: 0.38rem 0.75rem;
+    gap: 0.35rem;
+  }
+
+  .points-pill-top span {
+    font-size: 0.82rem; /* Keep points clearly visible */
+  }
+
+  /* Mobile Role Switcher Strip: Situated directly beneath fixed header */
+  .mobile-role-strip {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    top: calc(64px + env(safe-area-inset-top, 0px));
+    left: 0;
+    right: 0;
+    background: var(--bg-surface);
+    padding: 6px 16px 8px 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+    border-bottom: 1px solid var(--color-border);
+    z-index: 990;
+    box-sizing: border-box;
+  }
+
+  /* Main Content Offset: Starts cleanly below topbar + role strip */
   .main-content {
-    margin-top: 84px;
-    padding-bottom: 8.5rem;
+    margin-top: calc(112px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Mobile Primary CTA Button */
+  .mobile-primary-cta-container {
+    display: block;
+    margin: 1.25rem 0;
+    width: 100%;
+  }
+
+  /* Tactile Hero Scan Component (AI Pre-Check) */
+  .hero-scan-circle-container {
+    margin: 1.5rem auto 1.75rem auto;
+  }
+
+  .btn-hero-scan-circular {
+    width: 165px;
+    height: 165px;
+    padding: 0.75rem;
+    border-width: 3.5px;
+    box-shadow: 7px 7px 18px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
+  }
+
+  .scan-icon-bubble {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 0.35rem;
+  }
+
+  .scan-icon-bubble svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .scan-btn-label {
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+  }
+
+  .scan-btn-sublabel {
+    font-size: 0.65rem;
+  }
+
+  .scan-supporting-note {
+    font-size: 0.75rem;
+    margin-top: 0.65rem;
+    max-width: 290px;
+  }
+
+  .scan-supporting-note .desktop-note {
+    display: none !important;
+  }
+
+  .scan-supporting-note .mobile-note {
+    display: inline !important;
+  }
+
+  /* Green Credits Hero Card */
+  .hero-points-card {
+    padding: 1.25rem 1rem !important;
+    border-radius: 16px !important;
+    margin-bottom: 1.25rem;
+  }
+
+  .points-oversized-value {
+    font-size: 2.6rem;
+    margin: 0.25rem 0 0.5rem 0;
+  }
+
+  /* Active Pickup Card (Vertical Stacking) */
+  .pickup-status-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+    padding: 1.15rem 1rem !important;
+    margin-bottom: 1.25rem;
+    border-radius: 16px !important;
+  }
+
+  .pickup-status-info {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .pickup-status-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 0.65rem;
+  }
+
+  .pickup-status-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .pickup-otp-pill {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Dashboard Metrics Grid (2-Column Compact) */
+  .dashboard-metrics-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+    margin-bottom: 1.5rem;
+  }
+
+  .metric-card {
+    padding: 0.85rem 0.75rem !important;
+    border-radius: 14px !important;
+  }
+
+  .metric-card span {
+    font-size: 0.72rem !important;
+    margin-bottom: 0.2rem !important;
+  }
+
+  .metric-card strong {
+    font-size: 1.45rem !important;
+  }
+
+  .metric-card em {
+    font-size: 0.7rem !important;
+  }
+
+  /* Standardized Mobile Card Sizing & Padding */
+  .neu-card,
+  .neu-card-raised {
+    padding: 1.15rem 1rem !important;
+    border-radius: 16px !important;
+    box-shadow: var(--neu-raised-sm) !important;
+  }
+
+  .neu-card .flex-between,
+  .neu-card-raised .flex-between,
+  .neu-card-flat .flex-between {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* Step 2 Demo Picker: Horizontal Scroll Row & Upload Button */
+  .btn-upload-photo {
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-content: center;
+  }
+
+  .demo-picker-grid {
+    display: flex !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory;
+    gap: 0.75rem;
+    padding-bottom: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .demo-thumb-btn {
+    min-width: 120px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+
+  /* Surreal Background Blobs Calming on Mobile (prevent horizontal stretch & jitter) */
+  .surreal-blob {
+    animation: none !important;
+    filter: blur(40px) !important;
+    opacity: 0.16 !important;
+  }
+  .surreal-blob-green {
+    width: 180px !important;
+    height: 180px !important;
+    left: 0 !important;
+    top: 2% !important;
+  }
+  .surreal-blob-cyan {
+    width: 180px !important;
+    height: 180px !important;
+    right: 0 !important;
+    top: 45% !important;
+  }
+  .surreal-blob-orange {
+    width: 160px !important;
+    height: 160px !important;
+    bottom: 2% !important;
+    left: 5% !important;
+  }
+
+  /* Modals: Guaranteed Viewport Fit */
+  .modal-overlay,
+  .modal-overlay-backdrop {
+    padding: 12px;
+  }
+
+  .modal-content,
+  .neu-modal,
+  .celebration-reward-card {
+    max-width: calc(100vw - 24px) !important;
+    max-height: calc(100vh - 24px) !important;
+    padding: 1.25rem 1rem !important;
+    border-radius: var(--radius-lg) !important;
+    box-sizing: border-box !important;
+    overflow-y: auto !important;
+  }
+
+  .scan-viewfinder-modal {
+    width: calc(100vw - 32px) !important;
+    max-width: 360px !important;
+    padding: 1.25rem 1rem !important;
+  }
+
+  .camera-preview-box {
+    max-height: 200px !important;
+  }
+
+  /* Mobile Bottom Navigation Dock (Solid Matte Neumorphic) */
+  .mobile-bottom-dock {
+    display: flex !important;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: calc(64px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: var(--bg-surface);
+    border-top: 1px solid var(--color-border);
+    box-shadow: 0 -4px 14px var(--shadow-dark), 0 -1px 0 var(--color-border-highlight);
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 8px;
+    padding-right: 8px;
+    z-index: 1000;
+    box-sizing: border-box;
+  }
+
+  .dock-nav-group {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    justify-content: space-around;
+  }
+
+  .dock-item-btn {
+    flex: 1;
+    min-height: 48px;
+    padding: 0.4rem 0.2rem;
+    gap: 0.25rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .dock-item-btn.active {
+    color: var(--color-primary);
+  }
+
+  .dock-item-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .dock-center-slot {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 6px;
+    flex-shrink: 0;
+  }
+
+  .dock-floating-fab {
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #FFFFFF;
+    border: 3px solid var(--bg-surface);
+    box-shadow: 0 6px 18px rgba(5, 150, 105, 0.45), 0 2px 6px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    touch-action: manipulation;
+    z-index: 1005;
+  }
+
+  .dock-floating-fab:active {
+    transform: translateX(-50%) scale(0.94);
+  }
+
+  .dock-floating-fab svg {
+    width: 24px;
+    height: 24px;
+    stroke: #FFFFFF;
+    stroke-width: 2.5;
+  }
+
+  .dock-fab-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    letter-spacing: 0.02em;
+    margin-top: auto;
+  }
+
+  /* Rewards Overview Grid (Mobile composition) */
+  .rewards-overview-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.85rem !important;
+  }
+
+  .rewards-card-primary {
+    grid-column: span 2;
+    padding: 1.35rem 1.15rem !important;
+  }
+
+  .rewards-card-compact {
+    padding: 1rem 0.85rem !important;
+  }
+
+  .rewards-card-amount {
+    font-size: 2.2rem !important;
+  }
+
+  /* Municipal Command Center (Admin View) */
+  .admin-sidebar {
+    display: none !important;
+  }
+
+  .command-tools-section {
+    display: block !important;
+  }
+
+  .admin-page-title {
+    font-size: clamp(1.3rem, 5.5vw, 1.85rem) !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.02em;
+  }
+
+  .admin-page-subtitle {
+    font-size: 0.82rem !important;
   }
 
   .admin-metrics-row {
     grid-template-columns: 1fr;
   }
 
-  .app-container {
-    padding: 0 1rem;
+  .view-section.active {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
   }
 
-  .brand-badge {
-    display: none;
+  .desktop-dashboard-grid {
+    grid-template-columns: 1fr !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
   }
 
-  .role-tab-btn span:last-child {
-    display: none; /* Show only icon on small mobile screens */
+  .desktop-dashboard-grid > * {
+    min-width: 0 !important;
+    max-width: 100% !important;
   }
 
-  .role-tab-btn {
-    padding: 0.4rem 0.6rem;
+  .hero-grid,
+  .hero-grid-admin,
+  .hero-grid-profile,
+  .hero-grid-dumping,
+  .hero-grid-landing,
+  .hero-grid-leaderboard,
+  .hero-grid-2col {
+    grid-template-columns: 1fr !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
   }
 
-  .demo-reset-btn {
-    display: none;
+  .grid-cols-2,
+  .grid-cols-3,
+  .grid-cols-4 {
+    grid-template-columns: 1fr !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
   }
 
-  .btn-hero-scan-circular {
-    width: 195px;
-    height: 195px;
+  .hero-grid > *,
+  .hero-grid-admin > *,
+  .hero-grid-profile > *,
+  .hero-grid-dumping > *,
+  .hero-grid-landing > *,
+  .hero-grid-leaderboard > *,
+  .hero-grid-2col > *,
+  .grid-cols-2 > *,
+  .grid-cols-3 > *,
+  .grid-cols-4 > * {
+    min-width: 0 !important;
+    max-width: 100% !important;
   }
 
-  .scan-icon-bubble {
-    width: 64px;
-    height: 64px;
+  canvas {
+    max-width: 100% !important;
   }
 
-  .scan-icon-bubble svg {
-    width: 28px;
-    height: 28px;
-  }
-
-  .scan-btn-label {
-    font-size: 1.15rem;
-  }
-
-  .points-oversized-value {
-    font-size: 2.6rem;
+  .btn-block {
+    display: flex !important;
+    width: 100% !important;
   }
 }
 
-/* Breakpoint: Small Mobile (<= 400px) */
-@media (max-width: 400px) {
-  .btn-hero-scan-circular {
-    width: 178px;
-    height: 178px;
+/* Breakpoint: Compact Mobile (<= 380px) */
+@media (max-width: 380px) {
+  .rewards-overview-grid {
+    grid-template-columns: 1fr !important;
   }
 
-  .points-pill-top {
-    padding: 0.35rem 0.65rem;
-    font-size: 0.8rem;
+  .rewards-card-primary,
+  .rewards-card-compact {
+    grid-column: span 1 !important;
+  }
+}
+
+/* Breakpoint: Small Mobile (<= 480px) */
+@media (max-width: 480px) {
+  .dashboard-heading {
+    margin-bottom: 1rem;
+  }
+
+  .btn-hero-scan-circular {
+    width: 155px;
+    height: 155px;
   }
 
   .points-oversized-value {
-    font-size: 2.3rem;
+    font-size: 2.35rem;
   }
 
-  .mobile-bottom-dock {
-    width: calc(100% - 24px);
-    height: 62px;
+  .waste-options-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Breakpoint: Ultra-Compact Mobile (<= 360px e.g. iPhone SE 1st Gen) */
+@media (max-width: 360px) {
+  .app-container {
+    padding-left: 12px;
+    padding-right: 12px;
   }
 
-  .dock-scan-btn-center {
-    width: 50px;
-    height: 50px;
+  .btn-hero-scan-circular {
+    width: 148px;
+    height: 148px;
+    padding: 0.5rem;
+  }
+
+  .scan-icon-bubble {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 0.25rem;
+  }
+
+  .scan-icon-bubble svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .scan-btn-label {
+    font-size: 0.78rem;
+  }
+
+  .scan-btn-sublabel {
+    font-size: 0.6rem;
+  }
+
+  .points-pill-top {
+    padding: 0.35rem 0.55rem;
+  }
+
+  .points-pill-top span {
+    font-size: 0.75rem;
+  }
+
+  .points-oversized-value {
+    font-size: 2.1rem;
+  }
+
+  .dashboard-metrics-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .rewards-overview-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .rewards-card-primary,
+  .rewards-card-compact {
+    grid-column: span 1 !important;
   }
 }

@@ -99,25 +99,25 @@ export const AdminDashboardView = {
           </aside>
 
           <!-- RIGHT SIDE: METRICS, CHARTS & LIVE INGESTION -->
-          <main style="display: flex; flex-direction: column; gap: 1.5rem;">
+          <main style="display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; max-width: 100%;">
             
             <!-- Welcome Municipal Banner -->
-            <div class="neu-card neu-card-raised" style="padding: 1.5rem 1.75rem; border-radius: var(--radius-xl);">
+            <div class="neu-card neu-card-raised" style="border-radius: var(--radius-xl);">
               <div class="flex-between" style="flex-wrap: wrap; gap: 1rem;">
                 <div>
-                  <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                  <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; flex-wrap: wrap;">
                     <span class="badge badge-green">MUNICIPAL COMMAND ACTIVE</span>
                     <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Telemetry Sync: Live (1s)</span>
                   </div>
-                  <h2 style="color: var(--color-navy); font-size: 1.5rem; font-weight: 800; margin: 0;">
-                    Municipal Waste Recovery &amp; Green Credit Telemetry
+                  <h2 class="admin-page-title" style="color: var(--color-navy); font-size: 1.5rem; font-weight: 800; margin: 0;">
+                    Municipal Waste Recovery
                   </h2>
-                  <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
-                    Real-time citizen segregation compliance, decentralized collection verification, and EPR credit issuance.
+                  <p class="admin-page-subtitle" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+                    Green Telemetry &bull; SBM-U 2.0
                   </p>
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 0.65rem;">
+                <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
                   <button class="btn btn-secondary btn-sm" onclick="window.AdminDashboardView.render()">
                     <i data-lucide="refresh-cw" class="lucide-icon-sm"></i>
                     <span>Refresh Feed</span>
@@ -127,6 +127,53 @@ export const AdminDashboardView = {
                     <span>View Citizen App</span>
                   </button>
                 </div>
+              </div>
+            </div>
+
+            <!-- MOBILE COMMAND TOOLS SECTION (Shown on mobile <=768px, hidden on desktop via CSS) -->
+            <div class="command-tools-section neu-card neu-card-raised">
+              <h3 class="command-tools-title">Municipal Command Tools</h3>
+              <div class="command-tools-list">
+                <button class="command-tool-row" onclick="window.AppRouter.navigate('rewards')">
+                  <div class="command-tool-icon">
+                    <i data-lucide="gift" class="lucide-icon-md"></i>
+                  </div>
+                  <div class="command-tool-info">
+                    <strong class="command-tool-name">Green Credit Ledger</strong>
+                    <span class="command-tool-desc">EPR issuance &amp; transaction history</span>
+                  </div>
+                  <i data-lucide="chevron-right" class="command-tool-chevron"></i>
+                </button>
+                <button class="command-tool-row" onclick="window.AppRouter.navigate('illegal-dumping')">
+                  <div class="command-tool-icon">
+                    <i data-lucide="shield-alert" class="lucide-icon-md"></i>
+                  </div>
+                  <div class="command-tool-info">
+                    <strong class="command-tool-name">Illegal Dump Reports</strong>
+                    <span class="command-tool-desc">Citizen geo-flagged enforcement queue</span>
+                  </div>
+                  <i data-lucide="chevron-right" class="command-tool-chevron"></i>
+                </button>
+                <button class="command-tool-row" onclick="window.AppRouter.navigate('institutions')">
+                  <div class="command-tool-icon">
+                    <i data-lucide="school" class="lucide-icon-md"></i>
+                  </div>
+                  <div class="command-tool-info">
+                    <strong class="command-tool-name">Bulk Generators (Institutions)</strong>
+                    <span class="command-tool-desc">Colleges, tech parks &amp; hospital audits</span>
+                  </div>
+                  <i data-lucide="chevron-right" class="command-tool-chevron"></i>
+                </button>
+                <button class="command-tool-row" onclick="window.AdminDashboardView.triggerQuickExport()">
+                  <div class="command-tool-icon">
+                    <i data-lucide="download" class="lucide-icon-md"></i>
+                  </div>
+                  <div class="command-tool-info">
+                    <strong class="command-tool-name">Export SBM Report</strong>
+                    <span class="command-tool-desc">Download municipal MoHUA audit PDF</span>
+                  </div>
+                  <i data-lucide="chevron-right" class="command-tool-chevron"></i>
+                </button>
               </div>
             </div>
 
@@ -195,8 +242,8 @@ export const AdminDashboardView = {
             <div class="hero-grid hero-grid-admin" style="gap: 1.25rem;">
               
               <!-- Chart 1: Weekly Trends Line Chart -->
-              <div class="neu-card neu-card-raised" style="padding: 1.5rem; border-radius: var(--radius-xl);">
-                <div class="flex-between" style="margin-bottom: 1rem;">
+              <div class="neu-card neu-card-raised" style="border-radius: var(--radius-xl);">
+                <div class="flex-between" style="margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
                   <div>
                     <h3 style="font-size: 1.05rem; color: var(--color-navy); font-weight: 800; margin: 0;">Weekly Waste Diversion &amp; Credits</h3>
                     <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.15rem 0 0 0;">Decentralized municipal ingestion across 42 wards</p>
@@ -204,14 +251,14 @@ export const AdminDashboardView = {
                   <span class="badge badge-green">Past 7 Days</span>
                 </div>
 
-                <div style="height: 240px; position: relative;">
+                <div style="height: 240px; position: relative; min-width: 0; max-width: 100%;">
                   <canvas id="chart-admin-weekly"></canvas>
                 </div>
               </div>
 
               <!-- Chart 2: SIH Waste Taxonomy Doughnut Chart -->
-              <div class="neu-card neu-card-raised" style="padding: 1.5rem; border-radius: var(--radius-xl);">
-                <div class="flex-between" style="margin-bottom: 1rem;">
+              <div class="neu-card neu-card-raised" style="border-radius: var(--radius-xl);">
+                <div class="flex-between" style="margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
                   <div>
                     <h3 style="font-size: 1.05rem; color: var(--color-navy); font-weight: 800; margin: 0;">Segregation Taxonomy</h3>
                     <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.15rem 0 0 0;">Wet vs Dry vs Harmful</p>
@@ -219,7 +266,7 @@ export const AdminDashboardView = {
                   <span class="badge badge-blue">SIH Standard</span>
                 </div>
 
-                <div style="height: 240px; position: relative;">
+                <div style="height: 240px; position: relative; min-width: 0; max-width: 100%;">
                   <canvas id="chart-admin-taxonomy"></canvas>
                 </div>
               </div>
@@ -227,8 +274,8 @@ export const AdminDashboardView = {
             </div>
 
             <!-- ROW 3: LIVE MUNICIPAL INGESTION FEED (REAL PICKUPS) -->
-            <div class="neu-card neu-card-raised" style="padding: 1.5rem; border-radius: var(--radius-xl);">
-              <div class="flex-between" style="margin-bottom: 1.25rem;">
+            <div class="neu-card neu-card-raised" style="border-radius: var(--radius-xl);">
+              <div class="flex-between" style="margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
                 <div>
                   <h3 style="font-size: 1.1rem; color: var(--color-navy); font-weight: 800; display: flex; align-items: center; gap: 0.5rem; margin: 0;">
                     <i data-lucide="activity" class="lucide-icon-sm" style="color: var(--color-primary-dark);"></i>
@@ -242,7 +289,7 @@ export const AdminDashboardView = {
               </div>
 
               <!-- Ingestion Table -->
-              <div style="overflow-x: auto;">
+              <div style="overflow-x: auto; max-width: 100%; min-width: 0;">
                 <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.82rem;">
                   <thead>
                     <tr style="border-bottom: 1.5px solid var(--color-border); font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em;">
