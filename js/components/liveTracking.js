@@ -228,6 +228,7 @@ export const LiveTrackingView = {
   },
 
   initMap() {
+    this.cleanup();
     const mapElement = document.getElementById('live-tracking-map');
     if (!mapElement || !window.L) return;
 
@@ -266,6 +267,15 @@ export const LiveTrackingView = {
       opacity: 0.85,
       dashArray: '8, 8'
     }).addTo(this.mapInstance);
+  },
+
+  cleanup() {
+    if (this.mapInstance) {
+      MapHelper.destroyMap('live-tracking-map');
+      this.mapInstance = null;
+      this.truckMarker = null;
+      this.routePolyline = null;
+    }
   },
 
   simulateWorkerMove() {

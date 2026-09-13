@@ -222,12 +222,21 @@ export const WorkerPortalView = {
 
   processVerification(pickupId, approved) {
     if (approved) {
-      SoundFX.playPointsEarned();
-      Confetti.trigger(90);
       const slider = document.getElementById('modal-weight-slider');
       const verifiedWeight = slider ? parseFloat(slider.value) : undefined;
-      State.awardCredits(pickupId, verifiedWeight);
-      window.AppRouter.showToast('Pickup verified! Green Credits released.');
+      const res = State.awardCredits(pickupId, verifiedWeight);
+
+      if (res && res.alreadyVerified) {
+        SoundFX.playClick();
+        window.AppRouter.showToast('Pickup already verified — credits are on record.');
+      } else if (res && res.success) {
+        SoundFX.playPointsEarned();
+        Confetti.trigger(90);
+        window.AppRouter.showToast(`Pickup verified! +${res.points || res.awardedPoints} Green Credits released.`);
+      } else {
+        SoundFX.playClick();
+        window.AppRouter.showToast('Verification could not be completed.');
+      }
     } else {
       SoundFX.playClick();
       State.updatePickupStatus(pickupId, 'rejected');
@@ -251,7 +260,9 @@ export const WorkerPortalView = {
 
   closeScanModal() {
     SoundFX.playClick();
-    QRScanner.stop();
+    if (window.QRScanner && typeof window.QRScanner.stop === 'function') {
+      window.QRScanner.stop();
+    }
     const modal = document.getElementById('worker-scan-modal');
     if (modal) modal.classList.remove('active');
     this.render();
@@ -478,6 +489,12 @@ export const WorkerPortalView = {
       </div>
     `;
     if (window.lucide) window.lucide.createIcons();
+  },
+
+  cleanup() {
+    if (window.QRScanner && typeof window.QRScanner.stop === 'function') {
+      window.QRScanner.stop();
+    }
   }
 };
 

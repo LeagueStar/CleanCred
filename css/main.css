@@ -48,6 +48,7 @@
   --text-primary: #0F172A;
   --text-secondary: #334155;
   --text-muted: #64748B;
+  --color-text-muted: var(--text-muted);
   --text-subtle: #94A3B8;
 
   /* Waste Category System (SIH Taxonomy) */

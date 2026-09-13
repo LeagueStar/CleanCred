@@ -12,6 +12,7 @@ import { MapHelper } from '../utils/mapHelper.js';
 
 export const ReportWasteView = {
   currentStep: 1,
+  lastSubmittedRequestId: null,
   formData: {
     category: 'wet', // 'wet' | 'dry' | 'harmful'
     subType: 'Kitchen Vegetable & Fruit Scraps',
@@ -21,6 +22,7 @@ export const ReportWasteView = {
     pickupSlot: 'Morning Route (08:00 AM - 11:00 AM)',
     notes: '',
     photoUrl: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&q=80',
+    photoSource: 'demo', // 'upload' | 'demo'
     aiVerified: true,
     aiPurityScore: 98.4,
     geoCoords: null,
@@ -98,6 +100,7 @@ export const ReportWasteView = {
 
   startNewReport(params = {}) {
     this.currentStep = 1;
+    this.lastSubmittedRequestId = null;
     const cat = (params.category && this.categoryConfig[params.category]) ? params.category : 'wet';
     const initialPhoto = this.demoCatalog[cat] ? this.demoCatalog[cat][0].url : this.demoCatalog.wet[0].url;
 
@@ -110,6 +113,7 @@ export const ReportWasteView = {
       pickupSlot: 'Morning Route (08:00 AM - 11:00 AM)',
       notes: '',
       photoUrl: initialPhoto,
+      photoSource: 'demo',
       aiVerified: true,
       aiPurityScore: 98.4,
       geoCoords: null,
@@ -161,27 +165,27 @@ export const ReportWasteView = {
           <div style="display: flex; justify-content: space-between; position: relative; z-index: 2;">
             <div class="wizard-step-node ${this.currentStep === 1 ? 'active' : this.currentStep > 1 ? 'completed' : ''}" onclick="window.ReportWasteView.goToStep(1)">
               <div class="wizard-node-circle">${this.currentStep > 1 ? '✓' : '1'}</div>
-              <span class="wizard-node-label">Category</span>
+              <span class="wizard-node-label">1 Category</span>
             </div>
 
             <div class="wizard-step-node ${this.currentStep === 2 ? 'active' : this.currentStep > 2 ? 'completed' : ''}" onclick="window.ReportWasteView.goToStep(2)">
               <div class="wizard-node-circle">${this.currentStep > 2 ? '✓' : '2'}</div>
-              <span class="wizard-node-label">AI Purity</span>
+              <span class="wizard-node-label">2 Evidence</span>
             </div>
 
             <div class="wizard-step-node ${this.currentStep === 3 ? 'active' : this.currentStep > 3 ? 'completed' : ''}" onclick="window.ReportWasteView.goToStep(3)">
               <div class="wizard-node-circle">${this.currentStep > 3 ? '✓' : '3'}</div>
-              <span class="wizard-node-label">Location</span>
+              <span class="wizard-node-label">3 Location</span>
             </div>
 
             <div class="wizard-step-node ${this.currentStep === 4 ? 'active' : this.currentStep > 4 ? 'completed' : ''}" onclick="window.ReportWasteView.goToStep(4)">
               <div class="wizard-node-circle">${this.currentStep > 4 ? '✓' : '4'}</div>
-              <span class="wizard-node-label">Review</span>
+              <span class="wizard-node-label">4 Review</span>
             </div>
 
             <div class="wizard-step-node ${this.currentStep === 5 ? 'active' : ''}">
               <div class="wizard-node-circle">5</div>
-              <span class="wizard-node-label">Status</span>
+              <span class="wizard-node-label">5 Submitted</span>
             </div>
           </div>
         </div>
@@ -204,7 +208,7 @@ export const ReportWasteView = {
       case 1:
         return `
           <div>
-            <div class="wizard-step-eyebrow">Step 1 of 4 &bull; Categorization</div>
+            <div class="wizard-step-eyebrow">STEP 1 Category &bull; Waste Classification</div>
             <h2 class="wizard-step-title">Select Waste Category</h2>
             <p class="wizard-step-desc">
               Source segregation ensures high recovery efficiency and unlocks Green Credits.
@@ -304,7 +308,7 @@ export const ReportWasteView = {
         const demos = this.demoCatalog[this.formData.category] || this.demoCatalog.wet;
         return `
           <div>
-            <div class="wizard-step-eyebrow">Step 2 of 4 &bull; Visual Purity Verification</div>
+            <div class="wizard-step-eyebrow">STEP 2 Evidence &bull; AI Purity &amp; Photo Proof</div>
             <h2 class="wizard-step-title">Upload Photo Proof</h2>
             <p class="wizard-step-desc">
               Computer vision validates segregation compliance for <strong>${config.name}</strong>.
@@ -352,12 +356,12 @@ export const ReportWasteView = {
               </div>
               <div>
                 <strong style="color: var(--color-primary-dark); font-size: 0.95rem; display: block;">
-                  AI Purity Pre-Check Passed (${this.formData.aiPurityScore}% Score)
+                  AI Verification — Demo (${this.formData.aiPurityScore}% Score)
                 </strong>
                 <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.2rem 0 0.4rem 0;">
                   Waste matches <strong>${this.formData.category.toUpperCase()}</strong> classification with zero cross-contamination detected.
                 </p>
-                <span class="badge badge-green">✓ Segregation Verified</span>
+                <span class="badge badge-green">✓ Demo Model: Segregation Compliant</span>
               </div>
             </div>
 
@@ -377,7 +381,7 @@ export const ReportWasteView = {
       case 3:
         return `
           <div>
-            <div class="wizard-step-eyebrow">Step 3 of 4 &bull; Municipal Routing</div>
+            <div class="wizard-step-eyebrow">STEP 3 Location &bull; Municipal Routing &amp; Time Slot</div>
             <h2 class="wizard-step-title">Pickup Location &amp; Time Slot</h2>
             <p class="wizard-step-desc">
               Your location ensures direct route dispatch to Ramesh Kumar's electric collection van.
@@ -394,7 +398,12 @@ export const ReportWasteView = {
                 ` : this.formData.geoStatus === 'success' && this.formData.geoCoords ? `
                   <span class="badge badge-green" style="display: inline-flex; align-items: center; gap: 0.35rem;">
                     <i data-lucide="map-pin" class="lucide-icon-sm"></i>
-                    <span>Location detected: ${this.formData.geoLabel || 'GPS Accurate (±8m)'}</span>
+                    <span>${this.formData.geoLabel || 'GPS Accurate (±8m)'}</span>
+                  </span>
+                ` : this.formData.geoStatus === 'fallback' ? `
+                  <span class="badge badge-blue" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <i data-lucide="map-pin" class="lucide-icon-sm"></i>
+                    <span>${this.formData.geoLabel}</span>
                   </span>
                 ` : `
                   <span class="badge badge-green" style="display: inline-flex; align-items: center; gap: 0.35rem;">
@@ -453,7 +462,7 @@ export const ReportWasteView = {
       case 4:
         return `
           <div>
-            <div class="wizard-step-eyebrow">Step 4 of 4 &bull; Final Verification Summary</div>
+            <div class="wizard-step-eyebrow">STEP 4 Review &bull; Final Verification Summary</div>
             <h2 class="wizard-step-title">Review Report Details</h2>
             <p class="wizard-step-desc">
               Please review your pickup summary. A municipal officer will verify weight and purity at handover.
@@ -470,7 +479,7 @@ export const ReportWasteView = {
               <div style="padding: 1rem 1.25rem; display: flex; flex-direction: column; gap: 0.65rem; font-size: 0.85rem;">
                 <div class="flex-between">
                   <span style="color: var(--text-muted);">Material Sub-type:</span>
-                  <strong style="color: var(--color-navy);">${this.formData.subType}</strong>
+                  <strong style="color: var(--color-navy);">${Formatters.escapeHtml(this.formData.subType)}</strong>
                 </div>
                 <div class="flex-between">
                   <span style="color: var(--text-muted);">Estimated Quantity:</span>
@@ -478,15 +487,15 @@ export const ReportWasteView = {
                 </div>
                 <div class="flex-between">
                   <span style="color: var(--text-muted);">Handover Address:</span>
-                  <strong style="color: var(--color-navy); text-align: right;">${this.formData.address}</strong>
+                  <strong style="color: var(--color-navy); text-align: right;">${Formatters.escapeHtml(this.formData.address)}</strong>
                 </div>
                 <div class="flex-between">
                   <span style="color: var(--text-muted);">Selected Slot:</span>
-                  <span style="color: var(--text-secondary); text-align: right;">${this.formData.pickupSlot}</span>
+                  <span style="color: var(--text-secondary); text-align: right;">${Formatters.escapeHtml(this.formData.pickupSlot)}</span>
                 </div>
                 <div class="flex-between">
                   <span style="color: var(--text-muted);">Destination Facility:</span>
-                  <span style="color: var(--text-secondary); text-align: right;">${config.destination}</span>
+                  <span style="color: var(--text-secondary); text-align: right;">${Formatters.escapeHtml(config.destination)}</span>
                 </div>
               </div>
             </div>
@@ -516,9 +525,12 @@ export const ReportWasteView = {
         `;
 
       case 5:
-        const latest = State.state.pickups[0];
+        const latest = (this.lastSubmittedRequestId
+          ? State.state.pickups.find(p => p.id === this.lastSubmittedRequestId)
+          : null) || State.state.pickups[0];
         return `
           <div style="text-align: center; padding: 1.5rem 0;">
+            <div class="wizard-step-eyebrow" style="margin-bottom: 0.75rem;">STEP 5 Submitted &bull; Collection Dispatched</div>
             <div style="width: 64px; height: 64px; border-radius: 50%; background: #DCFCE7; color: var(--color-primary-dark); font-size: 1.8rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.25);">
               <i data-lucide="check" class="lucide-icon-lg"></i>
             </div>
@@ -532,10 +544,10 @@ export const ReportWasteView = {
             <div class="neu-card-inset" style="border-radius: var(--radius-lg); padding: 1.5rem; max-width: 380px; margin: 0 auto 1.75rem auto;">
               <div class="eyebrow" style="margin-bottom: 0.25rem; font-size: 0.75rem;">Collection Handover OTP</div>
               <div style="font-family: var(--font-heading); font-size: 2.5rem; font-weight: 900; letter-spacing: 0.15em; color: var(--color-primary-dark); margin: 0.25rem 0;">
-                ${latest ? latest.otp : '8492'}
+                ${latest ? Formatters.escapeHtml(latest.otp) : '8492'}
               </div>
               <div style="font-size: 0.78rem; color: var(--text-muted);">
-                Request ID: <strong>${latest ? latest.id : 'GK-2026-NEW'}</strong> &bull; Worker ETA: <strong>18 mins</strong>
+                Request ID: <strong>${latest ? Formatters.escapeHtml(latest.id) : 'GK-2026-NEW'}</strong> &bull; Worker ETA: <strong>18 mins</strong>
               </div>
             </div>
 
@@ -600,6 +612,7 @@ export const ReportWasteView = {
     const reader = new FileReader();
     reader.onload = (e) => {
       this.formData.photoUrl = e.target.result;
+      this.formData.photoSource = 'upload';
       this.formData.aiPurityScore = Math.round((96 + Math.random() * 3.5) * 10) / 10;
       SoundFX.playClick();
       this.render();
@@ -613,6 +626,7 @@ export const ReportWasteView = {
   selectDemoImage(url) {
     SoundFX.playClick();
     this.formData.photoUrl = url;
+    this.formData.photoSource = 'demo';
     this.formData.aiPurityScore = Math.round((96 + Math.random() * 3.8) * 10) / 10;
     this.render();
   },
@@ -624,32 +638,43 @@ export const ReportWasteView = {
     try {
       const pos = await MapHelper.getUserLocation();
       this.formData.geoCoords = { lat: pos.lat, lng: pos.lng };
-      this.formData.geoLabel = MapHelper.formatCoords(pos.lat, pos.lng);
+      this.formData.geoLabel = `Live GPS: ${MapHelper.formatCoords(pos.lat, pos.lng)}`;
       this.formData.geoStatus = 'success';
       this.formData.geoError = null;
+      this.formData.isDemoLocation = false;
       this.render();
       if (window.AppRouter && window.AppRouter.showToast) {
         window.AppRouter.showToast('GPS coordinates locked successfully.');
       }
     } catch (err) {
-      this.formData.geoStatus = 'error';
-      this.formData.geoError = err.message || 'GPS access denied or unavailable.';
+      // Honest demo fallback
+      this.formData.geoCoords = { lat: 19.0596, lng: 72.8295 };
+      this.formData.geoLabel = 'Demo coordinates used: 19.0596° N, 72.8295° E (Bandra West)';
+      this.formData.geoStatus = 'fallback';
+      this.formData.geoError = err.message || 'GPS permission not granted.';
+      this.formData.isDemoLocation = true;
       this.render();
+      if (window.AppRouter && window.AppRouter.showToast) {
+        window.AppRouter.showToast('Demo coordinates used: Ward 4B, Bandra West.');
+      }
     }
   },
 
   submitRequest() {
     SoundFX.playPointsEarned();
-    State.createWasteRequest({
+    const newRequest = State.createWasteRequest({
       category: this.formData.category,
       subType: this.formData.subType,
       quantity: this.formData.quantity,
       address: this.formData.address,
+      pickupSlot: this.formData.pickupSlot,
       notes: this.formData.notes,
       photoUrl: this.formData.photoUrl,
+      photoSource: this.formData.photoSource || 'demo',
       geoCoords: this.formData.geoCoords
     });
 
+    this.lastSubmittedRequestId = newRequest ? newRequest.id : null;
     this.currentStep = 5;
     this.render();
   }

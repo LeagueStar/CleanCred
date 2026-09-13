@@ -99,7 +99,7 @@
 
   /* Main Content Offset: Starts cleanly below topbar + role strip */
   .main-content {
-    margin-top: calc(112px + env(safe-area-inset-top, 0px));
+    margin-top: calc(134px + env(safe-area-inset-top, 0px)) !important;
     padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
   }
 
@@ -362,7 +362,7 @@
     justify-content: center;
     background: transparent;
     border: none;
-    color: var(--color-text-muted);
+    color: var(--text-muted);
     cursor: pointer;
     touch-action: manipulation;
   }
@@ -422,7 +422,7 @@
   .dock-fab-label {
     font-size: 0.65rem;
     font-weight: 600;
-    color: var(--color-text-muted);
+    color: var(--text-muted);
     letter-spacing: 0.02em;
     margin-top: auto;
   }
@@ -609,14 +609,5 @@
 
   .dashboard-metrics-grid {
     grid-template-columns: 1fr !important;
-  }
-
-  .rewards-overview-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  .rewards-card-primary,
-  .rewards-card-compact {
-    grid-column: span 1 !important;
   }
 }

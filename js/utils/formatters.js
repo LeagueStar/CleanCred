@@ -71,5 +71,18 @@ export const Formatters = {
     const year = new Date().getFullYear();
     const randomSuffix = Math.floor(10000 + Math.random() * 90000);
     return `GK-${year}-${randomSuffix}`;
+  },
+
+  /**
+   * Escape HTML to prevent XSS in templates
+   */
+  escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
   }
 };

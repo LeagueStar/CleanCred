@@ -71,14 +71,14 @@ export const RewardsWallet = {
             <div style="font-size: 1rem; font-weight: 700; color: #DCFCE7;">
               ≈ ${Formatters.formatCurrency(inrValue)} real value
             </div>
-            <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap;">
-              <button class="btn btn-secondary btn-sm" style="background: #FFFFFF; color: var(--color-primary-dark); font-weight: 800; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.15);" onclick="window.RewardsWallet.openRechargeModal()">
+            <div class="rewards-card-actions">
+              <button class="btn btn-secondary btn-sm btn-recharge" onclick="window.RewardsWallet.openRechargeModal()">
                 <i data-lucide="smartphone" class="lucide-icon-sm"></i>
-                <span>Recharge</span>
+                <span style="color: #064E3B !important;">Recharge</span>
               </button>
-              <button class="btn btn-secondary btn-sm" style="background: rgba(255,255,255,0.18); color: #FFFFFF; border: 1px solid rgba(255,255,255,0.35);" onclick="window.RewardsWallet.openBillsModal()">
+              <button class="btn btn-secondary btn-sm btn-paybills" onclick="window.RewardsWallet.openBillsModal()">
                 <i data-lucide="file-text" class="lucide-icon-sm"></i>
-                <span>Pay Bills</span>
+                <span style="color: #FFFFFF !important;">Pay Bills</span>
               </button>
             </div>
           </div>

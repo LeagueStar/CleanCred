@@ -796,23 +796,6 @@
   color: var(--color-navy);
 }
 
-/* Photo & AI Box */
-.photo-upload-zone {
-  border: 2px dashed var(--color-border-strong);
-  border-radius: var(--radius-lg);
-  padding: 2rem;
-  text-align: center;
-  background: var(--bg-sunken);
-  box-shadow: var(--neu-inset-sm);
-  cursor: pointer;
-  transition: var(--spring-tactile);
-}
-
-.photo-upload-zone:hover {
-  border-color: var(--color-primary);
-  box-shadow: var(--neu-inset);
-}
-
 .ai-verification-badge-card {
   background: var(--waste-wet-bg);
   border: 1px solid var(--waste-wet-border);
@@ -937,53 +920,6 @@
 .admin-metric-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--neu-raised-lg);
-}
-
-/* ==========================================================================
-   6. MOBILE BOTTOM NAVIGATION DOCK (SOLID MATTE // ZERO GLASS)
-   ========================================================================== */
-.mobile-bottom-dock {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 64px;
-  background: var(--bg-surface);
-  box-shadow: 0 -4px 14px var(--shadow-dark), 0 -1px 0 var(--color-border-highlight);
-  border-top: 1px solid var(--color-border);
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  z-index: 1000;
-}
-
-.dock-item-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  font-size: 0.72rem;
-  font-weight: 700;
-  cursor: pointer;
-  padding: 0.4rem 0.85rem;
-  border-radius: var(--radius-md);
-  transition: var(--spring-tactile);
-}
-
-.dock-item-btn:hover,
-.dock-item-btn.active {
-  color: var(--color-primary);
-  background: var(--bg-sunken);
-  box-shadow: var(--neu-inset-sm);
-}
-
-.dock-item-btn svg,
-.dock-lucide-icon {
-  width: 20px;
-  height: 20px;
 }
 
 /* ==========================================================================
@@ -1289,6 +1225,59 @@
   font-weight: 900;
   line-height: 1;
   margin-bottom: 0.5rem;
+}
+
+.rewards-card-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.rewards-card-primary .btn-recharge {
+  background: #FFFFFF !important;
+  color: #064E3B !important;
+  font-weight: 800 !important;
+  border: none !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.45rem !important;
+}
+
+.rewards-card-primary .btn-recharge span {
+  color: #064E3B !important;
+  font-weight: 800 !important;
+  display: inline !important;
+  visibility: visible !important;
+}
+
+.rewards-card-primary .btn-recharge svg,
+.rewards-card-primary .btn-recharge i {
+  color: #064E3B !important;
+  stroke: #064E3B !important;
+}
+
+.rewards-card-primary .btn-paybills {
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.45rem !important;
+}
+
+.rewards-card-primary .btn-paybills span {
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  display: inline !important;
+  visibility: visible !important;
+}
+
+.rewards-card-primary .btn-paybills svg,
+.rewards-card-primary .btn-paybills i {
+  color: #FFFFFF !important;
+  stroke: #FFFFFF !important;
 }
 
 /* ==========================================================================

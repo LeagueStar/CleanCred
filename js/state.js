@@ -515,13 +515,15 @@ class StateStore {
       address: formData.address || this.state.user.address,
       landmark: formData.landmark || '',
       pickupType: formData.pickupType || 'doorstep',
+      pickupSlot: formData.pickupSlot || 'Morning Route (08:00 AM - 11:00 AM)',
       scheduledDate: formData.scheduledDate || 'Today',
-      scheduledTime: formData.scheduledTime || 'Slot 10:00 AM - 12:00 PM',
+      scheduledTime: formData.scheduledTime || formData.pickupSlot || 'Slot 10:00 AM - 12:00 PM',
       createdAt: new Date().toISOString(),
       status: 'created',
       otp: Math.floor(1000 + Math.random() * 9000).toString(),
       etaMinutes: 18,
       photoUrl: formData.photoUrl || null,
+      photoSource: formData.photoSource || 'demo',
       geoCoords: formData.geoCoords || null
     };
 
@@ -532,6 +534,7 @@ class StateStore {
       id: newRequest.id,
       userName: this.state.user.name,
       address: newRequest.address,
+      pickupSlot: newRequest.pickupSlot,
       category: newRequest.category,
       subType: newRequest.subType,
       quantityKg: newRequest.quantityKg,
@@ -539,6 +542,7 @@ class StateStore {
       status: 'created',
       otp: newRequest.otp,
       photoUrl: newRequest.photoUrl || 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=300&q=80',
+      photoSource: newRequest.photoSource,
       geoCoords: newRequest.geoCoords
     });
 
@@ -671,6 +675,26 @@ class StateStore {
 
     if (!pickup && !workerItem) {
       return { success: false, message: `Pickup ${pickupId} not found` };
+    }
+
+    const currentStatus = (pickup ? pickup.status : workerItem.status) || 'created';
+
+    // Terminal statuses cannot transition further
+    if (currentStatus === 'verified' || currentStatus === 'rejected') {
+      return { success: false, message: `Pickup is already in terminal status "${currentStatus}"` };
+    }
+
+    // Enforce strict allowed forward transitions: created -> assigned -> on_the_way -> collected -> verified
+    const allowedTransitions = {
+      'created': ['assigned', 'rejected'],
+      'assigned': ['on_the_way', 'rejected'],
+      'on_the_way': ['collected', 'rejected'],
+      'collected': ['verified', 'rejected']
+    };
+
+    if (allowedTransitions[currentStatus] && !allowedTransitions[currentStatus].includes(newStatus) && currentStatus !== newStatus) {
+      console.warn(`CleanCred: Disallowed status transition from ${currentStatus} to ${newStatus}`);
+      return { success: false, message: `Cannot transition from ${currentStatus} to ${newStatus}` };
     }
 
     if (pickup) pickup.status = newStatus;

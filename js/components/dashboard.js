@@ -441,7 +441,7 @@ export const DashboardView = {
           <i data-lucide="check-circle-2" class="lucide-icon-lg"></i>
         </div>
         
-        <div class="badge badge-green" style="margin-bottom: 0.4rem;">AI Purity Pre-Check Passed (98.4%)</div>
+        <div class="badge badge-green" style="margin-bottom: 0.4rem;">AI Verification — Demo (98.4% Purity)</div>
         <h3 style="font-size: 1.35rem; font-weight: 900; color: var(--color-navy); margin: 0;">Pickup Staged</h3>
         <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.3rem 0 0.85rem 0; line-height: 1.35;">
           Request <strong>#${newReq.id}</strong> scheduled. Hand over bag to collector to disburse <strong>+10 Green Credits</strong>.

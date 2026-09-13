@@ -8,6 +8,7 @@ import { State } from './state.js';
 import { Formatters } from './utils/formatters.js';
 import { Confetti } from './utils/confetti.js';
 import { SoundFX } from './utils/audio.js';
+import { MapHelper } from './utils/mapHelper.js';
 
 // Component Views
 import { DashboardView } from './components/dashboard.js';
@@ -89,6 +90,15 @@ class AppRouterManager {
 
   navigate(route, params = {}) {
     SoundFX.playClick();
+
+    // Clean up active view resources before switching
+    if (this.currentRoute === 'live-tracking' && typeof LiveTrackingView.cleanup === 'function') {
+      LiveTrackingView.cleanup();
+    }
+    if (this.currentRoute === 'worker' && typeof WorkerPortalView.cleanup === 'function') {
+      WorkerPortalView.cleanup();
+    }
+
     const targetRoute = this.normalizeRoute(route);
     this.currentRoute = targetRoute;
     window.location.hash = route;
@@ -241,4 +251,11 @@ class AppRouterManager {
 
 // Instantiate and expose globally
 window.AppRouter = new AppRouterManager();
+window.State = State;
+window.Formatters = Formatters;
+window.MapHelper = MapHelper;
+window.ReportWasteView = ReportWasteView;
+window.WorkerPortalView = WorkerPortalView;
+window.RewardsWallet = RewardsWallet;
+window.DashboardView = DashboardView;
 export { AppRouterManager };

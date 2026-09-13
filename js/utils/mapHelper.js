@@ -55,6 +55,29 @@ export const MapHelper = {
     });
   },
 
+  _mapInstances: new Map(),
+
+  /**
+   * Safely destroy and remove existing map instance
+   */
+  destroyMap(elementId) {
+    if (this._mapInstances.has(elementId)) {
+      try {
+        const oldMap = this._mapInstances.get(elementId);
+        if (oldMap && typeof oldMap.remove === 'function') {
+          oldMap.remove();
+        }
+      } catch (err) {
+        console.warn('MapHelper: error removing map instance:', err);
+      }
+      this._mapInstances.delete(elementId);
+    }
+    const container = document.getElementById(elementId);
+    if (container && container._leaflet_id) {
+      delete container._leaflet_id;
+    }
+  },
+
   /**
    * Initialize a standard Leaflet Map on an element ID
    */
@@ -63,16 +86,16 @@ export const MapHelper = {
     const container = document.getElementById(elementId);
     if (!container) return null;
 
-    // Remove existing map if already initialized
-    if (container._leaflet_id) {
-      container._leaflet_id = null;
-    }
+    // Remove existing map instance properly before re-initializing
+    this.destroyMap(elementId);
 
     const map = window.L.map(elementId, {
       center: center,
       zoom: zoom,
       zoomControl: true
     });
+
+    this._mapInstances.set(elementId, map);
 
     // Clean OpenStreetMap tiles with eco-friendly styling
     window.L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
