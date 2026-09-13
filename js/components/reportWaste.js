@@ -126,6 +126,14 @@ export const ReportWasteView = {
     this.render(params);
   },
 
+  updateOnStateChange() {
+    // If on Step 5 (submitted summary screen), refresh details if pickup status progressed.
+    // If on Steps 1-4 (active citizen input wizard), strictly leave form state and DOM untouched.
+    if (this.currentStep === 5) {
+      this.render();
+    }
+  },
+
   render(params = {}) {
     const container = document.getElementById('view-report-waste');
     if (!container) return;
@@ -525,9 +533,13 @@ export const ReportWasteView = {
         `;
 
       case 5:
-        const latest = (this.lastSubmittedRequestId
+        const latest = this.lastSubmittedRequestId
           ? State.state.pickups.find(p => p.id === this.lastSubmittedRequestId)
-          : null) || State.state.pickups[0];
+          : State.state.pickups.find(p => p.status === 'created');
+        const workerName = (latest && latest.workerName) || 'Worker Ramesh Kumar (Ward 4B Fleet)';
+        const otpVal = (latest && latest.otp) || (latest ? '----' : '8492 (Demo Seed)');
+        const reqIdVal = (latest && latest.id) || 'GK-2026-NEW';
+        const etaVal = (latest && latest.etaMinutes) ? `${latest.etaMinutes} mins` : '18 mins';
         return `
           <div style="text-align: center; padding: 1.5rem 0;">
             <div class="wizard-step-eyebrow" style="margin-bottom: 0.75rem;">STEP 5 Submitted &bull; Collection Dispatched</div>
@@ -538,21 +550,21 @@ export const ReportWasteView = {
             <span class="badge badge-green" style="margin-bottom: 0.5rem;">Request Registered Successfully</span>
             <h2 style="color: var(--color-navy); font-size: 1.6rem; font-weight: 800; margin-bottom: 0.25rem;">Awaiting Municipal Collection</h2>
             <p style="font-size: 0.88rem; color: var(--text-muted); max-width: 480px; margin: 0 auto 1.5rem auto;">
-              Your waste collection request has been dispatched to <strong>Worker Ramesh Kumar</strong>. Hand over your waste bag and share the OTP below.
+              Your waste collection request has been dispatched to <strong>${Formatters.escapeHtml(workerName)}</strong>. Hand over your waste bag and share the OTP below.
             </p>
 
             <div class="neu-card-inset" style="border-radius: var(--radius-lg); padding: 1.5rem; max-width: 380px; margin: 0 auto 1.75rem auto;">
               <div class="eyebrow" style="margin-bottom: 0.25rem; font-size: 0.75rem;">Collection Handover OTP</div>
               <div style="font-family: var(--font-heading); font-size: 2.5rem; font-weight: 900; letter-spacing: 0.15em; color: var(--color-primary-dark); margin: 0.25rem 0;">
-                ${latest ? Formatters.escapeHtml(latest.otp) : '8492'}
+                ${Formatters.escapeHtml(otpVal)}
               </div>
               <div style="font-size: 0.78rem; color: var(--text-muted);">
-                Request ID: <strong>${latest ? Formatters.escapeHtml(latest.id) : 'GK-2026-NEW'}</strong> &bull; Worker ETA: <strong>18 mins</strong>
+                Request ID: <strong>${Formatters.escapeHtml(reqIdVal)}</strong> &bull; Worker ETA: <strong>${Formatters.escapeHtml(etaVal)}</strong>
               </div>
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 0.75rem; max-width: 380px; margin: 0 auto;">
-              <button class="btn btn-primary btn-block btn-lg" onclick="window.AppRouter.navigate('live-tracking')">
+              <button class="btn btn-primary btn-block btn-lg" onclick="window.AppRouter.navigate('live-tracking', { pickupId: '${latest ? latest.id : ''}' })">
                 <i data-lucide="navigation" class="lucide-icon-sm"></i>
                 <span>Track Pickup</span>
               </button>
@@ -661,7 +673,7 @@ export const ReportWasteView = {
   },
 
   submitRequest() {
-    SoundFX.playPointsEarned();
+    SoundFX.playClick();
     const newRequest = State.createWasteRequest({
       category: this.formData.category,
       subType: this.formData.subType,

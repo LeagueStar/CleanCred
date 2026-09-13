@@ -185,7 +185,7 @@ export const IllegalDumpingView = {
       photoUrl: this.photoPreviewUrl
     });
 
-    SoundFX.playPointsEarned();
+    SoundFX.playClick();
     Confetti.trigger(80);
     window.AppRouter.showToast('Report submitted! Ward Inspector notified.');
     this.photoPreviewUrl = null;

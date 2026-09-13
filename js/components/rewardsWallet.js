@@ -61,7 +61,7 @@ export const RewardsWallet = {
           <div class="neu-card neu-card-forest rewards-card-primary" style="color: #FFFFFF;">
             <div class="flex-between" style="margin-bottom: 1rem;">
               <span style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #DCFCE7;">Available Balance</span>
-              <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: #047857; border: 1px solid #10B981; display: flex; align-items: center; justify-content: center;">
                 <i data-lucide="coins" class="lucide-icon-sm" style="color: #FFFFFF;"></i>
               </div>
             </div>
@@ -74,11 +74,11 @@ export const RewardsWallet = {
             <div class="rewards-card-actions">
               <button class="btn btn-secondary btn-sm btn-recharge" onclick="window.RewardsWallet.openRechargeModal()">
                 <i data-lucide="smartphone" class="lucide-icon-sm"></i>
-                <span style="color: #064E3B !important;">Recharge</span>
+                <span style="color: #064E3B;">Recharge</span>
               </button>
               <button class="btn btn-secondary btn-sm btn-paybills" onclick="window.RewardsWallet.openBillsModal()">
                 <i data-lucide="file-text" class="lucide-icon-sm"></i>
-                <span style="color: #FFFFFF !important;">Pay Bills</span>
+                <span style="color: #FFFFFF;">Pay Bills</span>
               </button>
             </div>
           </div>

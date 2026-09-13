@@ -20,6 +20,10 @@
 
 /* Breakpoint: Mobile Viewport (<= 768px) */
 @media (max-width: 768px) {
+  :root {
+    --header-stack-height: calc(120px + env(safe-area-inset-top, 0px));
+  }
+
   /* Prevent horizontal overflow globally */
   html,
   body {
@@ -53,19 +57,19 @@
 
   /* Hide center role switcher in topbar row (moved to .mobile-role-strip) */
   .topbar-content .role-switcher-nav {
-    display: none !important;
+    display: none;
   }
 
   .brand-badge {
-    display: none !important; /* Hide SBM-U 2.0 pill on mobile */
+    display: none; /* Hide SBM-U 2.0 pill on mobile */
   }
 
   .demo-reset-btn {
-    display: none !important; /* Hide demo reset from topbar on mobile */
+    display: none; /* Hide demo reset from topbar on mobile */
   }
 
   .topbar-profile-btn span {
-    display: none !important; /* Icon-only profile button on mobile */
+    display: none; /* Icon-only profile button on mobile */
   }
 
   .topbar-profile-btn {
@@ -81,25 +85,22 @@
     font-size: 0.82rem; /* Keep points clearly visible */
   }
 
-  /* Mobile Role Switcher Strip: Situated directly beneath fixed header */
+  /* Mobile Role Switcher Strip: Situated directly beneath topbar inside header stack */
   .mobile-role-strip {
     display: flex;
     justify-content: center;
-    position: fixed;
-    top: calc(64px + env(safe-area-inset-top, 0px));
-    left: 0;
-    right: 0;
+    position: relative;
+    width: 100%;
     background: var(--bg-surface);
     padding: 6px 16px 8px 16px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
     border-bottom: 1px solid var(--color-border);
-    z-index: 990;
     box-sizing: border-box;
   }
 
-  /* Main Content Offset: Starts cleanly below topbar + role strip */
+  /* Main Content Offset: Dynamically self-correcting below header stack */
   .main-content {
-    margin-top: calc(134px + env(safe-area-inset-top, 0px)) !important;
+    margin-top: var(--header-stack-height, calc(120px + env(safe-area-inset-top, 0px)));
     padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
   }
 
@@ -150,17 +151,17 @@
   }
 
   .scan-supporting-note .desktop-note {
-    display: none !important;
+    display: none;
   }
 
   .scan-supporting-note .mobile-note {
-    display: inline !important;
+    display: inline;
   }
 
   /* Green Credits Hero Card */
   .hero-points-card {
-    padding: 1.25rem 1rem !important;
-    border-radius: 16px !important;
+    padding: 1.25rem 1rem;
+    border-radius: 16px;
     margin-bottom: 1.25rem;
   }
 
@@ -175,14 +176,14 @@
     flex-direction: column;
     align-items: stretch;
     gap: 0.85rem;
-    padding: 1.15rem 1rem !important;
+    padding: 1.15rem 1rem;
     margin-bottom: 1.25rem;
-    border-radius: 16px !important;
+    border-radius: 16px;
   }
 
   .pickup-status-info {
-    min-width: 0 !important;
-    width: 100% !important;
+    min-width: 0;
+    width: 100%;
   }
 
   .pickup-status-actions {
@@ -209,35 +210,36 @@
 
   /* Dashboard Metrics Grid (2-Column Compact) */
   .dashboard-metrics-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 0.75rem !important;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
     margin-bottom: 1.5rem;
   }
 
   .metric-card {
-    padding: 0.85rem 0.75rem !important;
-    border-radius: 14px !important;
+    padding: 0.85rem 0.75rem;
+    border-radius: 14px;
   }
 
   .metric-card span {
-    font-size: 0.72rem !important;
-    margin-bottom: 0.2rem !important;
+    font-size: 0.72rem;
+    margin-bottom: 0.2rem;
   }
 
   .metric-card strong {
-    font-size: 1.45rem !important;
+    font-size: 1.45rem;
   }
 
   .metric-card em {
-    font-size: 0.7rem !important;
+    font-size: 0.7rem;
   }
 
   /* Standardized Mobile Card Sizing & Padding */
   .neu-card,
-  .neu-card-raised {
-    padding: 1.15rem 1rem !important;
-    border-radius: 16px !important;
-    box-shadow: var(--neu-raised-sm) !important;
+  .neu-card-raised,
+  .neu-card-flat {
+    padding: 1.15rem 1rem;
+    border-radius: 16px;
+    box-shadow: var(--neu-raised-sm);
   }
 
   .neu-card .flex-between,
@@ -249,14 +251,14 @@
 
   /* Step 2 Demo Picker: Horizontal Scroll Row & Upload Button */
   .btn-upload-photo {
-    width: 100% !important;
-    max-width: 100% !important;
+    width: 100%;
+    max-width: 100%;
     justify-content: center;
   }
 
   .demo-picker-grid {
-    display: flex !important;
-    overflow-x: auto !important;
+    display: flex;
+    overflow-x: auto;
     scroll-snap-type: x mandatory;
     gap: 0.75rem;
     padding-bottom: 0.5rem;
@@ -271,27 +273,27 @@
 
   /* Surreal Background Blobs Calming on Mobile (prevent horizontal stretch & jitter) */
   .surreal-blob {
-    animation: none !important;
-    filter: blur(40px) !important;
-    opacity: 0.16 !important;
+    animation: none;
+    filter: blur(40px);
+    opacity: 0.16;
   }
   .surreal-blob-green {
-    width: 180px !important;
-    height: 180px !important;
-    left: 0 !important;
-    top: 2% !important;
+    width: 180px;
+    height: 180px;
+    left: 0;
+    top: 2%;
   }
   .surreal-blob-cyan {
-    width: 180px !important;
-    height: 180px !important;
-    right: 0 !important;
-    top: 45% !important;
+    width: 180px;
+    height: 180px;
+    right: 0;
+    top: 45%;
   }
   .surreal-blob-orange {
-    width: 160px !important;
-    height: 160px !important;
-    bottom: 2% !important;
-    left: 5% !important;
+    width: 160px;
+    height: 160px;
+    bottom: 2%;
+    left: 5%;
   }
 
   /* Modals: Guaranteed Viewport Fit */
@@ -303,27 +305,27 @@
   .modal-content,
   .neu-modal,
   .celebration-reward-card {
-    max-width: calc(100vw - 24px) !important;
-    max-height: calc(100vh - 24px) !important;
-    padding: 1.25rem 1rem !important;
-    border-radius: var(--radius-lg) !important;
-    box-sizing: border-box !important;
-    overflow-y: auto !important;
+    max-width: calc(100vw - 24px);
+    max-height: calc(100vh - 24px);
+    padding: 1.25rem 1rem;
+    border-radius: var(--radius-lg);
+    box-sizing: border-box;
+    overflow-y: auto;
   }
 
   .scan-viewfinder-modal {
-    width: calc(100vw - 32px) !important;
-    max-width: 360px !important;
-    padding: 1.25rem 1rem !important;
+    width: calc(100vw - 32px);
+    max-width: 360px;
+    padding: 1.25rem 1rem;
   }
 
   .camera-preview-box {
-    max-height: 200px !important;
+    max-height: 200px;
   }
 
   /* Mobile Bottom Navigation Dock (Solid Matte Neumorphic) */
   .mobile-bottom-dock {
-    display: flex !important;
+    display: flex;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -429,40 +431,40 @@
 
   /* Rewards Overview Grid (Mobile composition) */
   .rewards-overview-grid {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 0.85rem !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
   }
 
   .rewards-card-primary {
     grid-column: span 2;
-    padding: 1.35rem 1.15rem !important;
+    padding: 1.35rem 1.15rem;
   }
 
   .rewards-card-compact {
-    padding: 1rem 0.85rem !important;
+    padding: 1rem 0.85rem;
   }
 
   .rewards-card-amount {
-    font-size: 2.2rem !important;
+    font-size: 2.2rem;
   }
 
   /* Municipal Command Center (Admin View) */
   .admin-sidebar {
-    display: none !important;
+    display: none;
   }
 
   .command-tools-section {
-    display: block !important;
+    display: block;
   }
 
   .admin-page-title {
-    font-size: clamp(1.3rem, 5.5vw, 1.85rem) !important;
-    line-height: 1.2 !important;
+    font-size: clamp(1.3rem, 5.5vw, 1.85rem);
+    line-height: 1.2;
     letter-spacing: -0.02em;
   }
 
   .admin-page-subtitle {
-    font-size: 0.82rem !important;
+    font-size: 0.82rem;
   }
 
   .admin-metrics-row {
@@ -477,14 +479,14 @@
   }
 
   .desktop-dashboard-grid {
-    grid-template-columns: 1fr !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
+    grid-template-columns: 1fr;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .desktop-dashboard-grid > * {
-    min-width: 0 !important;
-    max-width: 100% !important;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .hero-grid,
@@ -494,17 +496,17 @@
   .hero-grid-landing,
   .hero-grid-leaderboard,
   .hero-grid-2col {
-    grid-template-columns: 1fr !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
+    grid-template-columns: 1fr;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .grid-cols-2,
   .grid-cols-3,
   .grid-cols-4 {
-    grid-template-columns: 1fr !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
+    grid-template-columns: 1fr;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .hero-grid > *,
@@ -517,29 +519,29 @@
   .grid-cols-2 > *,
   .grid-cols-3 > *,
   .grid-cols-4 > * {
-    min-width: 0 !important;
-    max-width: 100% !important;
+    min-width: 0;
+    max-width: 100%;
   }
 
   canvas {
-    max-width: 100% !important;
+    max-width: 100%;
   }
 
   .btn-block {
-    display: flex !important;
-    width: 100% !important;
+    display: flex;
+    width: 100%;
   }
 }
 
 /* Breakpoint: Compact Mobile (<= 380px) */
 @media (max-width: 380px) {
   .rewards-overview-grid {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: 1fr;
   }
 
   .rewards-card-primary,
   .rewards-card-compact {
-    grid-column: span 1 !important;
+    grid-column: span 1;
   }
 }
 
@@ -559,7 +561,7 @@
   }
 
   .waste-options-grid {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: 1fr;
   }
 }
 
@@ -608,6 +610,6 @@
   }
 
   .dashboard-metrics-grid {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: 1fr;
   }
 }

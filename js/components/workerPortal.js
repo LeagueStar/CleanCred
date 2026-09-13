@@ -94,7 +94,7 @@ export const WorkerPortalView = {
                       Citizen: <strong>${item.userName}</strong> &bull; ${item.address}
                     </div>
                     <div style="font-size: 0.78rem; color: var(--color-primary-dark); font-weight: 700; margin-top: 0.25rem;">
-                      Request ID: ${item.id} &bull; OTP: <span style="font-family: var(--font-mono);">${item.otp}</span>
+                      Request ID: ${item.id} &bull; OTP: <span style="font-family: var(--font-mono);">${item.otp}</span> &bull; Status: <span class="badge" style="text-transform: capitalize; font-size: 0.72rem; padding: 2px 6px;">${item.status.replace(/_/g, ' ')}</span>
                     </div>
                   </div>
                 </div>
@@ -108,8 +108,23 @@ export const WorkerPortalView = {
                   ` : item.status === 'rejected' ? `
                     <span class="badge" style="background: #FEE2E2; color: #991B1B; font-size: 0.88rem; padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.35rem;">
                       <i data-lucide="x-circle" class="lucide-icon-sm"></i>
-                      <span>Rejected (Contaminated)</span>
+                      <span>Rejected</span>
                     </span>
+                  ` : item.status === 'created' ? `
+                    <button class="btn btn-secondary btn-sm" onclick="window.WorkerPortalView.advanceStatus('${item.id}', 'assigned')">
+                      <i data-lucide="check" class="lucide-icon-sm"></i>
+                      <span>Accept Route</span>
+                    </button>
+                  ` : item.status === 'assigned' ? `
+                    <button class="btn btn-secondary btn-sm" onclick="window.WorkerPortalView.advanceStatus('${item.id}', 'on_the_way')">
+                      <i data-lucide="truck" class="lucide-icon-sm"></i>
+                      <span>Start Route</span>
+                    </button>
+                  ` : item.status === 'on_the_way' ? `
+                    <button class="btn btn-primary btn-sm" onclick="window.WorkerPortalView.advanceStatus('${item.id}', 'collected')">
+                      <i data-lucide="package-check" class="lucide-icon-sm"></i>
+                      <span>Mark Collected</span>
+                    </button>
                   ` : `
                     <button class="btn btn-primary" onclick="window.WorkerPortalView.openVerificationModal('${item.id}')">
                       <i data-lucide="scale" class="lucide-icon-sm"></i>
@@ -149,10 +164,26 @@ export const WorkerPortalView = {
     if (window.lucide) window.lucide.createIcons();
   },
 
+  advanceStatus(pickupId, newStatus) {
+    SoundFX.playClick();
+    const res = State.updatePickupStatus(pickupId, newStatus);
+    if (res && res.success) {
+      window.AppRouter.showToast(`Status updated to: ${newStatus.replace(/_/g, ' ')}`);
+      this.render();
+    } else {
+      window.AppRouter.showToast(res && res.message ? res.message : 'Could not update status');
+    }
+  },
+
   openVerificationModal(pickupId) {
     SoundFX.playClick();
     const item = State.state.workerQueue.find(q => q.id === pickupId);
     if (!item) return;
+
+    if (item.status !== 'collected') {
+      window.AppRouter.showToast('Pickup must be collected before verification.');
+      return;
+    }
 
     this.selectedPickup = item;
     const modalBody = document.getElementById('worker-modal-body');
@@ -229,13 +260,13 @@ export const WorkerPortalView = {
       if (res && res.alreadyVerified) {
         SoundFX.playClick();
         window.AppRouter.showToast('Pickup already verified — credits are on record.');
-      } else if (res && res.success) {
+      } else if (res && res.success && (res.points > 0 || res.awardedPoints > 0)) {
         SoundFX.playPointsEarned();
         Confetti.trigger(90);
         window.AppRouter.showToast(`Pickup verified! +${res.points || res.awardedPoints} Green Credits released.`);
       } else {
         SoundFX.playClick();
-        window.AppRouter.showToast('Verification could not be completed.');
+        window.AppRouter.showToast(res && res.message ? res.message : 'Verification could not be completed.');
       }
     } else {
       SoundFX.playClick();
@@ -450,6 +481,12 @@ export const WorkerPortalView = {
   },
 
   confirmScannedPickup(pickupId) {
+    const pickup = State.state.pickups.find(p => p.id === pickupId);
+    if (pickup && pickup.status !== 'collected' && pickup.status !== 'verified' && pickup.status !== 'rejected') {
+      if (pickup.status === 'created') State.updatePickupStatus(pickupId, 'assigned');
+      if (pickup.status === 'assigned') State.updatePickupStatus(pickupId, 'on_the_way');
+      if (pickup.status === 'on_the_way') State.updatePickupStatus(pickupId, 'collected');
+    }
     const result = State.awardCredits(pickupId);
 
     const modal = document.getElementById('worker-scan-modal');
@@ -457,7 +494,7 @@ export const WorkerPortalView = {
     const body = document.getElementById('worker-scan-body');
     if (!body) return;
 
-    if (!result.success) {
+    if (!result || !result.success || result.alreadyVerified || !(result.points > 0)) {
       const queueItem = State.state.workerQueue.find(q => q.id === pickupId);
       const pickupRecord = State.state.pickups.find(p => p.id === pickupId);
       this.renderScanResult({
@@ -465,7 +502,7 @@ export const WorkerPortalView = {
         item: {
           id: pickupId,
           userName: (queueItem && queueItem.userName) || State.state.user.name,
-          pointsCredited: result.points || (pickupRecord && pickupRecord.pointsCredited) || 0
+          pointsCredited: (result && result.points) || (pickupRecord && pickupRecord.pointsCredited) || 0
         }
       });
       return;
@@ -495,6 +532,10 @@ export const WorkerPortalView = {
     if (window.QRScanner && typeof window.QRScanner.stop === 'function') {
       window.QRScanner.stop();
     }
+    const inspectModal = document.getElementById('worker-inspect-modal');
+    if (inspectModal) inspectModal.classList.remove('active');
+    const scanModal = document.getElementById('worker-scan-modal');
+    if (scanModal) scanModal.classList.remove('active');
   }
 };
 

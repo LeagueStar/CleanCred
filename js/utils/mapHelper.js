@@ -63,18 +63,15 @@ export const MapHelper = {
   destroyMap(elementId) {
     if (this._mapInstances.has(elementId)) {
       try {
-        const oldMap = this._mapInstances.get(elementId);
+        let oldMap = this._mapInstances.get(elementId);
         if (oldMap && typeof oldMap.remove === 'function') {
           oldMap.remove();
         }
+        oldMap = null;
       } catch (err) {
         console.warn('MapHelper: error removing map instance:', err);
       }
       this._mapInstances.delete(elementId);
-    }
-    const container = document.getElementById(elementId);
-    if (container && container._leaflet_id) {
-      delete container._leaflet_id;
     }
   },
 

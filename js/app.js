@@ -53,12 +53,22 @@ class AppRouterManager {
   }
 
   init() {
-    // Listen for state changes to re-render navbar and active view
-    State.subscribe(() => {
-      this.updateNavbarHeader();
-      this.renderCurrentView();
-    });
+    // Dynamic self-correcting header stack height observer
+    this.updateHeaderStackHeight();
+    window.addEventListener('resize', () => this.updateHeaderStackHeight());
+    window.addEventListener('orientationchange', () => this.updateHeaderStackHeight());
+    if (typeof ResizeObserver !== 'undefined') {
+      const stack = document.getElementById('app-header-stack') || document.querySelector('.app-topbar');
+      if (stack) {
+        new ResizeObserver(() => this.updateHeaderStackHeight()).observe(stack);
+      }
+    }
 
+    // Listen for state changes to re-render navbar and active view without resetting form state
+    State.subscribe(() => {
+      this.handleStateUpdate();
+    });
+ 
     // Auto-detect initial route from hash or default to dashboard
     const rawHash = window.location.hash.replace('#', '');
     if (rawHash) {
@@ -136,16 +146,15 @@ class AppRouterManager {
       }
     });
 
-    // Update Mobile Bottom Dock Active State
-    const dockButtons = [
+    // Update Standard Mobile Bottom Dock Active State (4 regular dock items)
+    const standardDockItems = [
       { id: 'dock-btn-dashboard', routes: ['dashboard'] },
-      { id: 'dock-btn-report-waste', routes: ['report-waste'] },
       { id: 'dock-btn-live-tracking', routes: ['live-tracking'] },
       { id: 'dock-btn-rewards', routes: ['rewards'] },
       { id: 'dock-btn-profile', routes: ['profile'] }
     ];
 
-    dockButtons.forEach(dock => {
+    standardDockItems.forEach(dock => {
       const el = document.getElementById(dock.id);
       if (el) {
         if (dock.routes.includes(targetRoute)) {
@@ -155,6 +164,16 @@ class AppRouterManager {
         }
       }
     });
+
+    // Central Floating Action Button (FAB) Active State
+    const fabReportBtn = document.getElementById('dock-btn-report-waste');
+    if (fabReportBtn) {
+      if (targetRoute === 'report-waste') {
+        fabReportBtn.classList.add('active');
+      } else {
+        fabReportBtn.classList.remove('active');
+      }
+    }
 
     const btnProfile = document.getElementById('btn-topbar-profile');
     if (btnProfile) {
@@ -167,6 +186,9 @@ class AppRouterManager {
 
     // Update Points display in topbar
     this.updateNavbarHeader();
+
+    // Re-sync dynamic header stack height
+    this.updateHeaderStackHeight();
 
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'auto' });
@@ -202,7 +224,7 @@ class AppRouterManager {
         RewardsWallet.render();
         break;
       case 'live-tracking':
-        LiveTrackingView.render();
+        LiveTrackingView.render(params);
         break;
       case 'leaderboard':
         LeaderboardView.render();
@@ -221,6 +243,57 @@ class AppRouterManager {
         break;
       default:
         DashboardView.render(params);
+    }
+  }
+
+  handleStateUpdate() {
+    this.updateNavbarHeader();
+
+    // Re-render dependent views without resetting local form states
+    switch (this.currentRoute) {
+      case 'report-waste':
+        // State change while user is on report-waste:
+        // Must NOT call startNewReport() or reset in-progress form (category, weight, photo, location, step, notes)
+        if (typeof ReportWasteView.updateOnStateChange === 'function') {
+          ReportWasteView.updateOnStateChange();
+        }
+        break;
+      case 'live-tracking':
+        if (typeof LiveTrackingView.updateOnStateChange === 'function') {
+          LiveTrackingView.updateOnStateChange();
+        } else if (LiveTrackingView.activePickupId) {
+          LiveTrackingView.render({ pickupId: LiveTrackingView.activePickupId });
+        }
+        break;
+      case 'dashboard':
+        DashboardView.render();
+        break;
+      case 'worker':
+        WorkerPortalView.render();
+        break;
+      case 'admin':
+        AdminDashboardView.render();
+        break;
+      case 'rewards':
+        RewardsWallet.render();
+        break;
+      case 'leaderboard':
+        LeaderboardView.render();
+        break;
+      case 'impact':
+        ImpactDashboardView.render();
+        break;
+      case 'profile':
+        ProfileView.render();
+        break;
+      case 'illegal-dumping':
+        IllegalDumpingView.render();
+        break;
+      case 'institutions':
+        InstitutionPortalView.render();
+        break;
+      default:
+        break;
     }
   }
 
@@ -245,6 +318,16 @@ class AppRouterManager {
     if (topCounter && user) {
       const pts = user.greenPoints || 1250;
       topCounter.innerText = `${Formatters.formatNumber(pts)} GC`;
+    }
+  }
+
+  updateHeaderStackHeight() {
+    const stack = document.getElementById('app-header-stack') || document.querySelector('.app-topbar');
+    if (stack) {
+      const height = Math.ceil(stack.getBoundingClientRect().height);
+      if (height > 0) {
+        document.documentElement.style.setProperty('--header-stack-height', `${height}px`);
+      }
     }
   }
 }

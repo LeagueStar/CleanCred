@@ -66,76 +66,78 @@
   <canvas id="confetti-canvas"></canvas>
 
   <!-- ==========================================================================
-       TOP MUNICIPAL NAVIGATION BAR (SOLID MATTE NEUMORPHIC)
+       COMBINED HEADER STACK (TOPBAR + MOBILE ROLE STRIP)
        ========================================================================== -->
-  <header class="app-topbar">
-    <div class="app-container topbar-content">
-      
-      <!-- Brand Logo Cluster -->
-      <div class="brand-cluster" onclick="window.AppRouter.navigate('dashboard')">
-        <div class="brand-icon-wrapper">
-          <i data-lucide="leaf" style="width: 22px; height: 22px; stroke-width: 2.5;"></i>
-        </div>
-        <div>
-          <div class="brand-title">
-            <span>CleanCred</span>
-            <span class="brand-badge">SBM-U 2.0</span>
+  <header class="app-header-stack" id="app-header-stack">
+    <div class="app-topbar">
+      <div class="app-container topbar-content">
+        
+        <!-- Brand Logo Cluster -->
+        <div class="brand-cluster" onclick="window.AppRouter.navigate('dashboard')">
+          <div class="brand-icon-wrapper">
+            <i data-lucide="leaf" style="width: 22px; height: 22px; stroke-width: 2.5;"></i>
+          </div>
+          <div>
+            <div class="brand-title">
+              <span>CleanCred</span>
+              <span class="brand-badge">SBM-U 2.0</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Center 3-Role View Switcher (Lucide Controls) -->
-      <div class="role-switcher-nav" id="main-role-switcher">
-        <button class="role-tab-btn active" id="btn-mode-citizen" onclick="window.AppRouter.switchExperience('citizen')" title="Citizen Mobile Experience">
-          <i data-lucide="user" class="lucide-icon"></i>
+        <!-- Center 3-Role View Switcher (Lucide Controls) -->
+        <div class="role-switcher-nav" id="main-role-switcher">
+          <button class="role-tab-btn active" id="btn-mode-citizen" onclick="window.AppRouter.switchExperience('citizen')" title="Citizen Mobile Experience">
+            <i data-lucide="user" class="lucide-icon"></i>
+            <span>Citizen</span>
+          </button>
+          <button class="role-tab-btn" id="btn-mode-worker" onclick="window.AppRouter.switchExperience('worker')" title="Municipal Worker Portal">
+            <i data-lucide="truck" class="lucide-icon"></i>
+            <span>Worker</span>
+          </button>
+          <button class="role-tab-btn" id="btn-mode-admin" onclick="window.AppRouter.switchExperience('admin')" title="City Command Center">
+            <i data-lucide="building-2" class="lucide-icon"></i>
+            <span>Command</span>
+          </button>
+        </div>
+
+        <!-- Right Action Cluster -->
+        <div class="topbar-right-cluster">
+          <div class="points-pill-top" id="topbar-user-points" onclick="window.AppRouter.navigate('rewards')" title="View Green Wallet & Rewards">
+            <i data-lucide="coins" class="lucide-icon"></i>
+            <span id="user-points-counter-top">1,250 GC</span>
+          </div>
+          <button class="topbar-profile-btn" id="btn-topbar-profile" onclick="window.AppRouter.navigate('profile')" title="Citizen Profile & Municipal KYC">
+            <i data-lucide="user-check" class="lucide-icon-sm"></i>
+            <span>Profile</span>
+          </button>
+          <button class="demo-reset-btn" id="btn-demo-reset" onclick="window.State.resetState()" title="Reset session to clean seed state">
+            <i data-lucide="rotate-ccw" class="lucide-icon-sm"></i>
+            <span>Reset</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Mobile Segmented Role Strip (Visible on mobile <= 768px beneath fixed header) -->
+    <div class="mobile-role-strip" id="mobile-role-strip" role="tablist" aria-label="Role Switcher">
+      <div class="role-switcher-nav mobile-role-tabs">
+        <button class="role-tab-btn active" id="btn-mode-citizen-m" onclick="window.AppRouter.switchExperience('citizen')" title="Citizen Mobile Experience">
+          <i data-lucide="user" class="lucide-icon-sm"></i>
           <span>Citizen</span>
         </button>
-        <button class="role-tab-btn" id="btn-mode-worker" onclick="window.AppRouter.switchExperience('worker')" title="Municipal Worker Portal">
-          <i data-lucide="truck" class="lucide-icon"></i>
+        <button class="role-tab-btn" id="btn-mode-worker-m" onclick="window.AppRouter.switchExperience('worker')" title="Municipal Worker Portal">
+          <i data-lucide="truck" class="lucide-icon-sm"></i>
           <span>Worker</span>
         </button>
-        <button class="role-tab-btn" id="btn-mode-admin" onclick="window.AppRouter.switchExperience('admin')" title="City Command Center">
-          <i data-lucide="building-2" class="lucide-icon"></i>
+        <button class="role-tab-btn" id="btn-mode-admin-m" onclick="window.AppRouter.switchExperience('admin')" title="City Command Center">
+          <i data-lucide="building-2" class="lucide-icon-sm"></i>
           <span>Command</span>
         </button>
       </div>
-
-      <!-- Right Action Cluster -->
-      <div class="topbar-right-cluster">
-        <div class="points-pill-top" id="topbar-user-points" onclick="window.AppRouter.navigate('rewards')" title="View Green Wallet & Rewards">
-          <i data-lucide="coins" class="lucide-icon"></i>
-          <span id="user-points-counter-top">1,250 GC</span>
-        </div>
-        <button class="topbar-profile-btn" id="btn-topbar-profile" onclick="window.AppRouter.navigate('profile')" title="Citizen Profile & Municipal KYC">
-          <i data-lucide="user-check" class="lucide-icon-sm"></i>
-          <span>Profile</span>
-        </button>
-        <button class="demo-reset-btn" id="btn-demo-reset" onclick="window.State.resetState()" title="Reset session to clean seed state">
-          <i data-lucide="rotate-ccw" class="lucide-icon-sm"></i>
-          <span>Reset</span>
-        </button>
-      </div>
-
     </div>
   </header>
-
-  <!-- Mobile Segmented Role Strip (Visible on mobile <= 768px beneath fixed header) -->
-  <div class="mobile-role-strip" id="mobile-role-strip" role="tablist" aria-label="Role Switcher">
-    <div class="role-switcher-nav mobile-role-tabs">
-      <button class="role-tab-btn active" id="btn-mode-citizen-m" onclick="window.AppRouter.switchExperience('citizen')" title="Citizen Mobile Experience">
-        <i data-lucide="user" class="lucide-icon-sm"></i>
-        <span>Citizen</span>
-      </button>
-      <button class="role-tab-btn" id="btn-mode-worker-m" onclick="window.AppRouter.switchExperience('worker')" title="Municipal Worker Portal">
-        <i data-lucide="truck" class="lucide-icon-sm"></i>
-        <span>Worker</span>
-      </button>
-      <button class="role-tab-btn" id="btn-mode-admin-m" onclick="window.AppRouter.switchExperience('admin')" title="City Command Center">
-        <i data-lucide="building-2" class="lucide-icon-sm"></i>
-        <span>Command</span>
-      </button>
-    </div>
-  </div>
 
   <!-- ==========================================================================
        MAIN VIEW CONTAINERS (ALL ROUTES PERSISTED)

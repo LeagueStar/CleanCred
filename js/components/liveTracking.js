@@ -16,49 +16,100 @@ export const LiveTrackingView = {
   truckMarker: null,
   routePolyline: null,
   animationTimer: null,
+  activePickupId: null,
 
-  render() {
+  render(params = {}) {
     const container = document.getElementById('view-live-tracking');
     if (!container) return;
 
-    const pickup = State.state.pickups[0] || {
-      id: 'GK-2026-89421',
-      category: 'wet',
-      categoryName: 'Wet Waste (Organic)',
-      pointsReward: 10,
-      quantityKg: 4.5,
-      subType: 'Kitchen Scraps',
-      address: 'Flat 402, Green Meadows, Ward 4B, Mumbai',
-      status: 'on_the_way',
-      workerName: 'Ramesh Kumar',
-      workerPhone: '+91 98111 22334',
-      vehicleNo: 'MH-02-GK-4091',
-      otp: '8492',
-      etaMinutes: 12
-    };
+    let targetId = (params && params.pickupId) ? params.pickupId : this.activePickupId;
+    let pickup = null;
+    let isDemoMode = false;
+
+    if (targetId) {
+      pickup = State.state.pickups.find(p => p.id === targetId);
+    }
+
+    if (pickup) {
+      this.activePickupId = pickup.id;
+    } else {
+      // Explicit Demo Telemetry & Selection State (Zero silent guessing)
+      isDemoMode = true;
+      this.activePickupId = null;
+      pickup = {
+        id: 'DEMO-ROUTE-4B',
+        isDemo: true,
+        category: 'wet',
+        categoryName: 'Demonstration Fleet Telemetry',
+        pointsReward: 0,
+        quantityKg: 0,
+        subType: 'Ward 4B Fleet Demo Route',
+        address: 'Municipal Demonstration Route (Ward 4B)',
+        status: 'on_the_way',
+        workerName: 'Demo Vehicle Operator',
+        workerPhone: '+91 98111 22334',
+        vehicleNo: 'Electric Van MH-02-GK-4091',
+        otp: '----',
+        etaMinutes: 12
+      };
+    }
+
+    const activePickups = State.state.pickups.filter(p => p.status === 'created' || p.status === 'assigned' || p.status === 'on_the_way');
 
     container.innerHTML = `
       <div class="app-container" style="max-width: 1150px; margin: 0 auto; padding: 1.5rem 1rem 4rem 1rem;">
         
+        <!-- Explicit Demo Telemetry & Pickup Selector Banner -->
+        ${isDemoMode ? `
+        <div class="neu-card-inset" style="padding: 1rem 1.25rem; border-radius: var(--radius-lg); margin-bottom: 1.5rem; border-left: 4px solid #F59E0B; background: #FFFBEB;">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.5rem; color: #B45309; font-weight: 800; font-size: 0.95rem; margin-bottom: 0.25rem;">
+                <i data-lucide="info" class="lucide-icon-sm"></i>
+                <span>Demo Telemetry Mode &bull; No Specific Pickup Selected</span>
+              </div>
+              <p style="margin: 0; font-size: 0.82rem; color: #92400E;">
+                You are viewing simulated municipal van movement in Ward 4B. To track an actual collection, select from your active pickups below:
+              </p>
+            </div>
+          </div>
+          ${activePickups.length > 0 ? `
+            <div style="margin-top: 0.85rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+              <span style="font-size: 0.78rem; font-weight: 700; color: #78350F;">Select Pickup to Track:</span>
+              ${activePickups.map(p => `
+                <button class="btn btn-secondary btn-sm" onclick="window.LiveTrackingView.render({ pickupId: '${p.id}' })" style="border-color: #FCD34D; background: #FEF3C7; color: #92400E; font-weight: 700;">
+                  <i data-lucide="package" class="lucide-icon-xs"></i>
+                  <span>Track #${p.id} (${p.categoryName || p.category})</span>
+                </button>
+              `).join('')}
+            </div>
+          ` : `
+            <div style="margin-top: 0.65rem; font-size: 0.8rem; color: #92400E;">
+              No active collections scheduled. <button class="btn btn-secondary btn-sm" onclick="window.AppRouter.navigate('report-waste')" style="margin-left: 0.5rem;">Schedule New Pickup</button>
+            </div>
+          `}
+        </div>
+        ` : ''}
+
         <!-- Header -->
         <div class="flex-between" style="margin-bottom: 1.75rem; flex-wrap: wrap; gap: 1rem;">
           <div>
-            <div class="badge badge-green" style="margin-bottom: 0.35rem; display: inline-flex; align-items: center; gap: 0.35rem;">
-              <i data-lucide="navigation" class="lucide-icon-sm"></i>
-              <span>Simulated Fleet Telemetry Route &bull; Ward 4B</span>
+            <div class="${isDemoMode ? 'badge badge-amber' : 'badge badge-green'}" style="margin-bottom: 0.35rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+              <i data-lucide="${isDemoMode ? 'play-circle' : 'navigation'}" class="lucide-icon-sm"></i>
+              <span>${isDemoMode ? 'Simulated Fleet Telemetry (Demo) • Ward 4B' : `Live Pickup #${pickup.id} • Ward 4B`}</span>
             </div>
-            <h2 style="color: var(--color-navy); font-size: 1.85rem; font-weight: 800; margin: 0.25rem 0;">Live Pickup Tracking</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">Trace collection van dispatch from depot departure to doorstep verification.</p>
+            <h2 style="color: var(--color-navy); font-size: 1.85rem; font-weight: 800; margin: 0.25rem 0;">
+              ${isDemoMode ? 'Live Fleet Telemetry <span style="font-size: 1rem; color: #D97706; font-weight: 700;">(Demo Simulation)</span>' : `Live Pickup Tracking &bull; #${pickup.id}`}
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">
+              ${isDemoMode ? 'Observing simulated municipal van movement in Ward 4B.' : `Tracing collection van dispatch to ${Formatters.escapeHtml(pickup.address)}.`}
+            </p>
           </div>
 
           <div style="display: flex; gap: 0.75rem; align-items: center;">
             <button class="btn btn-secondary btn-sm" onclick="window.LiveTrackingView.simulateWorkerMove()">
               <i data-lucide="refresh-cw" class="lucide-icon-sm"></i>
               <span>Simulate Route Step</span>
-            </button>
-            <button class="btn btn-primary btn-sm" onclick="window.LiveTrackingView.fastForwardPickup('${pickup.id}')">
-              <i data-lucide="check-circle" class="lucide-icon-sm"></i>
-              <span>Complete Verification</span>
             </button>
           </div>
         </div>
@@ -118,10 +169,19 @@ export const LiveTrackingView = {
                 </div>
               </div>
 
-              ${pickup.status !== 'verified' ? `
+              ${isDemoMode ? `
+              <div class="neu-card-flat" style="padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; text-align: center; background: #FEF3C7; border: 1px dashed #F59E0B;">
+                <div style="font-size: 0.82rem; color: #92400E; font-weight: 700; margin-bottom: 0.25rem;">
+                  Demo Route Simulation
+                </div>
+                <div style="font-size: 0.75rem; color: #B45309;">
+                  No citizen QR code generated for demo telemetry. Select a real pickup above to track your collection OTP and QR code.
+                </div>
+              </div>
+              ` : pickup.status !== 'verified' ? `
               <div class="neu-card-flat" style="padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; text-align: center;">
                 <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                  Present this QR to Ramesh Kumar on arrival
+                  Present this QR to ${Formatters.escapeHtml(pickup.workerName || 'Ramesh Kumar')} on arrival
                 </div>
                 <div id="live-tracking-qr" style="display: flex; justify-content: center;"></div>
               </div>
@@ -129,13 +189,13 @@ export const LiveTrackingView = {
               <div class="neu-card-flat" style="padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; text-align: center; background: #DCFCE7; border-color: #86EFAC;">
                 <div style="color: var(--color-primary-dark); font-weight: 800; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
                   <i data-lucide="check-circle-2" class="lucide-icon-sm"></i>
-                  <span>Pickup Completed & Verified</span>
+                  <span>Pickup Completed &amp; Verified</span>
                 </div>
               </div>
               `}
 
               <div class="card-actions-grid-2col">
-                <button class="btn btn-secondary btn-sm" onclick="window.AppRouter.showToast('Calling Ramesh Kumar at ${pickup.workerPhone || '+91 98111 22334'}...')">
+                <button class="btn btn-secondary btn-sm" onclick="window.AppRouter.showToast('Calling ${pickup.workerName || 'Worker'} at ${pickup.workerPhone || '+91 98111 22334'}...')">
                   <i data-lucide="phone" class="lucide-icon-sm"></i>
                   <span>Call Worker</span>
                 </button>
@@ -167,24 +227,22 @@ export const LiveTrackingView = {
                     <i data-lucide="check" style="width: 12px; height: 12px;"></i>
                   </div>
                   <strong style="font-size: 0.875rem; color: var(--color-navy);">Worker Assigned</strong>
-                  <div style="font-size: 0.75rem; color: var(--text-muted);">Ramesh Kumar accepted Ward 4B route</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">${pickup.workerName || 'Ramesh Kumar'} accepted the route</div>
                 </div>
 
-                <!-- 3. On The Way -->
-                <div class="timeline-item ${pickup.status === 'on_the_way' ? 'active' : pickup.status === 'verified' || pickup.status === 'collected' ? 'done' : ''}">
+                <!-- 3. On the Way -->
+                <div class="timeline-item ${pickup.status === 'on_the_way' || pickup.status === 'collected' || pickup.status === 'verified' ? 'done active-node' : ''}">
                   <div class="timeline-dot">
-                    <i data-lucide="${pickup.status === 'verified' || pickup.status === 'collected' ? 'check' : 'truck'}" style="width: 12px; height: 12px;"></i>
+                    <i data-lucide="${pickup.status === 'on_the_way' ? 'navigation' : 'check'}" style="width: 12px; height: 12px;"></i>
                   </div>
-                  <strong style="font-size: 0.875rem; color: var(--color-navy);">Pickup On The Way</strong>
-                  <div style="font-size: 0.75rem; color: var(--text-muted);">
-                    ${pickup.status === 'verified' || pickup.status === 'collected' ? 'Reached location' : `Approaching doorstep (~${pickup.etaMinutes || 12} mins away)`}
-                  </div>
+                  <strong style="font-size: 0.875rem; color: var(--color-navy);">Collection Van En Route</strong>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">Arriving at doorstep (ETA: ${pickup.etaMinutes || 12} mins)</div>
                 </div>
 
                 <!-- 4. Collected -->
-                <div class="timeline-item ${pickup.status === 'collected' ? 'active' : pickup.status === 'verified' ? 'done' : ''}">
+                <div class="timeline-item ${pickup.status === 'collected' || pickup.status === 'verified' ? 'done' : ''}">
                   <div class="timeline-dot">
-                    <i data-lucide="${pickup.status === 'verified' ? 'check' : 'package-check'}" style="width: 12px; height: 12px;"></i>
+                    <i data-lucide="${pickup.status === 'collected' || pickup.status === 'verified' ? 'check' : 'package-check'}" style="width: 12px; height: 12px;"></i>
                   </div>
                   <strong style="font-size: 0.875rem; color: var(--color-navy);">Waste Collected</strong>
                   <div style="font-size: 0.75rem; color: var(--text-muted);">Loaded into segregated compartment</div>
@@ -195,7 +253,7 @@ export const LiveTrackingView = {
                   <div class="timeline-dot">
                     <i data-lucide="${pickup.status === 'verified' ? 'check' : 'scale'}" style="width: 12px; height: 12px;"></i>
                   </div>
-                  <strong style="font-size: 0.875rem; color: var(--color-navy);">Purity Verified & Weighed</strong>
+                  <strong style="font-size: 0.875rem; color: var(--color-navy);">Purity Verified &amp; Weighed</strong>
                   <div style="font-size: 0.75rem; color: var(--text-muted);">Segregation purity approved by worker</div>
                 </div>
 
@@ -219,11 +277,20 @@ export const LiveTrackingView = {
     `;
 
     setTimeout(() => this.initMap(), 100);
-    if (pickup.status !== 'verified') {
+    if (!isDemoMode && pickup.status !== 'verified') {
       setTimeout(() => QRCode.renderInto('live-tracking-qr', pickup.id), 50);
     }
     if (window.lucide) {
       window.lucide.createIcons();
+    }
+  },
+
+  updateOnStateChange() {
+    if (this.activePickupId) {
+      const p = State.state.pickups.find(item => item.id === this.activePickupId);
+      if (p) {
+        this.render({ pickupId: this.activePickupId });
+      }
     }
   },
 
@@ -270,6 +337,10 @@ export const LiveTrackingView = {
   },
 
   cleanup() {
+    if (this.animationTimer) {
+      clearInterval(this.animationTimer);
+      this.animationTimer = null;
+    }
     if (this.mapInstance) {
       MapHelper.destroyMap('live-tracking-map');
       this.mapInstance = null;
@@ -291,19 +362,6 @@ export const LiveTrackingView = {
       });
       window.AppRouter.showToast('Telemetry updated: Ramesh is ~8 mins away.');
     }
-  },
-
-  fastForwardPickup(pickupId) {
-    const result = State.awardCredits(pickupId, 4.5);
-    if (result.alreadyVerified) {
-      SoundFX.playClick();
-      window.AppRouter.showToast('Pickup was already verified — credits are on record.');
-      return;
-    }
-    SoundFX.playPointsEarned();
-    Confetti.trigger(100);
-    window.AppRouter.showToast(`Verified! +${result.points} Green Credits credited.`);
-    this.render();
   }
 };
 

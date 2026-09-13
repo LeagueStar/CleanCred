@@ -128,7 +128,7 @@ export const DashboardView = {
                 </div>
 
                 <div class="pickup-status-actions">
-                  <button class="btn btn-primary" onclick="window.AppRouter.navigate('live-tracking')">
+                  <button class="btn btn-primary" onclick="window.AppRouter.navigate('live-tracking', { pickupId: '${p.id}' })">
                     <i data-lucide="navigation" class="lucide-icon-sm"></i>
                     <span>Track Live Pickup</span>
                   </button>
@@ -419,7 +419,7 @@ export const DashboardView = {
   },
 
   triggerStagedPickupCreation() {
-    SoundFX.playPointsEarned();
+    SoundFX.playClick();
     Confetti.trigger(60);
 
     // Create traceable waste request in State without instant point awarding
@@ -461,7 +461,7 @@ export const DashboardView = {
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-          <button class="btn btn-primary btn-block" onclick="window.DashboardView.closeModal(); window.AppRouter.navigate('live-tracking');">
+          <button class="btn btn-primary btn-block" onclick="window.DashboardView.closeModal(); window.AppRouter.navigate('live-tracking', { pickupId: '${newReq.id}' });">
             <i data-lucide="navigation" class="lucide-icon-sm"></i>
             <span>Track Pickup On Live Map</span>
           </button>

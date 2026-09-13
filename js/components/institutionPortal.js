@@ -297,7 +297,7 @@ export const InstitutionPortalView = {
   },
 
   downloadCertificate() {
-    SoundFX.playPointsEarned();
+    SoundFX.playClick();
     Confetti.trigger(100);
     document.getElementById('certificate-modal').classList.add('active');
     if (window.lucide) window.lucide.createIcons();

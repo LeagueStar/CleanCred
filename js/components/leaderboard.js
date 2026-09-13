@@ -292,7 +292,7 @@ export const LeaderboardView = {
         </div>
 
         ${badge.unlocked ? `
-          <button class="btn btn-primary btn-block" onclick="window.Confetti.trigger(100); SoundFX.playPointsEarned();">
+          <button class="btn btn-primary btn-block" onclick="window.Confetti.trigger(100); SoundFX.playClick();">
             Celebrate Badge
           </button>
         ` : `

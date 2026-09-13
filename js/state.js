@@ -504,6 +504,7 @@ class StateStore {
   // Submit New Waste Request
   createWasteRequest(formData) {
     const pointsMap = { wet: 10, dry: 7, harmful: 5 };
+    const slot = formData.pickupSlot || 'Morning Route (08:00 AM - 11:00 AM)';
     const newRequest = {
       id: Formatters.generateRequestId(),
       category: formData.category,
@@ -515,11 +516,14 @@ class StateStore {
       address: formData.address || this.state.user.address,
       landmark: formData.landmark || '',
       pickupType: formData.pickupType || 'doorstep',
-      pickupSlot: formData.pickupSlot || 'Morning Route (08:00 AM - 11:00 AM)',
-      scheduledDate: formData.scheduledDate || 'Today',
-      scheduledTime: formData.scheduledTime || formData.pickupSlot || 'Slot 10:00 AM - 12:00 PM',
+      pickupSlot: slot,
+      scheduledDate: 'Today',
+      scheduledTime: slot.includes('Morning') ? '08:00 AM - 11:00 AM' : (slot.includes('Afternoon') ? '02:00 PM - 05:00 PM' : slot),
       createdAt: new Date().toISOString(),
       status: 'created',
+      workerName: 'Ramesh Kumar (Ward 4B Fleet)',
+      workerPhone: '+91 98111 22334',
+      vehicleNo: 'MH-02-GK-4091',
       otp: Math.floor(1000 + Math.random() * 9000).toString(),
       etaMinutes: 18,
       photoUrl: formData.photoUrl || null,
@@ -569,8 +573,22 @@ class StateStore {
       return {
         success: false,
         alreadyVerified: true,
+        message: "Pickup has already been verified and credited.",
         points: (pickup && pickup.pointsCredited) || (pickup && pickup.pointsReward) || 0,
+        awardedPoints: 0,
         weight: pickup ? pickup.quantityKg : null
+      };
+    }
+
+    if (!pickup) {
+      return { success: false, message: `Pickup ${pickupId} not found.` };
+    }
+
+    // Hard Guard: Credits may be awarded ONLY if pickup.status === 'collected'
+    if (pickup.status !== 'collected') {
+      return {
+        success: false,
+        message: "Pickup must be collected before verification."
       };
     }
 
@@ -656,8 +674,9 @@ class StateStore {
     return {
       success: res.success,
       alreadyVerified: res.alreadyVerified || false,
-      awardedPoints: res.awardedPoints || res.points || 0,
-      points: res.points || 0,
+      message: res.message || '',
+      awardedPoints: res.awardedPoints || (res.success ? res.points : 0),
+      points: res.success ? res.points : 0,
       weight: res.weight
     };
   }

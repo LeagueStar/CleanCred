@@ -7,12 +7,19 @@
 /* ==========================================================================
    1. TOP NAVIGATION BAR (SOLID MATTE // ZERO GLASS)
    ========================================================================== */
-.app-topbar,
-.silicone-topbar {
+.app-header-stack {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.app-topbar,
+.silicone-topbar {
+  position: relative;
+  width: 100%;
   height: 68px;
   background: var(--bg-surface);
   box-shadow: 0 4px 14px var(--shadow-dark), 0 1px 0 var(--color-border-highlight);
@@ -1235,49 +1242,49 @@
 }
 
 .rewards-card-primary .btn-recharge {
-  background: #FFFFFF !important;
-  color: #064E3B !important;
-  font-weight: 800 !important;
-  border: none !important;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 0.45rem !important;
+  background: #FFFFFF;
+  color: #064E3B;
+  font-weight: 800;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
 }
 
 .rewards-card-primary .btn-recharge span {
-  color: #064E3B !important;
-  font-weight: 800 !important;
-  display: inline !important;
-  visibility: visible !important;
+  color: #064E3B;
+  font-weight: 800;
+  display: inline;
+  visibility: visible;
 }
 
 .rewards-card-primary .btn-recharge svg,
 .rewards-card-primary .btn-recharge i {
-  color: #064E3B !important;
-  stroke: #064E3B !important;
+  color: #064E3B;
+  stroke: #064E3B;
 }
 
 .rewards-card-primary .btn-paybills {
-  background: rgba(255, 255, 255, 0.18) !important;
-  color: #FFFFFF !important;
-  border: 1px solid rgba(255, 255, 255, 0.35) !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 0.45rem !important;
+  background: #047857;
+  color: #FFFFFF;
+  border: 1px solid #10B981;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
 }
 
 .rewards-card-primary .btn-paybills span {
-  color: #FFFFFF !important;
-  font-weight: 700 !important;
-  display: inline !important;
-  visibility: visible !important;
+  color: #FFFFFF;
+  font-weight: 700;
+  display: inline;
+  visibility: visible;
 }
 
 .rewards-card-primary .btn-paybills svg,
 .rewards-card-primary .btn-paybills i {
-  color: #FFFFFF !important;
-  stroke: #FFFFFF !important;
+  color: #FFFFFF;
+  stroke: #FFFFFF;
 }
 
 /* ==========================================================================

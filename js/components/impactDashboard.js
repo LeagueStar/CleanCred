@@ -56,7 +56,7 @@ export const ImpactDashboardView = {
           <div class="neu-card neu-card-forest" style="padding: 1.75rem; border-radius: var(--radius-xl); color: #FFFFFF;">
             <div class="flex-between" style="margin-bottom: 0.75rem;">
               <span style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: #DCFCE7;">Total Waste Diverted</span>
-              <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: #047857; border: 1px solid #10B981; display: flex; align-items: center; justify-content: center;">
                 <i data-lucide="scale" class="lucide-icon-sm" style="color: #FFFFFF;"></i>
               </div>
             </div>
@@ -208,7 +208,7 @@ export const ImpactDashboardView = {
   },
 
   generateImpactBadge() {
-    SoundFX.playPointsEarned();
+    SoundFX.playClick();
     Confetti.trigger(90);
     document.getElementById('impact-cert-modal').classList.add('active');
     if (window.lucide) window.lucide.createIcons();
