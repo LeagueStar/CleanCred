@@ -1487,3 +1487,158 @@
   margin-top: 2px;
 }
 
+/* ==========================================================================
+   14. IMPACT ANALYTICS (DESKTOP BASE)
+   ========================================================================== */
+.impact-header {
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.impact-header-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.impact-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.impact-metric-card {
+  padding: 1.75rem;
+  border-radius: var(--radius-xl);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.impact-metric-val {
+  font-size: clamp(1.75rem, 4vw, 2.6rem);
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 0.35rem;
+  word-break: break-word;
+}
+
+.impact-metric-unit {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.impact-breakdown-card {
+  padding: 2rem;
+  border-radius: var(--radius-xl);
+  margin-bottom: 2.5rem;
+  box-sizing: border-box;
+}
+
+.impact-breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.impact-lifecycle-item {
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  box-sizing: border-box;
+}
+
+.impact-cert-card {
+  max-width: 580px;
+  text-align: center;
+  padding: 2.5rem;
+  border: 3px double #16A34A;
+  border-radius: var(--radius-xl);
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   15. INSTITUTIONS PORTAL (DESKTOP BASE)
+   ========================================================================== */
+.institution-tab-grid {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.institution-tab-grid .tab-label-short {
+  display: none;
+}
+
+.institution-tab-grid .tab-label-full {
+  display: inline;
+}
+
+.institution-showcase-card {
+  padding: 2.25rem;
+  margin-bottom: 2rem;
+  border-radius: var(--radius-xl);
+  box-sizing: border-box;
+}
+
+.institution-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.institution-feature-item {
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  box-sizing: border-box;
+}
+
+.institution-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.institution-modal-metrics {
+  display: flex;
+  justify-content: space-around;
+  background: var(--bg-surface-subtle);
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--color-border);
+  box-sizing: border-box;
+}
+
+.institution-cert-card {
+  max-width: 640px;
+  text-align: center;
+  border: 3px double #16A34A;
+  padding: 2.5rem;
+  border-radius: var(--radius-xl);
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   16. REWARDS CATALOG GRID (DESKTOP BASE)
+   ========================================================================== */
+.rewards-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+

@@ -97,7 +97,7 @@ export const RewardsWallet = {
             <div style="font-size: 0.9rem; color: var(--color-primary-dark); font-weight: 700;">
               ≈ ${Formatters.formatCurrency(lifetimeEarnedInr)} via ${user.pickupsCompleted} verified pickups
             </div>
-            <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 1rem; line-height: 1.4;">
+            <p class="rewards-avg-text" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 1rem; line-height: 1.4;">
               Average earning: ${Formatters.formatCurrency(avgEarningPerPickupInr)} per verified collection.
             </p>
           </div>
@@ -142,7 +142,7 @@ export const RewardsWallet = {
               <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Instant Telecom Credit (Jio, Airtel, Vi)</span>
             </div>
 
-            <div class="grid-cols-4" style="gap: 1rem;">
+            <div class="rewards-catalog-grid">
               <!-- ₹10 Plan -->
               <div class="neu-card neu-card-raised" style="text-align: center; border-top: 3px solid var(--color-primary);">
                 <div style="font-size: 1.5rem; font-weight: 900; color: var(--color-navy); margin-bottom: 0.25rem;">₹10</div>
@@ -197,7 +197,7 @@ export const RewardsWallet = {
               <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Direct Municipal Bill Credit</span>
             </div>
 
-            <div class="grid-cols-4" style="gap: 1rem;">
+            <div class="rewards-catalog-grid">
               <!-- Electricity -->
               <div class="neu-card neu-card-raised" style="text-align: center;">
                 <div style="width: 44px; height: 44px; border-radius: 50%; background: #FEF3C7; color: #B45309; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
@@ -264,7 +264,7 @@ export const RewardsWallet = {
               <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">EPR Partner Merchant Network</span>
             </div>
 
-            <div class="grid-cols-4" style="gap: 1rem;">
+            <div class="rewards-catalog-grid">
               <div class="neu-card neu-card-raised">
                 <div class="badge badge-green" style="margin-bottom: 0.5rem;">Organic Grocery</div>
                 <strong style="color: var(--color-navy); display: block;">BigBasket Organic</strong>

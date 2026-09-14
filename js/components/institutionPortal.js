@@ -37,26 +37,31 @@ export const InstitutionPortalView = {
         </div>
 
         <!-- 5 Category Filter Tabs -->
-        <div style="display: flex; gap: 0.75rem; margin-bottom: 2rem; overflow-x: auto; padding-bottom: 0.5rem;">
+        <div class="institution-tab-grid">
           <button class="btn btn-sm ${this.selectedType === 'schools' ? 'btn-primary' : 'btn-secondary'}" onclick="window.InstitutionPortalView.selectType('schools')">
             <i data-lucide="book-open" class="lucide-icon-sm"></i>
-            <span>Schools & Eco Clubs</span>
+            <span class="tab-label-full">Schools &amp; Eco Clubs</span>
+            <span class="tab-label-short">Schools</span>
           </button>
           <button class="btn btn-sm ${this.selectedType === 'colleges' ? 'btn-primary' : 'btn-secondary'}" onclick="window.InstitutionPortalView.selectType('colleges')">
             <i data-lucide="graduation-cap" class="lucide-icon-sm"></i>
-            <span>Colleges & Campuses</span>
+            <span class="tab-label-full">Colleges &amp; Campuses</span>
+            <span class="tab-label-short">Colleges</span>
           </button>
           <button class="btn btn-sm ${this.selectedType === 'hospitals' ? 'btn-primary' : 'btn-secondary'}" onclick="window.InstitutionPortalView.selectType('hospitals')">
             <i data-lucide="hospital" class="lucide-icon-sm"></i>
-            <span>Hospitals (Biomedical)</span>
+            <span class="tab-label-full">Hospitals (Biomedical)</span>
+            <span class="tab-label-short">Hospitals</span>
           </button>
           <button class="btn btn-sm ${this.selectedType === 'offices' ? 'btn-primary' : 'btn-secondary'}" onclick="window.InstitutionPortalView.selectType('offices')">
             <i data-lucide="briefcase" class="lucide-icon-sm"></i>
-            <span>Corporate ESG</span>
+            <span class="tab-label-full">Corporate ESG</span>
+            <span class="tab-label-short">Corporate</span>
           </button>
           <button class="btn btn-sm ${this.selectedType === 'societies' ? 'btn-primary' : 'btn-secondary'}" onclick="window.InstitutionPortalView.selectType('societies')">
             <i data-lucide="home" class="lucide-icon-sm"></i>
-            <span>Housing Societies (RWAs)</span>
+            <span class="tab-label-full">Housing Societies (RWAs)</span>
+            <span class="tab-label-short">Societies</span>
           </button>
         </div>
 
@@ -67,7 +72,7 @@ export const InstitutionPortalView = {
 
       <!-- Printable Certificate Modal -->
       <div class="modal-overlay" id="certificate-modal">
-        <div class="modal-content neu-card neu-card-raised" style="max-width: 640px; text-align: center; border: 3px double #16A34A; padding: 2.5rem; border-radius: var(--radius-xl);">
+        <div class="modal-content neu-card neu-card-raised institution-cert-card">
           <div class="modal-close-btn" onclick="document.getElementById('certificate-modal').classList.remove('active')">
             <i data-lucide="x" class="lucide-icon-sm"></i>
           </div>
@@ -83,7 +88,7 @@ export const InstitutionPortalView = {
             This certifies that <strong>Delhi Public School Green Club</strong> has achieved a <strong>94/100 Municipal Sustainability Index</strong> by diverting <strong>1,840 KG of waste</strong> with zero landfill contamination.
           </p>
 
-          <div style="display: flex; justify-content: space-around; background: var(--bg-surface-subtle); padding: 1.25rem; border-radius: var(--radius-md); margin-bottom: 1.5rem; border: 1px solid var(--color-border);">
+          <div class="institution-modal-metrics">
             <div>
               <div style="font-size: 1.25rem; font-weight: 900; color: var(--color-primary-dark);">1,840 KG</div>
               <div style="font-size: 0.75rem; color: var(--text-muted);">Waste Diverted</div>
@@ -120,7 +125,7 @@ export const InstitutionPortalView = {
     switch (this.selectedType) {
       case 'schools':
         return `
-          <div class="neu-card neu-card-raised" style="padding: 2.25rem; margin-bottom: 2rem; border-radius: var(--radius-xl);">
+          <div class="neu-card neu-card-raised institution-showcase-card">
             <div class="flex-between" style="margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
               <div>
                 <span class="badge badge-green" style="margin-bottom: 0.35rem;">Rank #1 School Eco Club</span>
@@ -130,22 +135,22 @@ export const InstitutionPortalView = {
               <div class="badge badge-points" style="font-size: 1rem; padding: 0.5rem 1rem;">19,500 Total GC</div>
             </div>
 
-            <div class="grid-cols-3" style="margin-bottom: 2rem; gap: 1.25rem;">
-              <div class="neu-card-flat" style="padding: 1.25rem; border-radius: var(--radius-md);">
+            <div class="institution-feature-grid">
+              <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Student Rewards</strong>
                 <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Students earn Green Credits for bringing segregated paper and e-waste from home.</p>
               </div>
-              <div class="neu-card-flat" style="padding: 1.25rem; border-radius: var(--radius-md);">
+              <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Classroom Battles</strong>
                 <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Grade 9A leads inter-class recycling championship with 340 kg paper recovered.</p>
               </div>
-              <div class="neu-card-flat" style="padding: 1.25rem; border-radius: var(--radius-md);">
+              <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Daily Bulk Van</strong>
                 <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Designated municipal electric van collects segregated cafeteria & dry waste daily at 3 PM.</p>
               </div>
             </div>
 
-            <button class="btn btn-primary" onclick="window.AppRouter.showToast('School onboarding consultation scheduled.')">
+            <button class="btn btn-primary institution-action-btn" onclick="window.AppRouter.showToast('School onboarding consultation scheduled.')">
               <i data-lucide="plus-circle" class="lucide-icon-sm"></i>
               <span>Register New School / Club</span>
             </button>
@@ -154,7 +159,7 @@ export const InstitutionPortalView = {
 
       case 'colleges':
         return `
-          <div class="neu-card neu-card-raised" style="padding: 2.25rem; margin-bottom: 2rem; border-radius: var(--radius-xl);">
+          <div class="neu-card neu-card-raised institution-showcase-card">
             <div class="flex-between" style="margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
               <div>
                 <span class="badge badge-green" style="margin-bottom: 0.35rem;">Higher Education Campus</span>
@@ -164,22 +169,22 @@ export const InstitutionPortalView = {
               <div class="badge badge-points" style="font-size: 1rem; padding: 0.5rem 1rem;">38,400 Total GC</div>
             </div>
 
-            <div class="grid-cols-3" style="margin-bottom: 2rem; gap: 1.25rem;">
-              <div class="neu-card-flat" style="padding: 1.25rem; border-radius: var(--radius-md);">
+            <div class="institution-feature-grid">
+              <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Hostel Waste Auditing</strong>
                 <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Real-time weight sensors in 16 campus hostel messes tracking organic diversion.</p>
               </div>
-              <div class="neu-card-flat" style="padding: 1.25rem; border-radius: var(--radius-md);">
+              <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Student Innovation Grants</strong>
                 <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">CleanCred grants funded 3 student research prototypes on plastic pyrolysis.</p>
               </div>
-              <div class="neu-card-flat" style="padding: 1.25rem; border-radius: var(--radius-md);">
+              <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Fest Waste Zero-Target</strong>
                 <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">100% waste recovery during cultural festivals (Mood Indigo & Techfest).</p>
               </div>
             </div>
 
-            <button class="btn btn-primary" onclick="window.AppRouter.showToast('College onboarding inquiry dispatched.')">
+            <button class="btn btn-primary institution-action-btn" onclick="window.AppRouter.showToast('College onboarding inquiry dispatched.')">
               <i data-lucide="graduation-cap" class="lucide-icon-sm"></i>
               <span>Partner With Your College</span>
             </button>
@@ -188,7 +193,7 @@ export const InstitutionPortalView = {
 
       case 'hospitals':
         return `
-          <div class="neu-card neu-card-raised" style="padding: 2.25rem; margin-bottom: 2rem; border-radius: var(--radius-xl); border-top: 4px solid #DC2626;">
+          <div class="neu-card neu-card-raised institution-showcase-card" style="border-top: 4px solid #DC2626;">
             <div class="flex-between" style="margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
               <div>
                 <span class="badge" style="background: #FEE2E2; color: #991B1B; margin-bottom: 0.35rem;">Biomedical Compliance</span>
@@ -198,22 +203,22 @@ export const InstitutionPortalView = {
               <div class="badge badge-green">100% CPCB Compliant ✓</div>
             </div>
 
-            <div class="grid-cols-3" style="margin-bottom: 2rem; gap: 1.25rem;">
-              <div class="neu-card-flat" style="padding: 1.25rem; border-radius: var(--radius-md); border-left: 3px solid #DC2626;">
+            <div class="institution-feature-grid">
+              <div class="neu-card-flat institution-feature-item" style="border-left: 3px solid #DC2626;">
                 <strong style="color: #991B1B; font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Red / Yellow Bag Segregation</strong>
                 <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Strict tracking of anatomical, soiled, and chemical medical waste with unique QR tags.</p>
               </div>
-              <div class="neu-card-flat" style="padding: 1.25rem; border-radius: var(--radius-md);">
+              <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Authorized Incineration</strong>
                 <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Dedicated GPS-monitored hazardous disposal vehicles with digital manifest sign-off.</p>
               </div>
-              <div class="neu-card-flat" style="padding: 1.25rem; border-radius: var(--radius-md);">
+              <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Pollution Control Audit</strong>
                 <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Instant one-click automated regulatory compliance report for State Pollution Control Board.</p>
               </div>
             </div>
 
-            <button class="btn btn-primary" onclick="window.AppRouter.showToast('Hospital Biomedical protocol requested.')">
+            <button class="btn btn-primary institution-action-btn" onclick="window.AppRouter.showToast('Hospital Biomedical protocol requested.')">
               <i data-lucide="hospital" class="lucide-icon-sm"></i>
               <span>Request Hospital Compliance Setup</span>
             </button>
@@ -222,7 +227,7 @@ export const InstitutionPortalView = {
 
       case 'offices':
         return `
-          <div class="neu-card neu-card-raised" style="padding: 2.25rem; margin-bottom: 2rem; border-radius: var(--radius-xl);">
+          <div class="neu-card neu-card-raised institution-showcase-card">
             <div class="flex-between" style="margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
               <div>
                 <span class="badge badge-navy" style="margin-bottom: 0.35rem;">Corporate ESG Platform</span>
@@ -232,22 +237,22 @@ export const InstitutionPortalView = {
               <div class="badge badge-green">ESG Gold Certified ✓</div>
             </div>
 
-            <div class="grid-cols-3" style="margin-bottom: 2rem; gap: 1.25rem;">
-              <div class="neu-card-flat" style="padding: 1.25rem; border-radius: var(--radius-md);">
+            <div class="institution-feature-grid">
+              <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Smart Recycling Hubs</strong>
                 <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Smart contactless dry paper & beverage can recycling stations on all 8 corporate floors.</p>
               </div>
-              <div class="neu-card-flat" style="padding: 1.25rem; border-radius: var(--radius-md);">
+              <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Corporate BRSR Reports</strong>
                 <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Direct SEBI-aligned Business Responsibility and Sustainability data export.</p>
               </div>
-              <div class="neu-card-flat" style="padding: 1.25rem; border-radius: var(--radius-md);">
+              <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Employee Green Perks</strong>
                 <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Top eco-performing teams receive company-matched gift cards and public accolades.</p>
               </div>
             </div>
 
-            <button class="btn btn-primary" onclick="window.AppRouter.showToast('Corporate ESG onboarding initiated.')">
+            <button class="btn btn-primary institution-action-btn" onclick="window.AppRouter.showToast('Corporate ESG onboarding initiated.')">
               <i data-lucide="briefcase" class="lucide-icon-sm"></i>
               <span>Setup Corporate Waste Solution</span>
             </button>
@@ -256,7 +261,7 @@ export const InstitutionPortalView = {
 
       case 'societies':
         return `
-          <div class="neu-card neu-card-raised" style="padding: 2.25rem; margin-bottom: 2rem; border-radius: var(--radius-xl);">
+          <div class="neu-card neu-card-raised institution-showcase-card">
             <div class="flex-between" style="margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
               <div>
                 <span class="badge badge-green" style="margin-bottom: 0.35rem;">Residential RWA Network</span>
@@ -266,22 +271,22 @@ export const InstitutionPortalView = {
               <div class="badge badge-points">₹12,400 Society Corpus Saved</div>
             </div>
 
-            <div class="grid-cols-3" style="margin-bottom: 2rem; gap: 1.25rem;">
-              <div class="neu-card-flat" style="padding: 1.25rem; border-radius: var(--radius-md);">
+            <div class="institution-feature-grid">
+              <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Wing Leaderboard</strong>
                 <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Wing A vs Wing B monthly segregation accuracy and organic compost yield competition.</p>
               </div>
-              <div class="neu-card-flat" style="padding: 1.25rem; border-radius: var(--radius-md);">
+              <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Municipal Tax Rebate</strong>
                 <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">100% segregating societies receive a 5% municipal property tax rebate from BMC.</p>
               </div>
-              <div class="neu-card-flat" style="padding: 1.25rem; border-radius: var(--radius-md);">
+              <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Community Compost</strong>
                 <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Onsite compost powers community organic vegetable and rooftop garden.</p>
               </div>
             </div>
 
-            <button class="btn btn-primary" onclick="window.AppRouter.showToast('Society RWA consultation registered.')">
+            <button class="btn btn-primary institution-action-btn" onclick="window.AppRouter.showToast('Society RWA consultation registered.')">
               <i data-lucide="home" class="lucide-icon-sm"></i>
               <span>Register Your Housing Society</span>
             </button>

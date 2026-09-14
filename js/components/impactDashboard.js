@@ -33,7 +33,7 @@ export const ImpactDashboardView = {
       <div class="app-container" style="max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem 4rem 1rem;">
         
         <!-- Header -->
-        <div class="flex-between" style="margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div class="flex-between impact-header">
           <div>
             <div class="badge badge-green" style="margin-bottom: 0.35rem; display: inline-flex; align-items: center; gap: 0.35rem;">
               <i data-lucide="leaf" class="lucide-icon-sm"></i>
@@ -43,67 +43,67 @@ export const ImpactDashboardView = {
             <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">Quantifiable lifecycle audit of diverted municipal waste, avoided landfill emissions, and resource recovery.</p>
           </div>
 
-          <button class="btn btn-primary" onclick="window.ImpactDashboardView.generateImpactBadge()">
+          <button class="btn btn-primary impact-header-btn" onclick="window.ImpactDashboardView.generateImpactBadge()">
             <i data-lucide="award" class="lucide-icon-sm"></i>
             <span>View Impact Certificate</span>
           </button>
         </div>
 
         <!-- 4 Top Ecological Impact Counters -->
-        <div class="grid-cols-4" style="margin-bottom: 2.5rem; gap: 1.25rem;">
+        <div class="impact-metric-grid">
           
           <!-- Diverted (Forest) -->
-          <div class="neu-card neu-card-forest" style="padding: 1.75rem; border-radius: var(--radius-xl); color: #FFFFFF;">
+          <div class="neu-card neu-card-forest impact-metric-card" style="color: #FFFFFF;">
             <div class="flex-between" style="margin-bottom: 0.75rem;">
               <span style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: #DCFCE7;">Total Waste Diverted</span>
-              <div style="width: 32px; height: 32px; border-radius: 50%; background: #047857; border: 1px solid #10B981; display: flex; align-items: center; justify-content: center;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: #047857; border: 1px solid #10B981; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <i data-lucide="scale" class="lucide-icon-sm" style="color: #FFFFFF;"></i>
               </div>
             </div>
-            <div style="font-size: 2.6rem; font-weight: 900; line-height: 1; margin-bottom: 0.35rem;">
-              ${user.lifetimeWasteKg} <span style="font-size: 1.1rem; font-weight: 600; opacity: 0.9;">KG</span>
+            <div class="impact-metric-val">
+              ${user.lifetimeWasteKg} <span class="impact-metric-unit" style="opacity: 0.9;">KG</span>
             </div>
             <p style="font-size: 0.78rem; color: #DCFCE7; margin: 0;">Prevented from open municipal dumps</p>
           </div>
 
           <!-- CO2 Emissions Avoided -->
-          <div class="neu-card neu-card-raised" style="padding: 1.75rem; border-radius: var(--radius-xl);">
+          <div class="neu-card neu-card-raised impact-metric-card">
             <div class="flex-between" style="margin-bottom: 0.75rem;">
               <span style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted);">CO₂ Emissions Avoided</span>
-              <div style="width: 32px; height: 32px; border-radius: 50%; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <i data-lucide="cloud-sun" class="lucide-icon-sm"></i>
               </div>
             </div>
-            <div style="font-size: 2.6rem; font-weight: 900; color: var(--color-navy); line-height: 1; margin-bottom: 0.35rem;">
-              ${user.co2SavedKg} <span style="font-size: 1.1rem; font-weight: 600; color: var(--text-muted);">KG</span>
+            <div class="impact-metric-val" style="color: var(--color-navy);">
+              ${user.co2SavedKg} <span class="impact-metric-unit" style="color: var(--text-muted);">KG</span>
             </div>
             <p style="font-size: 0.78rem; color: var(--color-primary-dark); font-weight: 700; margin: 0;">≈ 420 KM of car travel offset</p>
           </div>
 
           <!-- Trees Equivalent -->
-          <div class="neu-card neu-card-raised" style="padding: 1.75rem; border-radius: var(--radius-xl);">
+          <div class="neu-card neu-card-raised impact-metric-card">
             <div class="flex-between" style="margin-bottom: 0.75rem;">
               <span style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted);">Trees Equivalent</span>
-              <div style="width: 32px; height: 32px; border-radius: 50%; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <i data-lucide="trees" class="lucide-icon-sm"></i>
               </div>
             </div>
-            <div style="font-size: 2.6rem; font-weight: 900; color: var(--color-navy); line-height: 1; margin-bottom: 0.35rem;">
-              ${user.treesEquivalent} <span style="font-size: 1.1rem; font-weight: 600; color: var(--text-muted);">Trees</span>
+            <div class="impact-metric-val" style="color: var(--color-navy);">
+              ${user.treesEquivalent} <span class="impact-metric-unit" style="color: var(--text-muted);">Trees</span>
             </div>
             <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0;">Annual carbon absorption basis</p>
           </div>
 
           <!-- Water Conserved -->
-          <div class="neu-card neu-card-raised" style="padding: 1.75rem; border-radius: var(--radius-xl);">
+          <div class="neu-card neu-card-raised impact-metric-card">
             <div class="flex-between" style="margin-bottom: 0.75rem;">
               <span style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted);">Water Conserved</span>
-              <div style="width: 32px; height: 32px; border-radius: 50%; background: #DBEAFE; color: #1E40AF; display: flex; align-items: center; justify-content: center;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: #DBEAFE; color: #1E40AF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <i data-lucide="droplets" class="lucide-icon-sm"></i>
               </div>
             </div>
-            <div style="font-size: 2.6rem; font-weight: 900; color: #2563EB; line-height: 1; margin-bottom: 0.35rem;">
-              ${user.waterSavedLitres} <span style="font-size: 1.1rem; font-weight: 600; color: var(--text-muted);">L</span>
+            <div class="impact-metric-val" style="color: #2563EB;">
+              ${user.waterSavedLitres} <span class="impact-metric-unit" style="color: var(--text-muted);">L</span>
             </div>
             <p style="font-size: 0.78rem; color: #2563EB; font-weight: 700; margin: 0;">Via recycled paper & polymers</p>
           </div>
@@ -111,12 +111,12 @@ export const ImpactDashboardView = {
         </div>
 
         <!-- Waste Composition Breakdown -->
-        <div class="neu-card neu-card-raised" style="padding: 2rem; border-radius: var(--radius-xl); margin-bottom: 2.5rem;">
+        <div class="neu-card neu-card-raised impact-breakdown-card">
           <h3 style="color: var(--color-navy); margin-bottom: 1.25rem; font-size: 1.25rem; font-weight: 800;">Segregated Material Lifecycle Breakdown</h3>
 
-          <div class="grid-cols-3" style="gap: 1.25rem;">
+          <div class="impact-breakdown-grid">
             <!-- Wet -->
-            <div class="neu-card-flat" style="padding: 1.5rem; border-radius: var(--radius-lg); border-top: 4px solid var(--waste-wet);">
+            <div class="neu-card-flat impact-lifecycle-item" style="border-top: 4px solid var(--waste-wet);">
               <div class="flex-between" style="margin-bottom: 0.75rem;">
                 <strong style="color: var(--waste-wet); font-size: 1.1rem; display: flex; align-items: center; gap: 0.4rem;">
                   <i data-lucide="apple" class="lucide-icon-sm"></i>
@@ -133,7 +133,7 @@ export const ImpactDashboardView = {
             </div>
 
             <!-- Dry -->
-            <div class="neu-card-flat" style="padding: 1.5rem; border-radius: var(--radius-lg); border-top: 4px solid var(--waste-dry);">
+            <div class="neu-card-flat impact-lifecycle-item" style="border-top: 4px solid var(--waste-dry);">
               <div class="flex-between" style="margin-bottom: 0.75rem;">
                 <strong style="color: var(--waste-dry); font-size: 1.1rem; display: flex; align-items: center; gap: 0.4rem;">
                   <i data-lucide="package" class="lucide-icon-sm"></i>
@@ -150,7 +150,7 @@ export const ImpactDashboardView = {
             </div>
 
             <!-- Harmful -->
-            <div class="neu-card-flat" style="padding: 1.5rem; border-radius: var(--radius-lg); border-top: 4px solid var(--waste-harmful);">
+            <div class="neu-card-flat impact-lifecycle-item" style="border-top: 4px solid var(--waste-harmful);">
               <div class="flex-between" style="margin-bottom: 0.75rem;">
                 <strong style="color: var(--waste-harmful); font-size: 1.1rem; display: flex; align-items: center; gap: 0.4rem;">
                   <i data-lucide="shield-alert" class="lucide-icon-sm"></i>
@@ -172,7 +172,7 @@ export const ImpactDashboardView = {
 
       <!-- Impact Certificate Modal -->
       <div class="modal-overlay" id="impact-cert-modal">
-        <div class="modal-content neu-card neu-card-raised" style="max-width: 580px; text-align: center; padding: 2.5rem; border: 3px double #16A34A; border-radius: var(--radius-xl);">
+        <div class="modal-content neu-card neu-card-raised impact-cert-card">
           <div class="modal-close-btn" onclick="document.getElementById('impact-cert-modal').classList.remove('active')">
             <i data-lucide="x" class="lucide-icon-sm"></i>
           </div>
