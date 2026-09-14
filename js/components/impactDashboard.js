@@ -30,7 +30,7 @@ export const ImpactDashboardView = {
     const groundwaterProtectedL = Math.round(cat.harmful * 350);
 
     container.innerHTML = `
-      <div class="app-container" style="max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem 4rem 1rem;">
+      <div class="app-container impact-container">
         
         <!-- Header -->
         <div class="flex-between impact-header">
@@ -39,13 +39,17 @@ export const ImpactDashboardView = {
               <i data-lucide="leaf" class="lucide-icon-sm"></i>
               <span>Verified Environmental Footprint</span>
             </div>
-            <h2 style="color: var(--color-navy); font-size: 1.85rem; font-weight: 800; margin: 0.25rem 0;">Citizen Ecological Ledger</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">Quantifiable lifecycle audit of diverted municipal waste, avoided landfill emissions, and resource recovery.</p>
+            <h2 class="impact-title" style="color: var(--color-navy); font-size: 1.85rem; font-weight: 800; margin: 0.25rem 0;">
+              <span class="title-full">Citizen Ecological Ledger</span>
+              <span class="title-short">Impact Analytics</span>
+            </h2>
+            <p class="impact-header-desc" style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">Quantifiable lifecycle audit of diverted municipal waste, avoided landfill emissions, and resource recovery.</p>
           </div>
 
           <button class="btn btn-primary impact-header-btn" onclick="window.ImpactDashboardView.generateImpactBadge()">
             <i data-lucide="award" class="lucide-icon-sm"></i>
-            <span>View Impact Certificate</span>
+            <span class="btn-text-full">View Impact Certificate</span>
+            <span class="btn-text-short">View Certificate</span>
           </button>
         </div>
 
@@ -55,7 +59,10 @@ export const ImpactDashboardView = {
           <!-- Diverted (Forest) -->
           <div class="neu-card neu-card-forest impact-metric-card" style="color: #FFFFFF;">
             <div class="flex-between" style="margin-bottom: 0.75rem;">
-              <span style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: #DCFCE7;">Total Waste Diverted</span>
+              <span class="impact-metric-label" style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: #DCFCE7;">
+                <span class="label-full">Total Waste Diverted</span>
+                <span class="label-short">Total Waste</span>
+              </span>
               <div style="width: 32px; height: 32px; border-radius: 50%; background: #047857; border: 1px solid #10B981; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <i data-lucide="scale" class="lucide-icon-sm" style="color: #FFFFFF;"></i>
               </div>
@@ -69,7 +76,10 @@ export const ImpactDashboardView = {
           <!-- CO2 Emissions Avoided -->
           <div class="neu-card neu-card-raised impact-metric-card">
             <div class="flex-between" style="margin-bottom: 0.75rem;">
-              <span style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted);">CO₂ Emissions Avoided</span>
+              <span class="impact-metric-label" style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted);">
+                <span class="label-full">CO₂ Emissions Avoided</span>
+                <span class="label-short">CO₂ Avoided</span>
+              </span>
               <div style="width: 32px; height: 32px; border-radius: 50%; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <i data-lucide="cloud-sun" class="lucide-icon-sm"></i>
               </div>
@@ -83,7 +93,10 @@ export const ImpactDashboardView = {
           <!-- Trees Equivalent -->
           <div class="neu-card neu-card-raised impact-metric-card">
             <div class="flex-between" style="margin-bottom: 0.75rem;">
-              <span style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted);">Trees Equivalent</span>
+              <span class="impact-metric-label" style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted);">
+                <span class="label-full">Trees Equivalent</span>
+                <span class="label-short">Trees Equivalent</span>
+              </span>
               <div style="width: 32px; height: 32px; border-radius: 50%; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <i data-lucide="trees" class="lucide-icon-sm"></i>
               </div>
@@ -97,7 +110,10 @@ export const ImpactDashboardView = {
           <!-- Water Conserved -->
           <div class="neu-card neu-card-raised impact-metric-card">
             <div class="flex-between" style="margin-bottom: 0.75rem;">
-              <span style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted);">Water Conserved</span>
+              <span class="impact-metric-label" style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted);">
+                <span class="label-full">Water Conserved</span>
+                <span class="label-short">Water Conserved</span>
+              </span>
               <div style="width: 32px; height: 32px; border-radius: 50%; background: #DBEAFE; color: #1E40AF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <i data-lucide="droplets" class="lucide-icon-sm"></i>
               </div>
@@ -120,15 +136,17 @@ export const ImpactDashboardView = {
               <div class="flex-between" style="margin-bottom: 0.75rem;">
                 <strong style="color: var(--waste-wet); font-size: 1.1rem; display: flex; align-items: center; gap: 0.4rem;">
                   <i data-lucide="apple" class="lucide-icon-sm"></i>
-                  <span>Organic Wet Waste</span>
+                  <span class="title-full">Organic Wet Waste</span>
+                  <span class="title-short">Organic / Wet</span>
                 </strong>
-                <span class="badge" style="background: var(--waste-wet); color: #FFFFFF; font-weight: 700;">${cat.wet} KG (${wetPct}%)</span>
+                <span class="badge" style="background: var(--waste-wet); color: #FFFFFF; font-weight: 700;">${cat.wet} KG &bull; ${wetPct}%</span>
               </div>
-              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem; line-height: 1.4;">
+              <p class="impact-lifecycle-desc" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem; line-height: 1.4;">
                 Converted into ${compostKg} KG of municipal organic compost fertilizer for city public gardens.
               </p>
               <div style="font-size: 0.78rem; color: var(--color-primary-dark); font-weight: 700;">
-                Methane Gas Prevented: ~${methaneAvoidedKg} kg
+                <span class="desc-full">Methane Gas Prevented: ~${methaneAvoidedKg} kg</span>
+                <span class="desc-short">Methane prevented: ${methaneAvoidedKg} KG</span>
               </div>
             </div>
 
@@ -137,15 +155,17 @@ export const ImpactDashboardView = {
               <div class="flex-between" style="margin-bottom: 0.75rem;">
                 <strong style="color: var(--waste-dry); font-size: 1.1rem; display: flex; align-items: center; gap: 0.4rem;">
                   <i data-lucide="package" class="lucide-icon-sm"></i>
-                  <span>Clean Recyclables</span>
+                  <span class="title-full">Clean Recyclables</span>
+                  <span class="title-short">Dry</span>
                 </strong>
-                <span class="badge" style="background: var(--waste-dry); color: #FFFFFF; font-weight: 700;">${cat.dry} KG (${dryPct}%)</span>
+                <span class="badge" style="background: var(--waste-dry); color: #FFFFFF; font-weight: 700;">${cat.dry} KG &bull; ${dryPct}%</span>
               </div>
-              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem; line-height: 1.4;">
+              <p class="impact-lifecycle-desc" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem; line-height: 1.4;">
                 Reprocessed into industrial pellets, corrugated boxes, and recycled polyester fiber.
               </p>
               <div style="font-size: 0.78rem; color: #1E40AF; font-weight: 700;">
-                Landfill Space Saved: ${landfillSpaceSavedM3} m³
+                <span class="desc-full">Landfill Space Saved: ${landfillSpaceSavedM3} m³</span>
+                <span class="desc-short">Landfill saved: ${landfillSpaceSavedM3} m³</span>
               </div>
             </div>
 
@@ -154,15 +174,17 @@ export const ImpactDashboardView = {
               <div class="flex-between" style="margin-bottom: 0.75rem;">
                 <strong style="color: var(--waste-harmful); font-size: 1.1rem; display: flex; align-items: center; gap: 0.4rem;">
                   <i data-lucide="shield-alert" class="lucide-icon-sm"></i>
-                  <span>Hazardous & E-Waste</span>
+                  <span class="title-full">Hazardous & E-Waste</span>
+                  <span class="title-short">Harmful</span>
                 </strong>
-                <span class="badge" style="background: var(--waste-harmful); color: #FFFFFF; font-weight: 700;">${cat.harmful} KG (${harmfulPct}%)</span>
+                <span class="badge" style="background: var(--waste-harmful); color: #FFFFFF; font-weight: 700;">${cat.harmful} KG &bull; ${harmfulPct}%</span>
               </div>
-              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem; line-height: 1.4;">
+              <p class="impact-lifecycle-desc" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem; line-height: 1.4;">
                 Safely recovered in authorized CPCB smelters, preventing heavy metal groundwater contamination.
               </p>
               <div style="font-size: 0.78rem; color: #991B1B; font-weight: 700;">
-                Groundwater Protected: ~${Formatters.formatNumber(groundwaterProtectedL)} L
+                <span class="desc-full">Groundwater Protected: ~${Formatters.formatNumber(groundwaterProtectedL)} L</span>
+                <span class="desc-short">Groundwater protected: ~${Formatters.formatNumber(groundwaterProtectedL)} L</span>
               </div>
             </div>
           </div>

@@ -17,7 +17,7 @@ export const InstitutionPortalView = {
     if (!container) return;
 
     container.innerHTML = `
-      <div class="app-container" style="max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem 4rem 1rem;">
+      <div class="app-container institution-container">
         
         <!-- Header -->
         <div class="flex-between" style="margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
@@ -26,13 +26,20 @@ export const InstitutionPortalView = {
               <i data-lucide="building-2" class="lucide-icon-sm"></i>
               <span>Institutional Bulk Generator Framework</span>
             </div>
-            <h2 style="color: var(--color-navy); font-size: 1.85rem; font-weight: 800; margin: 0.25rem 0;">Institutional Waste Management</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">Bulk collection logistics, student eco-incentives, biomedical compliance, and corporate ESG reporting.</p>
+            <h2 class="institution-title" style="color: var(--color-navy); font-size: 1.85rem; font-weight: 800; margin: 0.25rem 0;">
+              <span class="title-full">Institutional Waste Management</span>
+              <span class="title-short">Institution Portal</span>
+            </h2>
+            <p class="institution-subtitle" style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">
+              <span class="desc-full">Bulk collection logistics, student eco-incentives, biomedical compliance, and corporate ESG reporting.</span>
+              <span class="desc-short">Bulk waste &amp; compliance</span>
+            </p>
           </div>
 
-          <button class="btn btn-primary" onclick="window.InstitutionPortalView.downloadCertificate()">
+          <button class="btn btn-primary institution-header-btn" onclick="window.InstitutionPortalView.downloadCertificate()">
             <i data-lucide="award" class="lucide-icon-sm"></i>
-            <span>Download Accreditation Certificate</span>
+            <span class="btn-text-full">Download Accreditation Certificate</span>
+            <span class="btn-text-short">Accreditation</span>
           </button>
         </div>
 
@@ -130,7 +137,7 @@ export const InstitutionPortalView = {
               <div>
                 <span class="badge badge-green" style="margin-bottom: 0.35rem;">Rank #1 School Eco Club</span>
                 <h3 style="color: var(--color-navy); font-size: 1.4rem; font-weight: 800;">Delhi Public School — Green Brigade</h3>
-                <p style="font-size: 0.85rem; color: var(--text-muted);">Student Body: 1,420 Active Recyclers &bull; Sustainability Score: 94/100</p>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">Student Body: 1,420 Active Recyclers &bull; Sustainability Score: 94/100</p>
               </div>
               <div class="badge badge-points" style="font-size: 1rem; padding: 0.5rem 1rem;">19,500 Total GC</div>
             </div>
@@ -138,15 +145,15 @@ export const InstitutionPortalView = {
             <div class="institution-feature-grid">
               <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Student Rewards</strong>
-                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Students earn Green Credits for bringing segregated paper and e-waste from home.</p>
+                <p class="institution-feature-desc">Students earn Green Credits for bringing segregated paper and e-waste from home.</p>
               </div>
               <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Classroom Battles</strong>
-                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Grade 9A leads inter-class recycling championship with 340 kg paper recovered.</p>
+                <p class="institution-feature-desc">Grade 9A leads inter-class recycling championship with 340 kg paper recovered.</p>
               </div>
               <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Daily Bulk Van</strong>
-                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Designated municipal electric van collects segregated cafeteria & dry waste daily at 3 PM.</p>
+                <p class="institution-feature-desc">Designated municipal electric van collects cafeteria & dry waste daily at 3 PM.</p>
               </div>
             </div>
 
@@ -164,7 +171,7 @@ export const InstitutionPortalView = {
               <div>
                 <span class="badge badge-green" style="margin-bottom: 0.35rem;">Higher Education Campus</span>
                 <h3 style="color: var(--color-navy); font-size: 1.4rem; font-weight: 800;">IIT Bombay — Campus Eco Cell</h3>
-                <p style="font-size: 0.85rem; color: var(--text-muted);">Hostel Waste Decentralization & Tech-Driven Composting &bull; Score: 98/100</p>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">Hostel Waste Decentralization & Tech-Driven Composting &bull; Score: 98/100</p>
               </div>
               <div class="badge badge-points" style="font-size: 1rem; padding: 0.5rem 1rem;">38,400 Total GC</div>
             </div>
@@ -172,15 +179,15 @@ export const InstitutionPortalView = {
             <div class="institution-feature-grid">
               <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Hostel Waste Auditing</strong>
-                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Real-time weight sensors in 16 campus hostel messes tracking organic diversion.</p>
+                <p class="institution-feature-desc">Real-time weight sensors in 16 campus hostel messes tracking organic diversion.</p>
               </div>
               <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Student Innovation Grants</strong>
-                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">CleanCred grants funded 3 student research prototypes on plastic pyrolysis.</p>
+                <p class="institution-feature-desc">CleanCred grants funded 3 student research prototypes on plastic pyrolysis.</p>
               </div>
               <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Fest Waste Zero-Target</strong>
-                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">100% waste recovery during cultural festivals (Mood Indigo & Techfest).</p>
+                <p class="institution-feature-desc">100% waste recovery during campus cultural festivals.</p>
               </div>
             </div>
 
@@ -198,7 +205,7 @@ export const InstitutionPortalView = {
               <div>
                 <span class="badge" style="background: #FEE2E2; color: #991B1B; margin-bottom: 0.35rem;">Biomedical Compliance</span>
                 <h3 style="color: var(--color-navy); font-size: 1.4rem; font-weight: 800;">Max Super Speciality Hospital Network</h3>
-                <p style="font-size: 0.85rem; color: var(--text-muted);">Color-Coded Bio-Hazard Barcode Tracking & CPCB Compliance</p>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">Color-Coded Bio-Hazard Barcode Tracking & CPCB Compliance</p>
               </div>
               <div class="badge badge-green">100% CPCB Compliant ✓</div>
             </div>
@@ -206,15 +213,21 @@ export const InstitutionPortalView = {
             <div class="institution-feature-grid">
               <div class="neu-card-flat institution-feature-item" style="border-left: 3px solid #DC2626;">
                 <strong style="color: #991B1B; font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Red / Yellow Bag Segregation</strong>
-                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Strict tracking of anatomical, soiled, and chemical medical waste with unique QR tags.</p>
+                <p class="institution-feature-desc">
+                  <span class="desc-full">Strict tracking of anatomical, soiled, and chemical medical waste with unique QR tags.</span>
+                  <span class="desc-short">QR-tagged biomedical waste tracking.</span>
+                </p>
               </div>
               <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Authorized Incineration</strong>
-                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Dedicated GPS-monitored hazardous disposal vehicles with digital manifest sign-off.</p>
+                <p class="institution-feature-desc">
+                  <span class="desc-full">Dedicated GPS-monitored fleet routes directly to CPCB-authorized high-temperature incinerator units.</span>
+                  <span class="desc-short">GPS-monitored hazardous disposal.</span>
+                </p>
               </div>
               <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Pollution Control Audit</strong>
-                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Instant one-click automated regulatory compliance report for State Pollution Control Board.</p>
+                <p class="institution-feature-desc">One-click automated regulatory compliance reports for SPCB.</p>
               </div>
             </div>
 
@@ -232,7 +245,7 @@ export const InstitutionPortalView = {
               <div>
                 <span class="badge badge-navy" style="margin-bottom: 0.35rem;">Corporate ESG Platform</span>
                 <h3 style="color: var(--color-navy); font-size: 1.4rem; font-weight: 800;">Infosys Technology Park — ESG Hub</h3>
-                <p style="font-size: 0.85rem; color: var(--text-muted);">Corporate Scope 3 Waste Analytics & Employee Green Leaderboards</p>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">Corporate Scope 3 Waste Analytics & Employee Green Leaderboards</p>
               </div>
               <div class="badge badge-green">ESG Gold Certified ✓</div>
             </div>
@@ -240,15 +253,18 @@ export const InstitutionPortalView = {
             <div class="institution-feature-grid">
               <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Smart Recycling Hubs</strong>
-                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Smart contactless dry paper & beverage can recycling stations on all 8 corporate floors.</p>
+                <p class="institution-feature-desc">Contactless dry paper & beverage can stations on all floors.</p>
               </div>
               <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Corporate BRSR Reports</strong>
-                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Direct SEBI-aligned Business Responsibility and Sustainability data export.</p>
+                <p class="institution-feature-desc">
+                  <span class="desc-full">Automated Scope 3 emissions data, diverted tonnages, and BRSR core format exports for SEBI filings.</span>
+                  <span class="desc-short">SEBI-aligned sustainability reporting.</span>
+                </p>
               </div>
               <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Employee Green Perks</strong>
-                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Top eco-performing teams receive company-matched gift cards and public accolades.</p>
+                <p class="institution-feature-desc">Top eco-performing teams receive company-matched gift cards and perks.</p>
               </div>
             </div>
 
@@ -266,7 +282,7 @@ export const InstitutionPortalView = {
               <div>
                 <span class="badge badge-green" style="margin-bottom: 0.35rem;">Residential RWA Network</span>
                 <h3 style="color: var(--color-navy); font-size: 1.4rem; font-weight: 800;">Greenwood Heights Residential Society</h3>
-                <p style="font-size: 0.85rem; color: var(--text-muted);">240 Families &bull; 100% Door-to-Door Wet Waste Composting</p>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">240 Families &bull; 100% Door-to-Door Wet Waste Composting</p>
               </div>
               <div class="badge badge-points">₹12,400 Society Corpus Saved</div>
             </div>
@@ -274,15 +290,15 @@ export const InstitutionPortalView = {
             <div class="institution-feature-grid">
               <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Wing Leaderboard</strong>
-                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Wing A vs Wing B monthly segregation accuracy and organic compost yield competition.</p>
+                <p class="institution-feature-desc">Wing A vs Wing B monthly segregation accuracy contest.</p>
               </div>
               <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Municipal Tax Rebate</strong>
-                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">100% segregating societies receive a 5% municipal property tax rebate from BMC.</p>
+                <p class="institution-feature-desc">5% municipal property tax rebate from BMC.</p>
               </div>
               <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Community Compost</strong>
-                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Onsite compost powers community organic vegetable and rooftop garden.</p>
+                <p class="institution-feature-desc">Onsite compost powers rooftop organic gardens.</p>
               </div>
             </div>
 

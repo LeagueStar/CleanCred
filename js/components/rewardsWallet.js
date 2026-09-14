@@ -34,10 +34,10 @@ export const RewardsWallet = {
     const totalRedeemedInr = Formatters.gpToInr(totalRedeemedGp);
 
     container.innerHTML = `
-      <div class="app-container" style="max-width: 1100px; margin: 0 auto; padding-top: 1rem; padding-bottom: 4rem;">
+      <div class="app-container rewards-container">
         
         <!-- Header -->
-        <div class="flex-between" style="margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div class="flex-between rewards-header">
           <div>
             <div class="badge badge-green" style="margin-bottom: 0.35rem; display: inline-flex; align-items: center; gap: 0.35rem;">
               <i data-lucide="wallet" class="lucide-icon-sm"></i>
@@ -48,7 +48,7 @@ export const RewardsWallet = {
           </div>
 
           <!-- Fast Conversion Banner -->
-          <div class="neu-card-inset" style="padding: 0.6rem 1rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 700; color: var(--color-primary-dark); display: inline-flex; align-items: center; gap: 0.5rem; max-width: 100%; box-sizing: border-box;">
+          <div class="neu-card-inset rewards-rate-banner">
             <i data-lucide="scale" class="lucide-icon-sm"></i>
             <span>Standard Rate: 100 GC = ₹10 INR</span>
           </div>
@@ -69,14 +69,14 @@ export const RewardsWallet = {
               ${Formatters.formatNumber(user.greenPoints)} <span style="font-size: 1.25rem; font-weight: 600; opacity: 0.9;">GC</span>
             </div>
             <div style="font-size: 1rem; font-weight: 700; color: #DCFCE7;">
-              ≈ ${Formatters.formatCurrency(inrValue)} real value
+              ≈ ${Formatters.formatCurrency(inrValue)}
             </div>
             <div class="rewards-card-actions">
-              <button class="btn btn-secondary btn-sm btn-recharge" onclick="window.RewardsWallet.openRechargeModal()">
+              <button class="btn btn-secondary btn-sm btn-recharge rewards-action-btn" onclick="window.RewardsWallet.openRechargeModal()">
                 <i data-lucide="smartphone" class="lucide-icon-sm"></i>
                 <span style="color: #064E3B;">Recharge</span>
               </button>
-              <button class="btn btn-secondary btn-sm btn-paybills" onclick="window.RewardsWallet.openBillsModal()">
+              <button class="btn btn-secondary btn-sm btn-paybills rewards-action-btn" onclick="window.RewardsWallet.openBillsModal()">
                 <i data-lucide="file-text" class="lucide-icon-sm"></i>
                 <span style="color: #FFFFFF;">Pay Bills</span>
               </button>
@@ -95,7 +95,8 @@ export const RewardsWallet = {
               ${Formatters.formatNumber(lifetimeEarnedGp)} <span style="font-size: 1.25rem; font-weight: 600; color: var(--text-muted);">GC</span>
             </div>
             <div style="font-size: 0.9rem; color: var(--color-primary-dark); font-weight: 700;">
-              ≈ ${Formatters.formatCurrency(lifetimeEarnedInr)} via ${user.pickupsCompleted} verified pickups
+              <span class="desc-full">≈ ${Formatters.formatCurrency(lifetimeEarnedInr)} via ${user.pickupsCompleted} verified pickups</span>
+              <span class="desc-short">≈ ${Formatters.formatCurrency(lifetimeEarnedInr)}<br><span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">${user.pickupsCompleted} verified pickups</span></span>
             </div>
             <p class="rewards-avg-text" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 1rem; line-height: 1.4;">
               Average earning: ${Formatters.formatCurrency(avgEarningPerPickupInr)} per verified collection.
@@ -114,12 +115,14 @@ export const RewardsWallet = {
               ${Formatters.formatNumber(totalRedeemedGp)} <span style="font-size: 1.25rem; font-weight: 600; color: var(--text-muted);">GC</span>
             </div>
             <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">
-              ${Formatters.formatCurrency(totalRedeemedInr)} redeemed (Recharge & Vouchers)
+              <span class="desc-full">${Formatters.formatCurrency(totalRedeemedInr)} redeemed (Recharge & Vouchers)</span>
+              <span class="desc-short" style="color: var(--text-muted); font-weight: 700;">≈ ${Formatters.formatCurrency(totalRedeemedInr)}</span>
             </div>
             <div style="margin-top: 1.25rem;">
               <span class="badge badge-green" style="display: inline-flex; align-items: center; gap: 0.35rem;">
                 <i data-lucide="shield-check" class="lucide-icon-sm"></i>
-                <span>Aadhaar KYC Verified</span>
+                <span class="label-full">Aadhaar KYC Verified</span>
+                <span class="label-short">KYC Verified</span>
               </span>
             </div>
           </div>
@@ -128,18 +131,21 @@ export const RewardsWallet = {
 
         <!-- Reward Store Catalogue Sections -->
         <div style="margin-bottom: 3.5rem;">
-          <h3 style="color: var(--color-navy); font-size: 1.35rem; font-weight: 800; margin-bottom: 1.5rem;">Explore Instant Redemptions</h3>
+          <h3 class="rewards-section-title">Explore Instant Redemptions</h3>
 
           <!-- Category 1: Mobile Recharge -->
-          <div style="margin-bottom: 2.5rem;">
-            <div class="flex-between" style="margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
-              <div style="display: flex; align-items: center; gap: 0.6rem;">
-                <div style="width: 28px; height: 28px; border-radius: 6px; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center;">
+          <div class="rewards-category-section">
+            <div class="flex-between rewards-category-header">
+              <div class="rewards-category-title-wrap">
+                <div class="rewards-category-icon-box" style="background: #DCFCE7; color: var(--color-primary-dark);">
                   <i data-lucide="smartphone" class="lucide-icon-sm"></i>
                 </div>
                 <strong style="font-size: 1.1rem; color: var(--color-navy);">Mobile Prepaid Recharges</strong>
               </div>
-              <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Instant Telecom Credit (Jio, Airtel, Vi)</span>
+              <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">
+                <span class="rewards-cat-desc-full">Instant Telecom Credit (Jio, Airtel, Vi)</span>
+                <span class="rewards-cat-desc-short">Jio · Airtel · Vi</span>
+              </span>
             </div>
 
             <div class="rewards-catalog-grid">
@@ -156,7 +162,7 @@ export const RewardsWallet = {
               <!-- ₹50 Plan -->
               <div class="neu-card neu-card-raised" style="text-align: center; border-top: 3px solid var(--color-primary);">
                 <div style="font-size: 1.5rem; font-weight: 900; color: var(--color-navy); margin-bottom: 0.25rem;">₹50</div>
-                <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.85rem;">Talktime + 5GB Data</div>
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.85rem;">5GB + talktime</div>
                 <div class="badge badge-points" style="margin-bottom: 1rem;">500 GC</div>
                 <button class="btn btn-primary btn-sm btn-block" onclick="window.RewardsWallet.redeemQuick('RECHARGE', 'Mobile Data Pack ₹50', 500)">
                   Redeem ₹50
@@ -166,7 +172,7 @@ export const RewardsWallet = {
               <!-- ₹100 Plan -->
               <div class="neu-card neu-card-raised" style="text-align: center; border-top: 3px solid var(--color-primary);">
                 <div style="font-size: 1.5rem; font-weight: 900; color: var(--color-navy); margin-bottom: 0.25rem;">₹100</div>
-                <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.85rem;">Full Talktime Pack</div>
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.85rem;">Full talktime pack</div>
                 <div class="badge badge-points" style="margin-bottom: 1rem;">1,000 GC</div>
                 <button class="btn btn-primary btn-sm btn-block" onclick="window.RewardsWallet.redeemQuick('RECHARGE', 'Full Talktime Pack ₹100', 1000)">
                   Redeem ₹100
@@ -176,7 +182,7 @@ export const RewardsWallet = {
               <!-- ₹200 Plan -->
               <div class="neu-card neu-card-raised" style="text-align: center; border-top: 3px solid var(--color-primary);">
                 <div style="font-size: 1.5rem; font-weight: 900; color: var(--color-navy); margin-bottom: 0.25rem;">₹200</div>
-                <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.85rem;">Unlimited 28-Day Plan</div>
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.85rem;">Unlimited 28-day</div>
                 <div class="badge badge-points" style="margin-bottom: 1rem;">2,000 GC</div>
                 <button class="btn btn-secondary btn-sm btn-block" onclick="window.RewardsWallet.redeemQuick('RECHARGE', 'Unlimited 28-Day Plan ₹200', 2000)">
                   Redeem ₹200
@@ -186,15 +192,18 @@ export const RewardsWallet = {
           </div>
 
           <!-- Category 2: Utility Bills & Municipal Fees -->
-          <div style="margin-bottom: 2.5rem;">
-            <div class="flex-between" style="margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
-              <div style="display: flex; align-items: center; gap: 0.6rem;">
-                <div style="width: 28px; height: 28px; border-radius: 6px; background: #FEF3C7; color: #B45309; display: flex; align-items: center; justify-content: center;">
+          <div class="rewards-category-section">
+            <div class="flex-between rewards-category-header">
+              <div class="rewards-category-title-wrap">
+                <div class="rewards-category-icon-box" style="background: #FEF3C7; color: #B45309;">
                   <i data-lucide="lightbulb" class="lucide-icon-sm"></i>
                 </div>
                 <strong style="font-size: 1.1rem; color: var(--color-navy);">Utility Bills &amp; Municipal Services</strong>
               </div>
-              <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Direct Municipal Bill Credit</span>
+              <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">
+                <span class="rewards-cat-desc-full">Direct Municipal Bill Credit</span>
+                <span class="rewards-cat-desc-short">Municipal services</span>
+              </span>
             </div>
 
             <div class="rewards-catalog-grid">
@@ -253,22 +262,25 @@ export const RewardsWallet = {
           </div>
 
           <!-- Category 3: Eco Shopping & Cafes -->
-          <div>
-            <div class="flex-between" style="margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
-              <div style="display: flex; align-items: center; gap: 0.6rem;">
-                <div style="width: 28px; height: 28px; border-radius: 6px; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center;">
+          <div class="rewards-category-section">
+            <div class="flex-between rewards-category-header">
+              <div class="rewards-category-title-wrap">
+                <div class="rewards-category-icon-box" style="background: #DCFCE7; color: var(--color-primary-dark);">
                   <i data-lucide="shopping-bag" class="lucide-icon-sm"></i>
                 </div>
-                <strong style="font-size: 1.1rem; color: var(--color-navy);">Eco-Friendly Brand Vouchers & Cafes</strong>
+                <strong style="font-size: 1.1rem; color: var(--color-navy);">Eco-Friendly Brand Vouchers &amp; Cafes</strong>
               </div>
-              <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">EPR Partner Merchant Network</span>
+              <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">
+                <span class="rewards-cat-desc-full">EPR Partner Merchant Network</span>
+                <span class="rewards-cat-desc-short">Green merchants</span>
+              </span>
             </div>
 
             <div class="rewards-catalog-grid">
               <div class="neu-card neu-card-raised">
                 <div class="badge badge-green" style="margin-bottom: 0.5rem;">Organic Grocery</div>
                 <strong style="color: var(--color-navy); display: block;">BigBasket Organic</strong>
-                <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">₹100 Voucher on min ₹500 grocery.</p>
+                <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">₹100 grocery voucher</p>
                 <div class="flex-between">
                   <span class="badge badge-points">1,000 GC</span>
                   <button class="btn btn-primary btn-sm" onclick="window.RewardsWallet.redeemQuick('SHOPPING', 'BigBasket Organic ₹100 Voucher', 1000)">
@@ -280,7 +292,7 @@ export const RewardsWallet = {
               <div class="neu-card neu-card-raised">
                 <div class="badge" style="background: #FEF3C7; color: #B45309; margin-bottom: 0.5rem;">Sustainable</div>
                 <strong style="color: var(--color-navy); display: block;">Bamboo India Store</strong>
-                <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">₹50 Gift Card for eco toothbrushes & kits.</p>
+                <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">₹50 eco gift card</p>
                 <div class="flex-between">
                   <span class="badge badge-points">500 GC</span>
                   <button class="btn btn-primary btn-sm" onclick="window.RewardsWallet.redeemQuick('SHOPPING', 'Bamboo India ₹50 Voucher', 500)">
@@ -292,7 +304,7 @@ export const RewardsWallet = {
               <div class="neu-card neu-card-raised">
                 <div class="badge badge-navy" style="margin-bottom: 0.5rem;">Cafe Partner</div>
                 <strong style="color: var(--color-navy); display: block;">Starbucks Coffee</strong>
-                <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">Free reusable bamboo tumbler with refill.</p>
+                <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">Free reusable tumbler</p>
                 <div class="flex-between">
                   <span class="badge badge-points">1,200 GC</span>
                   <button class="btn btn-primary btn-sm" onclick="window.RewardsWallet.redeemQuick('CAFE', 'Starbucks Eco Tumbler Voucher', 1200)">
@@ -304,7 +316,7 @@ export const RewardsWallet = {
               <div class="neu-card neu-card-raised">
                 <div class="badge badge-green" style="margin-bottom: 0.5rem;">Healthy Food</div>
                 <strong style="color: var(--color-navy); display: block;">Subway Green Meal</strong>
-                <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">₹50 discount on organic salad subs.</p>
+                <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">₹50 green meal</p>
                 <div class="flex-between">
                   <span class="badge badge-points">500 GC</span>
                   <button class="btn btn-primary btn-sm" onclick="window.RewardsWallet.redeemQuick('CAFE', 'Subway ₹50 Meal Discount', 500)">
@@ -317,15 +329,15 @@ export const RewardsWallet = {
         </div>
 
         <!-- Real-Time Transaction Ledger -->
-        <div class="neu-card neu-card-raised" style="border-radius: var(--radius-xl);">
-          <div class="flex-between" style="margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div class="neu-card neu-card-raised rewards-ledger-card">
+          <div class="flex-between rewards-ledger-header">
             <div>
               <h3 style="color: var(--color-navy); font-size: 1.3rem; font-weight: 800; margin: 0 0 0.25rem 0;">Wallet Transaction Ledger</h3>
               <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">Immutable client-side record of verified waste earnings and civic redemptions.</p>
             </div>
 
             <!-- Filter Tabs -->
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <div class="rewards-ledger-tabs">
               <button class="btn btn-sm ${this.currentTab === 'all' ? 'btn-primary' : 'btn-secondary'}" onclick="window.RewardsWallet.filterLedger('all')">
                 All
               </button>
@@ -338,24 +350,24 @@ export const RewardsWallet = {
             </div>
           </div>
 
-          <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+          <div class="rewards-ledger-list">
             ${State.state.transactions
               .filter(t => this.currentTab === 'all' || t.type === this.currentTab)
               .map(t => `
-                <div class="neu-card-flat" style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; border-radius: var(--radius-md); flex-wrap: wrap; gap: 0.75rem;">
-                  <div style="display: flex; align-items: center; gap: 0.75rem; min-width: 0; flex: 1 1 130px;">
+                <div class="neu-card-flat rewards-tx-row">
+                  <div class="rewards-tx-info">
                     <div style="width: 40px; height: 40px; border-radius: 50%; background: ${t.type === 'credit' ? '#DCFCE7' : '#FEE2E2'}; color: ${t.type === 'credit' ? '#16A34A' : '#EF4444'}; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0;">
                       <i data-lucide="${t.type === 'credit' ? 'arrow-down-left' : 'arrow-up-right'}" class="lucide-icon-sm"></i>
                     </div>
                     <div style="min-width: 0; word-break: break-word;">
                       <strong style="color: var(--color-navy); font-size: 0.95rem; display: block;">${t.title}</strong>
-                      <div style="font-size: 0.75rem; color: var(--text-muted); word-break: break-all;">
+                      <div class="rewards-tx-meta">
                         ${Formatters.formatDateTime(t.date)} &bull; Ref: ${t.id} ${t.meta ? `&bull; ${t.meta}` : ''}
                       </div>
                     </div>
                   </div>
 
-                  <div style="text-align: right; margin-left: auto;">
+                  <div class="rewards-tx-amount">
                     <div style="font-size: 1.15rem; font-weight: 800; color: ${t.type === 'credit' ? 'var(--color-primary-dark)' : '#EF4444'};">
                       ${t.type === 'credit' ? '+' : '-'}${t.amountGp} GC
                     </div>

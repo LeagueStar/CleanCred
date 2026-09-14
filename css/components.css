@@ -1241,6 +1241,48 @@
   flex-wrap: wrap;
 }
 
+.rewards-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 44px;
+  white-space: nowrap;
+  padding: 0.5rem 1rem;
+  box-sizing: border-box;
+}
+
+.rewards-tx-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  box-sizing: border-box;
+}
+
+.rewards-tx-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  flex: 1 1 130px;
+}
+
+.rewards-tx-meta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  word-break: break-all;
+}
+
+.rewards-tx-amount {
+  text-align: right;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
 .rewards-card-primary .btn-recharge {
   background: #FFFFFF;
   color: #064E3B;
@@ -1641,4 +1683,172 @@
   width: 100%;
   box-sizing: border-box;
 }
+
+/* Impact responsive helper utilities */
+.impact-title .title-short {
+  display: none;
+}
+.impact-title .title-full {
+  display: inline;
+}
+.impact-header-btn .btn-text-short {
+  display: none;
+}
+.impact-header-btn .btn-text-full {
+  display: inline;
+}
+.impact-metric-label .label-short {
+  display: none;
+}
+.impact-metric-label .label-full {
+  display: inline;
+}
+.impact-header-desc {
+  display: block;
+}
+.impact-lifecycle-desc {
+  display: block;
+}
+
+/* Institutions responsive helper utilities */
+.institution-title .title-short {
+  display: none;
+}
+.institution-title .title-full {
+  display: inline;
+}
+.institution-subtitle .desc-short {
+  display: none;
+}
+.institution-subtitle .desc-full {
+  display: inline;
+}
+.institution-header-btn .btn-text-short {
+  display: none;
+}
+.institution-header-btn .btn-text-full {
+  display: inline;
+}
+.institution-feature-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Rewards responsive helper utilities */
+.rewards-cat-desc-short {
+  display: none;
+}
+.rewards-cat-desc-full {
+  display: inline;
+}
+
+/* Scoped Page Containers (Mobile Gutters Baseline) */
+.rewards-container,
+.impact-container,
+.institution-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 4rem 1.5rem;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Scoped Rewards Semantic Layout Elements */
+.rewards-header {
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.rewards-rate-banner {
+  padding: 0.6rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.rewards-section-title {
+  color: var(--color-navy);
+  font-size: 1.35rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+}
+
+.rewards-category-section {
+  margin-bottom: 2.5rem;
+}
+
+.rewards-category-header {
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.rewards-category-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.rewards-category-icon-box {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rewards-catalog-card {
+  text-align: center;
+}
+
+.rewards-ledger-card {
+  border-radius: var(--radius-xl);
+}
+
+.rewards-ledger-header {
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.rewards-ledger-tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.rewards-ledger-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+/* Global Dual-State Utility Fallbacks (Desktop Base) */
+.desc-short,
+.title-short,
+.label-short,
+.btn-text-short,
+.tab-label-short {
+  display: none;
+}
+
+.desc-full,
+.title-full,
+.label-full,
+.btn-text-full,
+.tab-label-full {
+  display: inline;
+}
+
 
