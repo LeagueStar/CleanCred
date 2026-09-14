@@ -23,8 +23,10 @@ export const ReportWasteView = {
     notes: '',
     photoUrl: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&q=80',
     photoSource: 'demo', // 'upload' | 'demo'
-    aiVerified: true,
-    aiPurityScore: 98.4,
+    aiVerified: false,
+    aiPurityScore: null,
+    purityStatus: 'idle', // 'idle' | 'checking' | 'complete' | 'error'
+    purityError: null,
     geoCoords: null,
     geoStatus: 'idle', // 'idle' | 'loading' | 'success' | 'error'
     geoLabel: null,
@@ -114,8 +116,10 @@ export const ReportWasteView = {
       notes: '',
       photoUrl: initialPhoto,
       photoSource: 'demo',
-      aiVerified: true,
-      aiPurityScore: 98.4,
+      aiVerified: false,
+      aiPurityScore: null,
+      purityStatus: 'idle',
+      purityError: null,
       geoCoords: null,
       geoStatus: 'idle',
       geoLabel: null,
@@ -306,7 +310,7 @@ export const ReportWasteView = {
             </div>
 
             <button class="btn btn-primary btn-lg btn-full" onclick="window.ReportWasteView.goToStep(2)">
-              <span>Next: Photo &amp; AI Purity Check</span>
+              <span>Next: Photo &amp; Purity Check</span>
               <i data-lucide="arrow-right" class="lucide-icon-sm"></i>
             </button>
           </div>
@@ -316,10 +320,10 @@ export const ReportWasteView = {
         const demos = this.demoCatalog[this.formData.category] || this.demoCatalog.wet;
         return `
           <div>
-            <div class="wizard-step-eyebrow">STEP 2 Evidence &bull; AI Purity &amp; Photo Proof</div>
+            <div class="wizard-step-eyebrow">STEP 2 Evidence &bull; Purity &amp; Photo Proof</div>
             <h2 class="wizard-step-title">Upload Photo Proof</h2>
             <p class="wizard-step-desc">
-              Computer vision validates segregation compliance for <strong>${config.name}</strong>.
+              Phase 1 validates your declared material against the municipal segregation catalog for <strong>${config.name}</strong>.
             </p>
 
             <!-- Main Photo Upload & Preview Box -->
@@ -357,19 +361,26 @@ export const ReportWasteView = {
               </div>
             </div>
 
-            <!-- AI Automated Verification Card -->
+            <!-- Offline rule-based verification card -->
             <div class="neu-card-flat" style="display: flex; gap: 1rem; padding: 1.25rem; border-radius: var(--radius-md); border-left: 4px solid var(--color-primary); margin-top: 1.25rem;">
               <div style="width: 44px; height: 44px; border-radius: 50%; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <i data-lucide="sparkles" class="lucide-icon-md"></i>
               </div>
               <div>
                 <strong style="color: var(--color-primary-dark); font-size: 0.95rem; display: block;">
-                  AI Verification — Demo (${this.formData.aiPurityScore}% Score)
+                  Purity Check — Phase 1${this.formData.aiPurityScore !== null ? ` (${this.formData.aiPurityScore}% Score)` : ''}
                 </strong>
                 <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.2rem 0 0.4rem 0;">
-                  Waste matches <strong>${this.formData.category.toUpperCase()}</strong> classification with zero cross-contamination detected.
+                  ${this.formData.purityStatus === 'complete'
+                    ? this.escapeHtml(this.formData.purityRationale)
+                    : 'Uses your selected waste category and material to calculate a consistent, offline purity score.'}
                 </p>
-                <span class="badge badge-green">✓ Demo Model: Segregation Compliant</span>
+                ${this.formData.purityStatus === 'error'
+                  ? `<span style="font-size: 0.8rem; color: #B91C1C;">${this.escapeHtml(this.formData.purityError)}</span>`
+                  : `<span class="badge ${this.formData.aiVerified ? 'badge-green' : 'badge-navy'}">${this.formData.aiVerified ? '✓ Segregation Compliant' : 'Phase 1 rule-based verification'}</span>`}
+                <button class="btn btn-secondary btn-sm" style="margin-top: 0.75rem;" ${this.formData.purityStatus === 'checking' ? 'disabled' : ''} onclick="window.ReportWasteView.runPurityCheck()">
+                  ${this.formData.purityStatus === 'checking' ? 'Checking purity…' : 'Run purity check'}
+                </button>
               </div>
             </div>
 
@@ -590,11 +601,13 @@ export const ReportWasteView = {
     this.formData.subType = this.categoryConfig[cat].subTypes[0];
     const catalog = this.demoCatalog[cat] || this.demoCatalog.wet;
     this.formData.photoUrl = catalog[0].url;
+    this.resetPurityCheck();
     this.render();
   },
 
   setSubType(val) {
     this.formData.subType = val;
+    this.resetPurityCheck();
   },
 
   setQuantity(val) {
@@ -625,11 +638,11 @@ export const ReportWasteView = {
     reader.onload = (e) => {
       this.formData.photoUrl = e.target.result;
       this.formData.photoSource = 'upload';
-      this.formData.aiPurityScore = Math.round((96 + Math.random() * 3.5) * 10) / 10;
+      this.resetPurityCheck();
       SoundFX.playClick();
       this.render();
       if (window.AppRouter && window.AppRouter.showToast) {
-        window.AppRouter.showToast('Photo proof uploaded & purity checked.');
+        window.AppRouter.showToast('Photo proof uploaded. Run the purity check to continue.');
       }
     };
     reader.readAsDataURL(file);
@@ -639,8 +652,47 @@ export const ReportWasteView = {
     SoundFX.playClick();
     this.formData.photoUrl = url;
     this.formData.photoSource = 'demo';
-    this.formData.aiPurityScore = Math.round((96 + Math.random() * 3.8) * 10) / 10;
+    this.resetPurityCheck();
     this.render();
+  },
+
+  resetPurityCheck() {
+    this.formData.aiVerified = false;
+    this.formData.aiPurityScore = null;
+    this.formData.purityStatus = 'idle';
+    this.formData.purityError = null;
+    this.formData.purityRationale = null;
+  },
+
+  async runPurityCheck() {
+    this.formData.purityStatus = 'checking';
+    this.formData.purityError = null;
+    this.render();
+    try {
+      const response = await fetch('/api/verify-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category: this.formData.category, subtype: this.formData.subType })
+      });
+      const payload = await response.json();
+      if (!response.ok || typeof payload.purity_score !== 'number') {
+        throw new Error(payload.error || 'Purity verification is unavailable.');
+      }
+      this.formData.aiVerified = payload.segregated === true;
+      this.formData.aiPurityScore = payload.purity_score;
+      this.formData.purityRationale = payload.rationale || payload.result;
+      this.formData.purityStatus = 'complete';
+    } catch (error) {
+      this.formData.purityStatus = 'error';
+      this.formData.purityError = error.message || 'Start the local CleanCred server and try again.';
+    }
+    this.render();
+  },
+
+  escapeHtml(value) {
+    const element = document.createElement('div');
+    element.textContent = String(value || '');
+    return element.innerHTML;
   },
 
   async detectLocation() {

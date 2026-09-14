@@ -36,6 +36,10 @@ Most civic waste-reporting apps stop at "report" — a citizen submits a complai
 
 CleanCred closes that gap with **multi-signal verification** — a claim only becomes a credit once it clears every checkpoint in the pipeline:
 
+### Phase 1 purity verification
+
+The demo's photo flow uses an offline, rule-based purity check. It sends the selected waste category and material to the local `POST /api/verify-photo` endpoint, which returns a deterministic score from the municipal material catalog. No API key or network call is required. It validates the declared material, not the image contents. **Phase 1 is rule-based verification; Phase 2 roadmap integrates a vision model.**
+
 | Signal | What It Confirms |
 | :--- | :--- |
 | 🤖 **AI Segregation Check** | Whether the submitted waste is properly segregated |
