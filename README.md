@@ -83,7 +83,11 @@ CleanCred is a multi-portal ecosystem, with a dedicated experience for every sta
 2. **Verify** — The system checks AI-based segregation quality, GPS proximity to the reported site, and timestamp authenticity.
 3. **Collect** — A waste collector arrives and confirms pickup by scanning a QR code, closing the loop physically.
 4. **Record** — The verified event is logged into city-wide monitoring and impact-analytics dashboards.
-5. **Earn** — Only now are Green Credits issued to the citizen's Rewards Wallet.
+5. **Earn** — Only now are Green Credits issued to the citizen's Rewards Wallet, with a single centralized credit-award path and duplicate-verification protection to keep the ledger accurate.
+
+## 🎨 Design System
+
+CleanCred follows a deliberate **Surrealism × Neumorphism** visual language — solid, matte, dimensional surfaces with raised/inset shadows and a surreal environmental accent palette. There is **zero glassmorphism**: no `backdrop-filter`, no frosted-glass panels, no translucent UI surfaces. This keeps the interface feeling tactile and credible rather than trend-chasing, in line with a civic-infrastructure product rather than a generic AI-SaaS dashboard.
 
 ## 🛠️ Technology Stack
 
@@ -92,10 +96,10 @@ CleanCred uses a lightweight, dependency-light stack chosen for a smooth UI and 
 | Layer | Technology |
 | :--- | :--- |
 | **Structure** | Semantic HTML5 |
-| **Styling** | Tailwind CSS (utility layer) + custom `main.css`, `components.css`, `animations.css`, `responsive.css` |
-| **Application Logic** | Modular Vanilla JavaScript — a lightweight client-side router and global state manager |
+| **Styling** | Tailwind CSS (via CDN, utility layer) + custom `main.css`, `components.css`, `animations.css`, `responsive.css` for the Surrealism × Neumorphism design system |
+| **Application Logic** | Modular Vanilla JavaScript (ES modules) — a lightweight client-side router and global state manager |
 | **Interactivity** | Custom utilities for QR generation/scanning, live-map rendering, confetti, and audio feedback |
-| **Backend / Local Server** | Python (`server.py`) — a zero-dependency HTTP server for local hosting and API endpoints |
+| **Local Dev Server** | Python (`server.py`) — a zero-dependency `http.server`-based server; also exposes a `/api/health` check and a `/api/report_test` endpoint used for local demo/testing, not a production backend |
 | **Deployment** | Static hosting via GitHub Pages |
 
 ## 📂 Project Structure
@@ -103,10 +107,10 @@ CleanCred uses a lightweight, dependency-light stack chosen for a smooth UI and 
 ```bash
 CleanCred/
 ├── index.html                  # Main entry point & app shell
-├── server.py                   # Python local dev / API server
+├── server.py                   # Local dev server (+ demo/test endpoints)
 ├── start.bat                   # Windows one-click startup script
 ├── css/
-│   ├── main.css                 # Global styles & design tokens
+│   ├── main.css                 # Global styles, design tokens & design-system rules
 │   ├── components.css           # Component-level styling
 │   ├── animations.css           # Transitions & keyframes
 │   └── responsive.css           # Mobile / tablet responsiveness
@@ -137,7 +141,7 @@ CleanCred/
 
 ## 🚀 Installation & Local Setup
 
-**Prerequisites:** [Python 3.x](https://www.python.org/downloads/) installed on your system.
+**Prerequisites:** [Python 3.x](https://www.python.org/downloads/) installed on your system. No `pip install` required — the server uses only Python's standard library.
 
 1. **Clone the repository**
    ```bash
@@ -155,7 +159,7 @@ CleanCred/
 
 3. **Open the app**
 
-   Navigate to `http://localhost:8081` (or the port printed in the server output).
+   Navigate to `http://localhost:8081`.
 
 No build step, no package manager, no external services required — clone and run.
 
