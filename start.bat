@@ -1,8 +1,9 @@
 @echo off
-title CLEANCRED — Municipal Waste Command Center
+title CleanCred — Verified Waste Action & Green Credits Platform
 echo ===================================================
-echo   Starting CLEANCRED Platform...
-echo   ISRO Telemetry Command Center Aesthetic
+echo   CleanCred — Smart India Hackathon 2026
+echo   Team GreenLegacy ^| Problem Statement SIH26195
+echo   Verified waste recovery
 echo ===================================================
 
 cd /d "%~dp0"
