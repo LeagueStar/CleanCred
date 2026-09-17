@@ -1,0 +1,8 @@
+# CleanCred Git Ignore Rules
+backend/uploads/
+backend/cleancred.db
+**/__pycache__/
+*.pyc
+.env
+.DS_Store
+Thumbs.db

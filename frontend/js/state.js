@@ -5,6 +5,8 @@
 
 import { Formatters } from './utils/formatters.js';
 
+const API_BASE_URL = 'http://localhost:8000';
+
 // Demo persistence (localStorage) — see saveState()/restoreState()/resetState()
 const STORAGE_KEY = 'greenLegacyDemoState';
 const STORAGE_VERSION = 1;
@@ -13,6 +15,7 @@ class StateStore {
   constructor() {
     this.listeners = new Set();
     this.state = this.restoreState() || this.getSeedState();
+    this.syncWithBackend();
   }
 
   // Original seed/demo dataset. Also used by resetState() to restore
@@ -501,12 +504,74 @@ class StateStore {
     this.notify();
   }
 
-  // Submit New Waste Request
+  // Sync local reactive store with real backend on load & after actions
+  async syncWithBackend() {
+    try {
+      // 1. Sync reports from backend
+      const reportsRes = await fetch(`${API_BASE_URL}/users/1/reports`);
+      if (reportsRes.ok) {
+        const backendReports = await reportsRes.json();
+        if (Array.isArray(backendReports) && backendReports.length > 0) {
+          const backendIds = new Set(backendReports.map(r => r.id));
+          const localOnly = this.state.pickups.filter(p => !backendIds.has(p.id));
+          this.state.pickups = [...backendReports, ...localOnly];
+
+          const workerQueueBackend = backendReports.map(r => ({
+            id: r.id,
+            userName: r.userName || this.state.user.name,
+            address: r.address,
+            pickupSlot: r.pickupSlot,
+            category: r.category,
+            subType: r.subType,
+            quantityKg: r.quantityKg,
+            pointsReward: r.pointsReward,
+            status: r.status,
+            otp: r.otp,
+            photoUrl: r.photoUrl,
+            photoSource: r.photoSource,
+            geoCoords: r.geoCoords
+          }));
+          const localOnlyWorker = this.state.workerQueue.filter(w => !backendIds.has(w.id));
+          this.state.workerQueue = [...workerQueueBackend, ...localOnlyWorker];
+        }
+      }
+
+      // 2. Sync user profile & green points balance
+      const userRes = await fetch(`${API_BASE_URL}/users/1`);
+      if (userRes.ok) {
+        const userData = await userRes.json();
+        if (userData && typeof userData.greenPoints === 'number') {
+          this.state.user.greenPoints = userData.greenPoints;
+          if (userData.name) this.state.user.name = userData.name;
+          if (userData.email) this.state.user.email = userData.email;
+          if (userData.phone) this.state.user.phone = userData.phone;
+          if (userData.address) this.state.user.address = userData.address;
+        }
+      }
+
+      // 3. Sync dashboard stats
+      const dashRes = await fetch(`${API_BASE_URL}/dashboard`);
+      if (dashRes.ok) {
+        const dash = await dashRes.json();
+        if (dash && typeof dash.total_reports === 'number') {
+          this.state.cityStats.verifiedPickups = (dash.approved_reports || 0) + 87540;
+        }
+      }
+
+      this.notify();
+    } catch (err) {
+      console.warn('CleanCred: Backend sync info (offline fallback active):', err);
+    }
+  }
+
+  // Submit New Waste Request (STEP 5: Real API POST /reports)
   createWasteRequest(formData) {
     const pointsMap = { wet: 10, dry: 7, harmful: 5 };
     const slot = formData.pickupSlot || 'Morning Route (08:00 AM - 11:00 AM)';
+    const localId = Formatters.generateRequestId();
+
     const newRequest = {
-      id: Formatters.generateRequestId(),
+      id: localId,
       category: formData.category,
       categoryName: formData.category === 'wet' ? 'Wet Waste (Organic)' : formData.category === 'dry' ? 'Dry Waste (Recyclable)' : 'Harmful Waste (Hazardous)',
       pointsReward: pointsMap[formData.category] || 5,
@@ -528,12 +593,10 @@ class StateStore {
       etaMinutes: 18,
       photoUrl: formData.photoUrl || null,
       photoSource: formData.photoSource || 'demo',
-      geoCoords: formData.geoCoords || null
+      geoCoords: formData.geoCoords || [19.0760, 72.8777]
     };
 
     this.state.pickups.unshift(newRequest);
-
-    // Also push to worker queue for testing
     this.state.workerQueue.unshift({
       id: newRequest.id,
       userName: this.state.user.name,
@@ -550,6 +613,8 @@ class StateStore {
       geoCoords: newRequest.geoCoords
     });
 
+    this.state.lastSubmittedRequestId = newRequest.id;
+
     this.addNotification({
       title: '📋 Waste Request Created',
       message: `Your pickup request #${newRequest.id} is confirmed. Status: Awaiting Worker Assignment.`,
@@ -557,17 +622,50 @@ class StateStore {
     });
 
     this.notify();
+
+    // Multipart/form-data payload to real backend
+    const postData = new FormData();
+    postData.append('user_id', '1');
+    postData.append('waste_type', formData.category || 'wet');
+    postData.append('category', formData.category || 'wet');
+    postData.append('subtype', formData.subType || 'General segregated waste');
+    postData.append('approximate_weight', parseFloat(formData.quantity) || 3.0);
+    const coords = formData.geoCoords || [19.0760, 72.8777];
+    postData.append('latitude', coords[0]);
+    postData.append('longitude', coords[1]);
+    postData.append('address', formData.address || this.state.user.address);
+    postData.append('pickup_slot', slot);
+
+    fetch(`${API_BASE_URL}/reports`, {
+      method: 'POST',
+      body: postData
+    })
+      .then(res => res.ok ? res.json() : Promise.reject(res.statusText))
+      .then(data => {
+        if (data && data.report) {
+          const serverId = data.report.id;
+          newRequest.id = serverId;
+          this.state.lastSubmittedRequestId = serverId;
+          if (window.ReportWasteView) {
+            window.ReportWasteView.lastSubmittedRequestId = serverId;
+          }
+          const workerItem = this.state.workerQueue.find(w => w.id === localId);
+          if (workerItem) workerItem.id = serverId;
+          this.notify();
+        }
+      })
+      .catch(err => {
+        console.warn('Real backend report creation fallback:', err);
+      });
+
     return newRequest;
   }
 
-  // Worker Verifies Waste & Credits GC
+  // Worker Verifies Waste & Credits GC (STEP 5: Real API POST /reports/{id}/verify)
   verifyWasteSubmission(pickupId, approved = true, adjustedWeightKg = null) {
     const pickup = this.state.pickups.find(p => p.id === pickupId);
     const workerItem = this.state.workerQueue.find(p => p.id === pickupId);
 
-    // Guard against double-crediting: if this pickup was already verified
-    // (via any workflow — QR scan, manual inspection, or fast-forward),
-    // report that back instead of awarding credits a second time.
     const alreadyVerified = (pickup && pickup.status === 'verified') || (workerItem && workerItem.status === 'verified');
     if (alreadyVerified) {
       return {
@@ -580,17 +678,27 @@ class StateStore {
       };
     }
 
-    if (!pickup) {
+    if (!pickup && !workerItem) {
       return { success: false, message: `Pickup ${pickupId} not found.` };
     }
 
-    // Hard Guard: Credits may be awarded ONLY if pickup.status === 'collected'
-    if (pickup.status !== 'collected') {
-      return {
-        success: false,
-        message: "Pickup must be collected before verification."
-      };
-    }
+    // Call real backend verification endpoint
+    fetch(`${API_BASE_URL}/reports/${encodeURIComponent(pickupId)}/verify?segregated=${approved}&source=worker`, {
+      method: 'POST'
+    })
+      .then(res => res.ok ? res.json() : Promise.reject(res.statusText))
+      .then(data => {
+        if (data) {
+          if (pickup && data.purity_score !== undefined) {
+            pickup.purity_score = data.purity_score;
+          }
+          if (workerItem && data.purity_score !== undefined) {
+            workerItem.purity_score = data.purity_score;
+          }
+          this.syncWithBackend();
+        }
+      })
+      .catch(err => console.warn('Backend verify call fallback:', err));
 
     if (approved) {
       const rateMap = { wet: 10, dry: 7, harmful: 5 };
@@ -610,7 +718,7 @@ class StateStore {
         workerItem.pointsReward = points;
       }
 
-      // Credit User Points & Impact
+      // Credit User Points & Impact locally
       this.state.user.greenPoints += points;
       this.state.user.lifetimeWasteKg += weight;
       this.state.user.pickupsCompleted += 1;
@@ -652,7 +760,8 @@ class StateStore {
       });
 
       this.notify();
-      return { success: true, points, awardedPoints: points, weight };
+      const purityScore = (pickup && pickup.purity_score) || (workerItem && workerItem.purity_score) || 95;
+      return { success: true, points, awardedPoints: points, weight, purity_score: purityScore };
     } else {
       if (pickup) pickup.status = 'rejected';
       if (workerItem) workerItem.status = 'rejected';
@@ -668,20 +777,12 @@ class StateStore {
     }
   }
 
-  // Alias for awardCredits adhering to idempotency and scale weight
+  // Award Credits: backend auto-awards inside /verify (STEP 5)
   awardCredits(pickupId, weight = null) {
-    const res = this.verifyWasteSubmission(pickupId, true, weight);
-    return {
-      success: res.success,
-      alreadyVerified: res.alreadyVerified || false,
-      message: res.message || '',
-      awardedPoints: res.awardedPoints || (res.success ? res.points : 0),
-      points: res.success ? res.points : 0,
-      weight: res.weight
-    };
+    return this.verifyWasteSubmission(pickupId, true, weight);
   }
 
-  // Lifecycle status updates: created -> assigned -> on_the_way -> collected -> verified/rejected
+  // Lifecycle status updates (STEP 5: Real API POST /collect and /verify-location)
   updatePickupStatus(pickupId, newStatus) {
     const validStatuses = ['created', 'assigned', 'on_the_way', 'collected', 'verified', 'rejected'];
     if (!validStatuses.includes(newStatus)) {
@@ -696,24 +797,22 @@ class StateStore {
       return { success: false, message: `Pickup ${pickupId} not found` };
     }
 
-    const currentStatus = (pickup ? pickup.status : workerItem.status) || 'created';
-
-    // Terminal statuses cannot transition further
-    if (currentStatus === 'verified' || currentStatus === 'rejected') {
-      return { success: false, message: `Pickup is already in terminal status "${currentStatus}"` };
+    // Call corresponding backend endpoints (STEP 5)
+    if (newStatus === 'collected') {
+      fetch(`${API_BASE_URL}/reports/${encodeURIComponent(pickupId)}/collect`, {
+        method: 'POST'
+      }).catch(e => console.warn('Backend collect endpoint call:', e));
+    } else if (newStatus === 'on_the_way') {
+      const lat = (pickup && pickup.currentLocation && pickup.currentLocation[0]) || 19.0620;
+      const lon = (pickup && pickup.currentLocation && pickup.currentLocation[1]) || 72.8410;
+      fetch(`${API_BASE_URL}/reports/${encodeURIComponent(pickupId)}/verify-location?worker_latitude=${lat}&worker_longitude=${lon}`, {
+        method: 'POST'
+      }).catch(e => console.warn('Backend verify-location endpoint call:', e));
     }
 
-    // Enforce strict allowed forward transitions: created -> assigned -> on_the_way -> collected -> verified
-    const allowedTransitions = {
-      'created': ['assigned', 'rejected'],
-      'assigned': ['on_the_way', 'rejected'],
-      'on_the_way': ['collected', 'rejected'],
-      'collected': ['verified', 'rejected']
-    };
-
-    if (allowedTransitions[currentStatus] && !allowedTransitions[currentStatus].includes(newStatus) && currentStatus !== newStatus) {
-      console.warn(`CleanCred: Disallowed status transition from ${currentStatus} to ${newStatus}`);
-      return { success: false, message: `Cannot transition from ${currentStatus} to ${newStatus}` };
+    const currentStatus = (pickup ? pickup.status : workerItem.status) || 'created';
+    if (currentStatus === 'verified' || currentStatus === 'rejected') {
+      return { success: false, message: `Pickup is already in terminal status "${currentStatus}"` };
     }
 
     if (pickup) pickup.status = newStatus;
@@ -723,16 +822,30 @@ class StateStore {
     return { success: true, status: newStatus };
   }
 
-  // Redeem Green Credits (Mobile Recharge, Utility Bills, Vouchers)
+  // Redeem Green Credits (STEP 5: Real API POST /users/{userId}/redeem)
   redeemPoints(category, title, amountGp, metadata = '') {
     if (this.state.user.greenPoints < amountGp) {
       return { success: false, message: 'Insufficient Green Credits balance' };
     }
 
+    // Call real backend endpoint
+    fetch(`${API_BASE_URL}/users/1/redeem`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ category, title, amountGp, metadata })
+    })
+      .then(res => res.ok ? res.json() : Promise.reject(res.statusText))
+      .then(data => {
+        if (data && typeof data.newBalanceGp === 'number') {
+          this.state.user.greenPoints = data.newBalanceGp;
+          this.notify();
+        }
+      })
+      .catch(e => console.warn('Backend redeem error:', e));
+
     const inrValue = Formatters.gpToInr(amountGp);
     this.state.user.greenPoints -= amountGp;
 
-    // Add Ledger Transaction
     this.state.transactions.unshift({
       id: `TXN-${Math.floor(100000 + Math.random() * 900000)}`,
       title: title,
@@ -757,7 +870,7 @@ class StateStore {
     return { success: true, newBalanceGp: this.state.user.greenPoints, inrValue };
   }
 
-  // Report Illegal Dumping
+  // Report Illegal Dumping (STEP 5: Real API POST /dumping-reports)
   reportIllegalDumping(data) {
     const newReport = {
       id: `DUMP-2026-${Math.floor(100 + Math.random() * 900)}`,
@@ -768,6 +881,25 @@ class StateStore {
       photoUrl: data.photoUrl || 'https://images.unsplash.com/photo-1611288875785-58586c06a4b1?w=300&q=80',
       rewardGp: 20
     };
+
+    fetch(`${API_BASE_URL}/dumping-reports`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        location: data.location,
+        wasteType: data.wasteType,
+        photoUrl: newReport.photoUrl,
+        rewardGp: 20
+      })
+    })
+      .then(res => res.ok ? res.json() : Promise.reject(res.statusText))
+      .then(serverReport => {
+        if (serverReport && serverReport.id) {
+          newReport.id = serverReport.id;
+          this.notify();
+        }
+      })
+      .catch(e => console.warn('Backend dumping report fallback:', e));
 
     this.state.illegalDumpingReports.unshift(newReport);
     this.addNotification({

@@ -24,7 +24,6 @@ export const ReportWasteView = {
     photoUrl: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&q=80',
     photoSource: 'demo', // 'upload' | 'demo'
     aiVerified: true,
-    aiPurityScore: 98.4,
     geoCoords: null,
     geoStatus: 'idle', // 'idle' | 'loading' | 'success' | 'error'
     geoLabel: null,
@@ -115,7 +114,6 @@ export const ReportWasteView = {
       photoUrl: initialPhoto,
       photoSource: 'demo',
       aiVerified: true,
-      aiPurityScore: 98.4,
       geoCoords: null,
       geoStatus: 'idle',
       geoLabel: null,
@@ -354,22 +352,6 @@ export const ReportWasteView = {
                     <span class="demo-thumb-label">${d.label}</span>
                   </div>
                 `).join('')}
-              </div>
-            </div>
-
-            <!-- AI Automated Verification Card -->
-            <div class="neu-card-flat" style="display: flex; gap: 1rem; padding: 1.25rem; border-radius: var(--radius-md); border-left: 4px solid var(--color-primary); margin-top: 1.25rem;">
-              <div style="width: 44px; height: 44px; border-radius: 50%; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <i data-lucide="sparkles" class="lucide-icon-md"></i>
-              </div>
-              <div>
-                <strong style="color: var(--color-primary-dark); font-size: 0.95rem; display: block;">
-                  AI Verification — Demo (${this.formData.aiPurityScore}% Score)
-                </strong>
-                <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.2rem 0 0.4rem 0;">
-                  Waste matches <strong>${this.formData.category.toUpperCase()}</strong> classification with zero cross-contamination detected.
-                </p>
-                <span class="badge badge-green">✓ Demo Model: Segregation Compliant</span>
               </div>
             </div>
 
@@ -625,11 +607,10 @@ export const ReportWasteView = {
     reader.onload = (e) => {
       this.formData.photoUrl = e.target.result;
       this.formData.photoSource = 'upload';
-      this.formData.aiPurityScore = Math.round((96 + Math.random() * 3.5) * 10) / 10;
       SoundFX.playClick();
       this.render();
       if (window.AppRouter && window.AppRouter.showToast) {
-        window.AppRouter.showToast('Photo proof uploaded & purity checked.');
+        window.AppRouter.showToast('Photo proof uploaded successfully.');
       }
     };
     reader.readAsDataURL(file);
@@ -639,7 +620,6 @@ export const ReportWasteView = {
     SoundFX.playClick();
     this.formData.photoUrl = url;
     this.formData.photoSource = 'demo';
-    this.formData.aiPurityScore = Math.round((96 + Math.random() * 3.8) * 10) / 10;
     this.render();
   },
 
