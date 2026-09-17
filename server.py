@@ -23,39 +23,6 @@ if sys.platform == 'win32':
 PORT = 8081
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
-# Phase 1 purity catalog. It is intentionally deterministic and offline:
-# the same declared material always receives the same explainable score.
-PURITY_SCORES = {
-    "wet": {
-        "Kitchen Vegetable & Fruit Scraps": 96,
-        "Cooked Food Waste & Leftovers": 93,
-        "Tea Leaves & Coffee Grounds": 95,
-        "Garden Trimmings & Fallen Leaves": 94,
-    },
-    "dry": {
-        "Cardboard Shipping Cartons & Paper": 92,
-        "PET Water & Soda Bottles": 94,
-        "Aluminium & Steel Beverage Cans": 91,
-        "Clean Glass Containers & Jars": 93,
-    },
-    "harmful": {
-        "Used Lithium & Alkaline Batteries": 97,
-        "Discarded Electronics & Circuit Boards": 93,
-        "Fluorescent Tubes & CFL Bulbs": 90,
-        "Expired Domestic Pharmaceutical Medicines": 96,
-    },
-}
-
-
-def calculate_purity_score(category, subtype):
-    """Return (score, accepted, rationale) for a declared municipal waste stream."""
-    category = (category or "").strip().lower()
-    subtype = (subtype or "").strip()
-    score = PURITY_SCORES.get(category, {}).get(subtype)
-    if score is None:
-        return 65, False, "Material is outside the supported Phase 1 category catalog."
-    return score, score >= 85, "Declared material matches the municipal segregation catalog."
-
 class CleanCredHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
@@ -73,27 +40,6 @@ class CleanCredHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):
         parsed_url = urllib.parse.urlparse(self.path)
-        if parsed_url.path == '/api/verify-photo':
-            content_length = int(self.headers.get('Content-Length', 0))
-            if content_length > 16 * 1024:
-                self.send_json({"error": "Verification request is too large."}, 413)
-                return
-            try:
-                payload = json.loads(self.rfile.read(content_length).decode('utf-8'))
-                score, accepted, rationale = calculate_purity_score(
-                    payload.get('category'), payload.get('subtype')
-                )
-            except (json.JSONDecodeError, UnicodeDecodeError, AttributeError):
-                self.send_json({"error": "Send category and subtype as JSON."}, 400)
-                return
-            self.send_json({
-                "segregated": accepted,
-                "purity_score": score,
-                "result": f"Purity score: {score}% — {'Accepted' if accepted else 'Needs review'}",
-                "rationale": rationale,
-                "verification_method": "rule-based-phase-1",
-            })
-            return
         if parsed_url.path == '/api/report_test':
             content_length = int(self.headers.get('Content-Length', 0))
             body = self.rfile.read(content_length)
@@ -108,14 +54,6 @@ class CleanCredHandler(http.server.SimpleHTTPRequestHandler):
             return
         self.send_response(404)
         self.end_headers()
-
-    def send_json(self, data, status=200):
-        response = json.dumps(data).encode('utf-8')
-        self.send_response(status)
-        self.send_header('Content-Type', 'application/json')
-        self.send_header('Content-Length', str(len(response)))
-        self.end_headers()
-        self.wfile.write(response)
 
     def do_GET(self):
         parsed_url = urllib.parse.urlparse(self.path)

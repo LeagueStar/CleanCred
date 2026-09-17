@@ -137,6 +137,13 @@ export const ProfileView = {
     State.state.user.phone = phone;
     State.state.user.address = address;
 
+    // STEP 5: Real backend PUT /users/1
+    fetch('http://localhost:8000/users/1', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, phone, address })
+    }).catch(e => console.warn('CleanCred: Backend profile save error:', e));
+
     State.addNotification({
       title: 'Profile Updated',
       message: 'Your account details and municipal pickup address were saved.',

@@ -103,7 +103,7 @@ export const WorkerPortalView = {
                   ${item.status === 'verified' ? `
                     <span class="badge" style="background: #D1FAE5; color: #065F46; font-size: 0.88rem; padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.35rem;">
                       <i data-lucide="check-circle-2" class="lucide-icon-sm"></i>
-                      <span>Verified (+${item.pointsReward} GC)</span>
+                      <span>Verified (${item.purity_score ? item.purity_score + '% Purity • ' : ''}+${item.pointsReward} GC)</span>
                     </span>
                   ` : item.status === 'rejected' ? `
                     <span class="badge" style="background: #FEE2E2; color: #991B1B; font-size: 0.88rem; padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.35rem;">
@@ -263,7 +263,8 @@ export const WorkerPortalView = {
       } else if (res && res.success && (res.points > 0 || res.awardedPoints > 0)) {
         SoundFX.playPointsEarned();
         Confetti.trigger(90);
-        window.AppRouter.showToast(`Pickup verified! +${res.points || res.awardedPoints} Green Credits released.`);
+        const purityText = res.purity_score ? ` (Purity: ${res.purity_score}%)` : '';
+        window.AppRouter.showToast(`Pickup verified!${purityText} +${res.points || res.awardedPoints} Green Credits released.`);
       } else {
         SoundFX.playClick();
         window.AppRouter.showToast(res && res.message ? res.message : 'Verification could not be completed.');

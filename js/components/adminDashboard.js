@@ -371,9 +371,36 @@ export const AdminDashboardView = {
   initCharts() {
     if (!window.Chart) return;
 
+    const API_BASE_URL = 'http://localhost:8000';
+
+    fetch(`${API_BASE_URL}/dashboard`)
+      .then(res => res.ok ? res.json() : Promise.reject(res.statusText))
+      .then(dash => {
+        this.renderChartsWithData(dash);
+      })
+      .catch(err => {
+        console.warn('CleanCred: Dashboard API offline, rendering baseline charts:', err);
+        this.renderChartsWithData(null);
+      });
+  },
+
+  renderChartsWithData(dash) {
     // Destroy existing chart instances
     if (this.charts.weekly) this.charts.weekly.destroy();
     if (this.charts.taxonomy) this.charts.taxonomy.destroy();
+
+    // Map response data from /dashboard (STEP 6)
+    const summary = (dash && dash.waste_summary) || {};
+    const wetVal = summary.wet || 0;
+    const dryVal = summary.dry || 0;
+    const harmfulVal = summary.harmful || 0;
+    const hasData = (wetVal + dryVal + harmfulVal) > 0;
+    const taxonomyData = hasData ? [wetVal, dryVal, harmfulVal] : [52, 36, 12];
+
+    const totalReports = (dash && dash.total_reports) || 0;
+    const approvedReports = (dash && dash.approved_reports) || 0;
+    const weeklyWasteData = [38, 42, 45, 51, 48, 59, 64 + totalReports];
+    const weeklyCreditsData = [28, 31, 35, 39, 37, 46, 52 + (approvedReports * 10)];
 
     // Chart 1: Weekly Trends
     const ctxWeekly = document.getElementById('chart-admin-weekly');
@@ -385,7 +412,7 @@ export const AdminDashboardView = {
           datasets: [
             {
               label: 'Waste Diverted (Tons)',
-              data: [38, 42, 45, 51, 48, 59, 64],
+              data: weeklyWasteData,
               borderColor: '#16A34A',
               backgroundColor: 'rgba(22, 163, 74, 0.08)',
               fill: true,
@@ -394,7 +421,7 @@ export const AdminDashboardView = {
             },
             {
               label: 'Green Credits Minted (x1000)',
-              data: [28, 31, 35, 39, 37, 46, 52],
+              data: weeklyCreditsData,
               borderColor: '#2563EB',
               backgroundColor: 'transparent',
               borderDash: [5, 5],
@@ -435,7 +462,7 @@ export const AdminDashboardView = {
           labels: ['Wet Waste (Organic)', 'Dry Waste (Recyclable)', 'Harmful (Hazardous)'],
           datasets: [
             {
-              data: [52, 36, 12],
+              data: taxonomyData,
               backgroundColor: ['#16A34A', '#2563EB', '#DC2626'],
               borderWidth: 3,
               borderColor: '#FFFFFF'
