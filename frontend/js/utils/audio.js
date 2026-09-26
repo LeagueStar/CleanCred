@@ -19,7 +19,7 @@ class SoundEffectsManager {
   }
 
   /**
-   * Sound: Earn Green Credits Chime (Upward cheerful arpeggio)
+   * Sound: Earn Credits Chime (Upward cheerful arpeggio)
    */
   playPointsEarned() {
     if (!this.enabled) return;

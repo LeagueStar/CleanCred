@@ -72,7 +72,7 @@ def run_tests():
     print(f"    Backend status response: {be_resp.strip()} - OK")
 
     # 3. Check Dashboard BEFORE adding report
-    print("\n[3] Checking Kreya's Dashboard Data (BEFORE report submission)...")
+    print("\n[3] Checking Admin Dashboard Data (BEFORE report submission)...")
     dash_status, dash_before = test_get(f"{API_BASE}/dashboard")
     dash_before = json.loads(dash_before)
     print(f"    Dashboard BEFORE: total_reports={dash_before['total_reports']}, approved_reports={dash_before['approved_reports']}, waste_summary={dash_before['waste_summary']}")
@@ -115,7 +115,7 @@ def run_tests():
     assert len(matching) > 0, f"Report {request_id} not found in user reports!"
     print(f"    Found newly submitted report in GET /users/1/reports ({len(user_reports)} total reports) - OK")
 
-    # 7. Test Location Verification (Gupta's proximity)
+    # 7. Test Location Verification (Worker proximity)
     print("\n[7] Testing Location Verification via POST /reports/{id}/verify-location...")
     # Point near: worker is within 15 meters
     loc_status, loc_resp = test_post_json(f"{API_BASE}/reports/{request_id}/verify-location?worker_latitude=19.0761&worker_longitude=72.8778", {})
@@ -155,8 +155,8 @@ def run_tests():
     # 11. Test Profile Update
     print("\n[11] Testing Profile Save via PUT /users/1...")
     prof_status, prof_resp = test_put_json(f"{API_BASE}/users/1", {
-        "name": "Shivansh Prajapati",
-        "email": "shivansh.green@karma.org",
+        "name": "DemoTester",
+        "email": "demotester@cleancred.org",
         "phone": "+91 98765 43210",
         "address": "Flat 402, Green Meadows, Ward 4B, Mumbai"
     })
@@ -174,7 +174,7 @@ def run_tests():
     print(f"    Dumping report created: ID={dump_resp['id']}, Status={dump_resp['status']}, Reward=+{dump_resp['rewardGp']} GC - OK")
 
     # 13. Check Dashboard AFTER adding report
-    print("\n[13] Checking Kreya's Dashboard Data (AFTER report submission & verification)...")
+    print("\n[13] Checking Admin Dashboard Data (AFTER report submission & verification)...")
     dash_status_after, dash_after = test_get(f"{API_BASE}/dashboard")
     dash_after = json.loads(dash_after)
     print(f"    Dashboard AFTER: total_reports={dash_after['total_reports']}, approved_reports={dash_after['approved_reports']}, collected_reports={dash_after['collected_reports']}, waste_summary={dash_after['waste_summary']}")

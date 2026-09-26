@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GREEN LEGACY — REACTIVE STATE STORE
+   CLEANCRED — REACTIVE STATE STORE
    Persistent State, Role-Based Access, & Event Subscriptions
    ========================================================================== */
 
@@ -27,13 +27,13 @@ class StateStore {
       // Current User Role: 'citizen' | 'worker' | 'admin' | 'institution'
       currentRole: 'citizen',
 
-      // Citizen Profile (Shivansh Prajapati)
+      // Citizen Profile (DemoTester)
       user: {
-        id: 'usr_shivansh_99',
-        name: 'Shivansh Prajapati',
-        email: 'shivansh.green@karma.org',
+        id: 'usr_demotester_99',
+        name: 'DemoTester',
+        email: 'demotester@cleancred.org',
         phone: '+91 98765 43210',
-        avatar: 'SP',
+        avatar: 'DT',
         address: 'Flat 402, Green Meadows, Ward 4B, Mumbai',
         greenPoints: 1250, // 100 GC = ₹10 => ₹125
         get greenCredits() { return this.greenPoints; },
@@ -141,7 +141,7 @@ class StateStore {
       workerQueue: [
         {
           id: 'GK-2026-89421',
-          userName: 'Shivansh Prajapati',
+          userName: 'DemoTester',
           address: 'Flat 402, Green Meadows, Ward 4B',
           category: 'wet',
           subType: 'Kitchen Scraps',
@@ -253,7 +253,7 @@ class StateStore {
           id: 'badge_4',
           name: 'Eco Champion',
           icon: '🏆',
-          description: 'Accumulate more than 2,000 Green Credits.',
+          description: 'Accumulate more than 2,000 Credits.',
           unlocked: false,
           progress: 62.5 // 1250/2000
         },
@@ -335,18 +335,18 @@ class StateStore {
           { rank: 3, name: 'Vikramaditya Roy', avatar: 'VR', points: 4650, wasteKg: 430, streak: 25, location: 'Delhi' },
           { rank: 4, name: 'Ananya Gupta', avatar: 'AG', points: 3890, wasteKg: 370, streak: 19, location: 'Pune' },
           { rank: 5, name: 'Karan Malhotra', avatar: 'KM', points: 3410, wasteKg: 310, streak: 15, location: 'Hyderabad' },
-          { rank: 12, name: 'Shivansh Prajapati (You)', avatar: 'SP', points: 1250, wasteKg: 125, streak: 8, location: 'Mumbai', isUser: true }
+          { rank: 12, name: 'DemoTester (You)', avatar: 'DT', points: 1250, wasteKg: 125, streak: 8, location: 'Mumbai', isUser: true }
         ],
         city: [
           { rank: 1, name: 'Aarav Mehta', avatar: 'AM', points: 5420, wasteKg: 520, streak: 34, location: 'Ward 2A' },
           { rank: 2, name: 'Sneha Deshmukh', avatar: 'SD', points: 4210, wasteKg: 400, streak: 22, location: 'Ward 4B' },
           { rank: 3, name: 'Rahul Rane', avatar: 'RR', points: 3950, wasteKg: 380, streak: 18, location: 'Ward 7C' },
-          { rank: 8, name: 'Shivansh Prajapati (You)', avatar: 'SP', points: 1250, wasteKg: 125, streak: 8, location: 'Ward 4B', isUser: true }
+          { rank: 8, name: 'DemoTester (You)', avatar: 'DT', points: 1250, wasteKg: 125, streak: 8, location: 'Ward 4B', isUser: true }
         ],
         neighborhood: [
           { rank: 1, name: 'Sneha Deshmukh', avatar: 'SD', points: 4210, wasteKg: 400, streak: 22, location: 'Bldg 3' },
           { rank: 2, name: 'Rohan Patil', avatar: 'RP', points: 2150, wasteKg: 210, streak: 14, location: 'Bldg 8' },
-          { rank: 3, name: 'Shivansh Prajapati (You)', avatar: 'SP', points: 1250, wasteKg: 125, streak: 8, location: 'Bldg 4', isUser: true }
+          { rank: 3, name: 'DemoTester (You)', avatar: 'DT', points: 1250, wasteKg: 125, streak: 8, location: 'Bldg 4', isUser: true }
         ],
         college: [
           { rank: 1, name: 'IIT Bombay Eco Cell', avatar: 'IIT', points: 38400, wasteKg: 3600, location: 'Powai Campus' },
@@ -395,7 +395,7 @@ class StateStore {
         },
         {
           id: 'notif_2',
-          title: '+10 Green Credits issued',
+          title: '+10 Credits issued',
           message: 'Wet waste collection #GK-2026-89210 verified successfully by municipal inspector.',
           timestamp: new Date(Date.now() - 3 * 3600 * 1000).toISOString(),
           read: false,
@@ -412,7 +412,7 @@ class StateStore {
         {
           id: 'notif_4',
           title: '📱 Recharge Successful',
-          message: '₹10 Jio recharge applied successfully using 100 Green Credits.',
+          message: '₹10 Jio recharge applied successfully using 100 Credits.',
           timestamp: new Date(Date.now() - 48 * 3600 * 1000).toISOString(),
           read: true,
           type: 'reward'
@@ -1050,7 +1050,7 @@ class StateStore {
     });
 
     this.addNotification({
-      title: `+${points} Green Credits Issued`,
+      title: `+${points} Credits Issued`,
       message: `Pickup #${reportId} verified & collected. One-time QR consumed.`,
       type: 'points'
     });
@@ -1103,10 +1103,10 @@ class StateStore {
     return { success: true, status: newStatus };
   }
 
-  // Redeem Green Credits (STEP 5: Real API POST /users/{userId}/redeem)
+  // Redeem Credits (STEP 5: Real API POST /users/{userId}/redeem)
   redeemPoints(category, title, amountGp, metadata = '') {
     if (this.state.user.greenPoints < amountGp) {
-      return { success: false, message: 'Insufficient Green Credits balance' };
+      return { success: false, message: 'Insufficient Credits balance' };
     }
 
     // Call real backend endpoint

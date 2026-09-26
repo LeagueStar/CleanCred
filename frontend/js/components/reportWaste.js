@@ -1,6 +1,6 @@
 /* ==========================================================================
    CLEANCRED — 5-STEP VERIFIED WASTE REPORTING FLOW
-   Smart India Hackathon 2026 // Team GreenLegacy
+   CleanCred Core Engine
    Model: Report → Verify → Collect → Record → Earn
    Tactile Neumorphism + Civic Technology
    ========================================================================== */
@@ -160,7 +160,7 @@ export const ReportWasteView = {
           </div>
           <h1 class="wizard-step-title">Report Waste Collection</h1>
           <p class="wizard-step-desc">
-            Schedule verified municipal collection. Green Credits are credited upon scale verification by Ramesh Kumar.
+            Schedule verified municipal collection. Credits are credited upon scale verification by Ramesh Kumar.
           </p>
         </div>
 
@@ -219,7 +219,7 @@ export const ReportWasteView = {
             <div class="wizard-step-eyebrow">STEP 1 Category &bull; Waste Classification</div>
             <h2 class="wizard-step-title">Select Waste Category</h2>
             <p class="wizard-step-desc">
-              Source segregation ensures high recovery efficiency and unlocks Green Credits.
+              Source segregation ensures high recovery efficiency and unlocks Credits.
             </p>
 
             <!-- 3 Category Options -->
@@ -499,7 +499,7 @@ export const ReportWasteView = {
                 <span>Verification Rule:</span>
               </strong>
               <span style="color: #78350F;">
-                Green Credits are <em>not</em> credited on report submission. They will be deposited into your wallet once municipal worker Ramesh Kumar verifies segregation on his digital scale.
+                Credits are <em>not</em> credited on report submission. They will be deposited into your wallet once municipal worker Ramesh Kumar verifies segregation on his digital scale.
               </span>
             </div>
 

@@ -1,6 +1,6 @@
 /* ==========================================================================
    CLEANCRED — CITIZEN MOBILE HOME VIEW
-   Smart India Hackathon 2026 // Team GreenLegacy
+   CleanCred Core Engine
    Tactile Neumorphism + Civic Technology
    Strict Workflow: Report → Verify → Collect → Record → Earn
    ========================================================================== */
@@ -38,7 +38,7 @@ export const DashboardView = {
               Good morning, ${user.name.split(' ')[0]}
             </h1>
             <p class="hide-on-mobile" style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.25rem;">
-              ${activePickups.length > 0 ? 'Your municipal collection is in progress. Hand over waste upon arrival to release credits.' : 'Keep your household waste segregated and earn verified Green Credits.'}
+              ${activePickups.length > 0 ? 'Your municipal collection is in progress. Hand over waste upon arrival to release credits.' : 'Keep your household waste segregated and earn verified Credits.'}
             </p>
           </div>
 
@@ -58,11 +58,11 @@ export const DashboardView = {
           </div>
         </div>
 
-        <!-- 1. GREEN CREDITS HERO BALANCE CARD -->
+        <!-- 1. CREDITS HERO BALANCE CARD -->
         <div class="hero-points-card neu-card neu-card-raised">
           <div class="flex-between">
             <span style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">
-              Available Green Credits
+              Available Credits
             </span>
             <span class="badge badge-green hide-on-mobile" style="display: flex; align-items: center; gap: 0.3rem;">
               <i data-lucide="shield-check" class="lucide-icon-sm"></i>
@@ -444,7 +444,7 @@ export const DashboardView = {
         <div class="badge badge-green" style="margin-bottom: 0.4rem;">AI Verification — Demo (98.4% Purity)</div>
         <h3 style="font-size: 1.35rem; font-weight: 900; color: var(--color-navy); margin: 0;">Pickup Staged</h3>
         <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.3rem 0 0.85rem 0; line-height: 1.35;">
-          Request <strong>#${newReq.id}</strong> scheduled. Hand over bag to collector to disburse <strong>+10 Green Credits</strong>.
+          Request <strong>#${newReq.id}</strong> scheduled. Hand over bag to collector to disburse <strong>+10 Credits</strong>.
         </p>
 
         <!-- Handover OTP Pill -->

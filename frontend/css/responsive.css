@@ -1,6 +1,6 @@
 /* ==========================================================================
    CLEANCRED — RESPONSIVE ADAPTATIONS
-   Smart India Hackathon 2026 // Team GreenLegacy
+   CleanCred UI Design System
    ========================================================================== */
 
 /* Breakpoint: Laptop / Tablet (<= 1024px) */
@@ -158,7 +158,7 @@
     display: inline;
   }
 
-  /* Green Credits Hero Card */
+  /* Credits Hero Card */
   .hero-points-card {
     padding: 1.25rem 1rem;
     border-radius: 16px;

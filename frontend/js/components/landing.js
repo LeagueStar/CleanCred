@@ -30,7 +30,7 @@ export const LandingPage = {
                 </h1>
                 
                 <p style="font-size: 1.15rem; margin-bottom: 2rem; max-width: 520px; color: var(--text-muted); line-height: 1.6;">
-                  Make responsible waste segregation traceable—from your doorstep to recovery. Green Credits reward verified participation.
+                  Make responsible waste segregation traceable—from your doorstep to recovery. Credits reward verified participation.
                 </p>
 
                 <!-- Action Buttons -->
@@ -104,7 +104,7 @@ export const LandingPage = {
                       <div class="workflow-step-number">3</div>
                       <div style="flex: 1;">
                         <div style="font-size: 0.9rem; font-weight: 800; color: #FFFFFF;">Recovery is recorded</div>
-                        <div style="font-size: 0.75rem; color: #DCFCE7;">Green Credits are issued after verified collection</div>
+                        <div style="font-size: 0.75rem; color: #DCFCE7;">Credits are issued after verified collection</div>
                       </div>
                       <span class="badge badge-points">+10 GC</span>
                     </div>
@@ -171,7 +171,7 @@ export const LandingPage = {
                   <span class="process-step-marker is-recovery">05</span>
                 </div>
                 <h4 style="margin-bottom: 0.5rem; color: var(--color-primary-dark);">5. Earn & Redeem</h4>
-                <p style="font-size: 0.85rem; color: var(--text-muted);">Green Credits instantly credited. Redeem for mobile recharges and utility bills.</p>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Credits instantly credited. Redeem for mobile recharges and utility bills.</p>
               </div>
 
             </div>
@@ -291,24 +291,24 @@ export const LandingPage = {
             <div class="hero-grid hero-grid-2col" style="gap: 3rem; align-items: center;">
               <div>
                 <div class="badge" style="background: rgba(132, 204, 22, 0.2); color: #84CC16; border: 1px solid #84CC16; margin-bottom: 1rem;">
-                  GREEN CREDITS, SIMPLY EXPLAINED
+                  CREDITS, SIMPLY EXPLAINED
                 </div>
-                <h2 style="color: #FFFFFF; margin-bottom: 1rem;">100 Green Credits = ₹10 Real Value</h2>
+                <h2 style="color: #FFFFFF; margin-bottom: 1rem;">100 Credits = ₹10 Real Value</h2>
                 <p style="color: #CBD5E1; margin-bottom: 1.5rem;">
-                  Green Credits are the incentive layer. The core service is verified, accountable collection and responsible recovery.
+                  Credits are the incentive layer. The core service is verified, accountable collection and responsible recovery.
                 </p>
 
                 <div style="display: flex; flex-direction: column; gap: 0.85rem;">
                   <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.08); padding: 0.75rem 1.25rem; border-radius: var(--radius-md);">
-                    <span>🟢 500 Green Credits</span>
+                    <span>🟢 500 Credits</span>
                     <strong style="color: #84CC16; font-size: 1.1rem;">= ₹50 Direct Credit</strong>
                   </div>
                   <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.08); padding: 0.75rem 1.25rem; border-radius: var(--radius-md);">
-                    <span>🔵 1,000 Green Credits</span>
+                    <span>🔵 1,000 Credits</span>
                     <strong style="color: #84CC16; font-size: 1.1rem;">= ₹100 Direct Credit</strong>
                   </div>
                   <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.08); padding: 0.75rem 1.25rem; border-radius: var(--radius-md);">
-                    <span>⭐ 2,500 Green Credits</span>
+                    <span>⭐ 2,500 Credits</span>
                     <strong style="color: #84CC16; font-size: 1.1rem;">= ₹250 Direct Credit</strong>
                   </div>
                 </div>
@@ -346,7 +346,7 @@ export const LandingPage = {
                 <div style="background: var(--waste-wet-bg); border: 1.5px solid var(--waste-wet-border); border-radius: var(--radius-md); padding: 1.25rem; text-align: center; margin-top: 1.5rem;">
                   <div style="font-size: 0.8rem; font-weight: 700; color: var(--color-primary-dark); text-transform: uppercase;">Estimated Monthly Reward</div>
                   <div style="font-size: 2rem; font-weight: 800; color: var(--color-primary-dark); margin: 0.25rem 0;" id="calc-total-inr">₹19.70 / month</div>
-                  <div style="font-size: 0.85rem; color: var(--text-muted);" id="calc-total-gp">(197 Green Credits)</div>
+                  <div style="font-size: 0.85rem; color: var(--text-muted);" id="calc-total-gp">(197 Credits)</div>
                 </div>
 
                 <button class="btn btn-primary btn-block" style="margin-top: 1.5rem;" onclick="window.AppRouter.navigate('report-waste')">
@@ -375,7 +375,7 @@ export const LandingPage = {
               </button>
             </div>
             <div style="margin-top: 3rem; font-weight: 800; letter-spacing: 0.18em; color: var(--color-primary-dark); font-size: 0.9rem;">
-              CleanCred &bull; Built by Green Legacy
+              CleanCred &bull; Municipal Waste Recovery Platform
             </div>
           </div>
         </section>
@@ -404,7 +404,7 @@ export const LandingPage = {
     document.getElementById('calc-dry-val').textContent = `${dryCount} pickups (${dryGp} GC)`;
     document.getElementById('calc-bonus-val').textContent = `+${bonusGp} GC Bonus`;
     document.getElementById('calc-total-inr').textContent = `₹${totalInr} / month`;
-    document.getElementById('calc-total-gp').textContent = `(${totalGp} Green Credits)`;
+    document.getElementById('calc-total-gp').textContent = `(${totalGp} Credits)`;
   }
 };
 

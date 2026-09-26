@@ -151,7 +151,7 @@ def timeline(report_id:int,authorization:str|None=Header(default=None)):
     if w: events.append({"stage":"WORKER VERIFY","time":w["verified_at"],"status":"PASSED" if w["segregated"] else "REJECTED","detail":f"GPS distance {w['distance_m']:.1f} m"})
     if col: events.append({"stage":"COLLECT","time":col["collected_at"],"status":"CONFIRMED","detail":"One-time QR consumed; credit ledger unlocked"})
     c=get_conn(); tx=c.execute("SELECT points,created_at FROM credit_transactions WHERE report_id=?",(report_id,)).fetchone(); c.close()
-    if tx: events.append({"stage":"EARN","time":tx["created_at"],"status":"CREDITED","detail":f"+{tx['points']} Green Credits"})
+    if tx: events.append({"stage":"EARN","time":tx["created_at"],"status":"CREDITED","detail":f"+{tx['points']} Credits"})
     return {"report_id":report_id,"status":r["status"],"verification_score":r["verification_score"],"risk_level":r["risk_level"],"events":events}
 
 @app.get("/wallet/{user_id}")

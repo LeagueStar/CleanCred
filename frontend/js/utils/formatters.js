@@ -1,11 +1,11 @@
 /* ==========================================================================
-   GREEN LEGACY — UTILITY FORMATTERS
-   Points Conversion Rule: 100 Green Credits (GC) = ₹10 (INR)
+   CLEANCRED — UTILITY FORMATTERS
+   Points Conversion Rule: 100 Credits (GC) = ₹10 (INR)
    ========================================================================== */
 
 export const Formatters = {
   /**
-   * Convert Green Credits to Indian Rupees (INR)
+   * Convert Credits to Indian Rupees (INR)
    * 100 GC = ₹10
    */
   gpToInr(gp) {
@@ -13,7 +13,7 @@ export const Formatters = {
   },
 
   /**
-   * Convert INR to Green Credits
+   * Convert INR to Credits
    * ₹10 = 100 GC
    */
   inrToGp(inr) {

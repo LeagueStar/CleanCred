@@ -1,7 +1,7 @@
 /* ==========================================================================
    CLEANCRED — FINTECH GREEN WALLET & REWARDS STORE
    Tactile Neumorphism + Civic Technology
-   Points Conversion: 100 Green Credits = ₹10 INR
+   Points Conversion: 100 Credits = ₹10 INR
    ========================================================================== */
 
 import { State } from '../state.js';
@@ -43,7 +43,7 @@ export const RewardsWallet = {
               <i data-lucide="wallet" class="lucide-icon-sm"></i>
               <span>CleanCred Rewards Account</span>
             </div>
-            <h2 style="color: var(--color-navy); font-size: 1.85rem; font-weight: 800; margin: 0.25rem 0;">Green Credits Wallet</h2>
+            <h2 style="color: var(--color-navy); font-size: 1.85rem; font-weight: 800; margin: 0.25rem 0;">Credits Wallet</h2>
             <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">Verified recovery balance, municipal credits, and civic redemption catalog.</p>
           </div>
 
@@ -395,7 +395,7 @@ export const RewardsWallet = {
             </div>
             <div>
               <h3 style="color: var(--color-navy); margin: 0; font-size: 1.2rem;">Instant Mobile Recharge</h3>
-              <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.2rem 0 0 0;">Recharge prepaid numbers using your Green Credits balance.</p>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.2rem 0 0 0;">Recharge prepaid numbers using your Credits balance.</p>
             </div>
           </div>
 
@@ -417,10 +417,10 @@ export const RewardsWallet = {
           <div class="form-group">
             <label class="form-label">Select Recharge Plan</label>
             <select class="form-select neu-input" id="recharge-amount">
-              <option value="100">₹10 Talktime (100 Green Credits)</option>
-              <option value="500">₹50 Data Pack (500 Green Credits)</option>
-              <option value="1000">₹100 Full Talktime (1,000 Green Credits)</option>
-              <option value="2000">₹200 28-Day Unlimited (2,000 Green Credits)</option>
+              <option value="100">₹10 Talktime (100 Credits)</option>
+              <option value="500">₹50 Data Pack (500 Credits)</option>
+              <option value="1000">₹100 Full Talktime (1,000 Credits)</option>
+              <option value="2000">₹200 28-Day Unlimited (2,000 Credits)</option>
             </select>
           </div>
 
@@ -450,7 +450,7 @@ export const RewardsWallet = {
             </div>
             <div>
               <h3 style="color: var(--color-navy); margin: 0; font-size: 1.2rem;">Pay Utility Bill</h3>
-              <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.2rem 0 0 0;">Apply Green Credits as direct discount on municipal bills.</p>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.2rem 0 0 0;">Apply Credits as direct discount on municipal bills.</p>
             </div>
           </div>
 
@@ -472,8 +472,8 @@ export const RewardsWallet = {
           <div class="form-group">
             <label class="form-label">Redeem Value</label>
             <select class="form-select neu-input" id="bill-gp-amount">
-              <option value="500">₹50 Bill Discount (500 Green Credits)</option>
-              <option value="1000">₹100 Bill Discount (1,000 Green Credits)</option>
+              <option value="500">₹50 Bill Discount (500 Credits)</option>
+              <option value="1000">₹100 Bill Discount (1,000 Credits)</option>
             </select>
           </div>
 
@@ -524,7 +524,7 @@ export const RewardsWallet = {
       window.AppRouter.showToast(`Redeemed ${title} (-${amountGp} GC)`);
       this.render();
     } else {
-      alert(res.message || 'Insufficient Green Credits balance');
+      alert(res.message || 'Insufficient Credits balance');
     }
   },
 

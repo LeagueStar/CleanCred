@@ -271,8 +271,8 @@ export const LiveTrackingView = {
                   <div class="timeline-dot">
                     <i data-lucide="${pickup.status === 'verified' ? 'coins' : 'circle'}" style="width: 12px; height: 12px;"></i>
                   </div>
-                  <strong style="font-size: 0.875rem; color: var(--color-primary-dark);">Green Credits Credited</strong>
-                  <div style="font-size: 0.75rem; color: var(--color-primary-dark); font-weight: 700;">+${pickup.pointsReward} GC awarded to your wallet</div>
+                  <strong style="font-size: 0.875rem; color: var(--color-primary-dark);">Credits Credited</strong>
+                  <div style="font-size: 0.75rem; color: var(--color-primary-dark); font-weight: 700;">+${pickup.pointsReward} Credits awarded to your wallet</div>
                 </div>
 
               </div>
@@ -316,7 +316,7 @@ export const LiveTrackingView = {
     if (!this.mapInstance) return;
 
     // User Home Pin
-    const homePin = MapHelper.createCustomPin('H', 'Shivansh (Home)', '#16A34A');
+    const homePin = MapHelper.createCustomPin('H', 'DemoTester (Home)', '#16A34A');
     window.L.marker(userCoord, { icon: homePin }).addTo(this.mapInstance);
 
     // Van Pin

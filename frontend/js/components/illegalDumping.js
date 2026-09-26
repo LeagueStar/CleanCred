@@ -34,7 +34,7 @@ export const IllegalDumpingView = {
 
           <div class="badge badge-points" style="font-size: 0.95rem; padding: 0.5rem 1rem; display: inline-flex; align-items: center; gap: 0.4rem;">
             <i data-lucide="coins" class="lucide-icon-sm"></i>
-            <span>+20 Green Credits / Resolved Report</span>
+            <span>+20 Credits / Resolved Report</span>
           </div>
         </div>
 

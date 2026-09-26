@@ -145,7 +145,7 @@ export const InstitutionPortalView = {
             <div class="institution-feature-grid">
               <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Student Rewards</strong>
-                <p class="institution-feature-desc">Students earn Green Credits for bringing segregated paper and e-waste from home.</p>
+                <p class="institution-feature-desc">Students earn Credits for bringing segregated paper and e-waste from home.</p>
               </div>
               <div class="neu-card-flat institution-feature-item">
                 <strong style="color: var(--color-navy); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">Classroom Battles</strong>

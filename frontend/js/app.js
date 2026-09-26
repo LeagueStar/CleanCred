@@ -1,6 +1,6 @@
 /* ==========================================================================
    CLEANCRED — FRONTEND ROUTER & APP CONTROLLER
-   Smart India Hackathon 2026 // Team GreenLegacy
+   CleanCred Core Engine
    Client-Side Architecture for Static GitHub Pages Deployment
    ========================================================================== */
 

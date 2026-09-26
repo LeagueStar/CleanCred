@@ -1,7 +1,7 @@
 /* ==========================================================================
    CLEANCRED — DESKTOP ADMIN & MUNICIPAL COMMAND CENTER
-   Smart India Hackathon 2026 // Team GreenLegacy
-   Real-Time Citywide Waste Diversion & Green Credit Telemetry
+   Smart India Hackathon 2026 // CleanCred Core Engine
+   Real-Time Citywide Waste Diversion & Credit Telemetry
    Tactile Neumorphism + Civic Technology
    ========================================================================== */
 
@@ -69,7 +69,7 @@ export const AdminDashboardView = {
               <li>
                 <button class="sidebar-nav-link" onclick="window.AppRouter.navigate('rewards')">
                   <i data-lucide="gift" class="lucide-icon-sm"></i>
-                  <span>Green Credit Ledger</span>
+                  <span>Credit Ledger</span>
                 </button>
               </li>
               <li>
@@ -139,7 +139,7 @@ export const AdminDashboardView = {
                     <i data-lucide="gift" class="lucide-icon-md"></i>
                   </div>
                   <div class="command-tool-info">
-                    <strong class="command-tool-name">Green Credit Ledger</strong>
+                    <strong class="command-tool-name">Credit Ledger</strong>
                     <span class="command-tool-desc">EPR issuance &amp; transaction history</span>
                   </div>
                   <i data-lucide="chevron-right" class="command-tool-chevron"></i>
@@ -183,11 +183,11 @@ export const AdminDashboardView = {
               <!-- Card 1: Total Credits Issued -->
               <div class="admin-metric-card neu-card neu-card-raised">
                 <div class="flex-between" style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.35rem;">
-                  <span>TOTAL GREEN CREDITS</span>
+                  <span>TOTAL CREDITS</span>
                   <i data-lucide="coins" class="lucide-icon-sm" style="color: var(--color-primary-dark);"></i>
                 </div>
                 <div style="font-family: var(--font-heading); font-size: 1.85rem; font-weight: 900; color: var(--color-navy);">
-                  ${totalPointsMinted}M <small style="font-size: 0.9rem; font-weight: 700; color: var(--color-primary);">GC</small>
+                  ${totalPointsMinted}M <small style="font-size: 0.9rem; font-weight: 700; color: var(--color-primary);">Credits</small>
                 </div>
                 <div style="font-size: 0.75rem; font-weight: 700; color: var(--color-primary-dark); margin-top: 0.25rem;">
                   ↑ 24.8% issued this month
@@ -422,7 +422,7 @@ export const AdminDashboardView = {
               borderWidth: 2.5
             },
             {
-              label: 'Green Credits Minted (x1000)',
+              label: 'Credits Minted (x1000)',
               data: weeklyCreditsData,
               borderColor: '#2563EB',
               backgroundColor: 'transparent',

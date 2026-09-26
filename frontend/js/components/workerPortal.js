@@ -1,6 +1,6 @@
 /* ==========================================================================
    CLEANCRED — MUNICIPAL WORKER VERIFICATION PORTAL
-   Smart India Hackathon 2026 // Team GreenLegacy
+   CleanCred Core Engine
    Tactile Neumorphism + Civic Technology
    Role: Ramesh Kumar | Zone 4 - Ward 4B | Electric Van MH-02-GK-4091
    ========================================================================== */
@@ -70,7 +70,7 @@ export const WorkerPortalView = {
           <div class="flex-between" style="margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
             <div>
               <h3 style="color: var(--color-navy); font-size: 1.3rem; font-weight: 800; margin: 0 0 0.25rem 0;">Assigned Route Collection Queue</h3>
-              <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">Inspect waste bags, confirm segregation purity, and disburse Green Credits upon physical weighing.</p>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">Inspect waste bags, confirm segregation purity, and disburse Credits upon physical weighing.</p>
             </div>
             <span class="badge badge-green">${queue.filter(q => q.status !== 'verified' && q.status !== 'rejected').length} Pending Verifications</span>
           </div>
