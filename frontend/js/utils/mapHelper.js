@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GREEN LEGACY — LEAFLET MAP HELPER
+   CLEANCRED — LEAFLET MAP HELPER
    Interactive Geolocation, Vehicle Tracking, and City Hotspots
    ========================================================================== */
 

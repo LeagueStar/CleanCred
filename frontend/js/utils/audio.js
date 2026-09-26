@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GREEN LEGACY — WEB AUDIO API SYNTHESIZER
+   CLEANCRED — WEB AUDIO API SYNTHESIZER
    Delightful micro-interactions & feedback sounds
    ========================================================================== */
 

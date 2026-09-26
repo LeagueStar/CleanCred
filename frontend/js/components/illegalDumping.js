@@ -1,7 +1,7 @@
 /* ==========================================================================
    CLEANCRED — ILLEGAL DUMPING REPORTING & CIVIC ACTION
    Tactile Neumorphism + Civic Technology
-   Citizen-powered Geo-Tagged Hotspot Spotting (+20 GC on Verification)
+   Citizen-powered Geo-Tagged Hotspot Spotting (+20 Credits on Verification)
    ========================================================================== */
 
 import { State } from '../state.js';
@@ -29,7 +29,7 @@ export const IllegalDumpingView = {
               <span>Civic Vigilance & Enforcement Hotline</span>
             </div>
             <h2 style="color: var(--color-navy); font-size: 1.85rem; font-weight: 800; margin: 0.25rem 0;">Report Illegal Dumping Hotspot</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">Help municipal authorities identify and clear illicit waste piles. Earn +20 GC once resolved.</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">Help municipal authorities identify and clear illicit waste piles. Earn +20 Credits once resolved.</p>
           </div>
 
           <div class="badge badge-points" style="font-size: 0.95rem; padding: 0.5rem 1rem; display: inline-flex; align-items: center; gap: 0.4rem;">
@@ -93,7 +93,7 @@ export const IllegalDumpingView = {
 
             <button class="btn btn-primary btn-block btn-lg" style="margin-top: 1rem;" onclick="window.IllegalDumpingView.submitReport()">
               <i data-lucide="send" class="lucide-icon-sm"></i>
-              <span>Dispatch Hotspot Report (+20 GC)</span>
+              <span>Dispatch Hotspot Report (+20 Credits)</span>
             </button>
           </div>
 
@@ -119,7 +119,7 @@ export const IllegalDumpingView = {
                 </div>
                 <div class="neu-card-inset" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: var(--radius-md); border-left: 4px solid var(--color-primary);">
                   <div style="width: 24px; height: 24px; border-radius: 50%; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.75rem;">4</div>
-                  <div><strong style="color: var(--color-primary-dark);">Resolved:</strong> Clean site verified & +20 GC released</div>
+                  <div><strong style="color: var(--color-primary-dark);">Resolved:</strong> Clean site verified & +20 Credits released</div>
                 </div>
               </div>
             </div>
@@ -142,7 +142,7 @@ export const IllegalDumpingView = {
 
                     <div style="text-align: right;">
                       <span class="badge" style="background: ${r.status === 'Resolved' ? '#D1FAE5' : '#FEF3C7'}; color: ${r.status === 'Resolved' ? '#065F46' : '#92400E'}; font-size: 0.75rem; font-weight: 700;">
-                        ${r.status === 'Resolved' ? 'Resolved (+20 GC)' : r.status}
+                        ${r.status === 'Resolved' ? 'Resolved (+20 Credits)' : r.status}
                       </span>
                     </div>
                   </div>

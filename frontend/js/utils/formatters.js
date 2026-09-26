@@ -1,12 +1,12 @@
 /* ==========================================================================
    CLEANCRED — UTILITY FORMATTERS
-   Points Conversion Rule: 100 Credits (GC) = ₹10 (INR)
+   Points Conversion Rule: 100 Credits = ₹10 (INR)
    ========================================================================== */
 
 export const Formatters = {
   /**
    * Convert Credits to Indian Rupees (INR)
-   * 100 GC = ₹10
+   * 100 Credits = ₹10
    */
   gpToInr(gp) {
     return Math.floor((gp / 100) * 10);
@@ -14,7 +14,7 @@ export const Formatters = {
 
   /**
    * Convert INR to Credits
-   * ₹10 = 100 GC
+   * ₹10 = 100 Credits
    */
   inrToGp(inr) {
     return inr * 10;

@@ -1,11 +1,11 @@
 /* ==========================================================================
-   GREEN LEGACY — QR CODE UTILITIES
+   CLEANCRED — QR CODE UTILITIES
    Thin wrapper around the "qrcode-generator" library (loaded via CDN in
    index.html, exposed as the global window.qrcode function). Encodes and
    decodes the payload printed on a citizen's pickup QR code.
    ========================================================================== */
 
-// Every Green Legacy pickup QR encodes this fixed prefix + the request ID.
+// Every CleanCred pickup QR encodes this fixed prefix + the request ID.
 // The prefix lets us recognize "this looks like one of our QR codes" before
 // even checking whether the request ID exists in state.
 const QR_PREFIX = 'GREENLEGACY:';

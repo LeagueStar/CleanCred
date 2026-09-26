@@ -239,7 +239,7 @@ export const ReportWasteView = {
                       <div style="font-size: 0.78rem; color: var(--text-muted);">Vegetable peels, food scraps, cooked leftovers, garden leaves</div>
                     </div>
                   </div>
-                  <span class="badge badge-green" style="font-size: 0.85rem; padding: 0.35rem 0.75rem;">+10 GC/KG</span>
+                  <span class="badge badge-green" style="font-size: 0.85rem; padding: 0.35rem 0.75rem;">+10 Credits/KG</span>
                 </div>
               </div>
 
@@ -257,7 +257,7 @@ export const ReportWasteView = {
                       <div style="font-size: 0.78rem; color: var(--text-muted);">Cardboard cartons, PET plastic, beverage cans, clean paper</div>
                     </div>
                   </div>
-                  <span class="badge badge-blue" style="font-size: 0.85rem; padding: 0.35rem 0.75rem;">+7 GC/KG</span>
+                  <span class="badge badge-blue" style="font-size: 0.85rem; padding: 0.35rem 0.75rem;">+7 Credits/KG</span>
                 </div>
               </div>
 
@@ -275,7 +275,7 @@ export const ReportWasteView = {
                       <div style="font-size: 0.78rem; color: var(--text-muted);">Batteries, domestic e-waste, fluorescent lamps, expired medicines</div>
                     </div>
                   </div>
-                  <span class="badge badge-red" style="font-size: 0.85rem; padding: 0.35rem 0.75rem;">+5 GC/KG</span>
+                  <span class="badge badge-red" style="font-size: 0.85rem; padding: 0.35rem 0.75rem;">+5 Credits/KG</span>
                 </div>
               </div>
 
@@ -465,7 +465,7 @@ export const ReportWasteView = {
                 <span class="badge ${this.formData.category === 'wet' ? 'badge-green' : this.formData.category === 'dry' ? 'badge-blue' : 'badge-red'}">
                   ${config.name}
                 </span>
-                <strong style="font-size: 1.05rem; color: var(--color-primary-dark);">+${config.points} GC/KG (Gated on Verification)</strong>
+                <strong style="font-size: 1.05rem; color: var(--color-primary-dark);">+${config.points} Credits/KG (Gated on Verification)</strong>
               </div>
 
               <div style="padding: 1rem 1.25rem; display: flex; flex-direction: column; gap: 0.65rem; font-size: 0.85rem;">

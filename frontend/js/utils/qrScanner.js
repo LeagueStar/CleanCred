@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GREEN LEGACY — LIVE CAMERA QR SCANNER
+   CLEANCRED — LIVE CAMERA QR SCANNER
    Thin wrapper around getUserMedia + the "jsQR" decoding library (loaded
    via CDN in index.html, exposed as the global window.jsQR function).
 

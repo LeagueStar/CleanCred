@@ -295,6 +295,10 @@ class AppRouterManager {
       default:
         break;
     }
+
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
   }
 
   showToast(message, type = 'info') {
@@ -317,7 +321,7 @@ class AppRouterManager {
     const topCounter = document.getElementById('user-points-counter-top');
     if (topCounter && user) {
       const pts = user.greenPoints || 1250;
-      topCounter.innerText = `${Formatters.formatNumber(pts)} GC`;
+      topCounter.innerText = `${Formatters.formatNumber(pts)} Credits`;
     }
   }
 

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GREEN LEGACY — LANDING PAGE COMPONENT
+   CLEANCRED — LANDING PAGE COMPONENT
    Tagline: EARN. RECYCLE. REWARD.
    ========================================================================== */
 
@@ -106,7 +106,7 @@ export const LandingPage = {
                         <div style="font-size: 0.9rem; font-weight: 800; color: #FFFFFF;">Recovery is recorded</div>
                         <div style="font-size: 0.75rem; color: #DCFCE7;">Credits are issued after verified collection</div>
                       </div>
-                      <span class="badge badge-points">+10 GC</span>
+                      <span class="badge badge-points">+10 Credits</span>
                     </div>
                   </div>
 
@@ -215,7 +215,7 @@ export const LandingPage = {
                 </div>
 
                 <button class="btn btn-primary btn-block" onclick="window.AppRouter.navigate('report-waste', { category: 'wet' })">
-                  Report Wet Waste (+10 GC)
+                  Report Wet Waste (+10 Credits)
                 </button>
               </div>
 
@@ -244,7 +244,7 @@ export const LandingPage = {
                 </div>
 
                 <button class="btn btn-block" style="background: var(--waste-dry); color: #FFFFFF;" onclick="window.AppRouter.navigate('report-waste', { category: 'dry' })">
-                  Report Dry Waste (+7 GC)
+                  Report Dry Waste (+7 Credits)
                 </button>
               </div>
 
@@ -277,7 +277,7 @@ export const LandingPage = {
                 </div>
 
                 <button class="btn btn-block" style="background: var(--waste-harmful); color: #FFFFFF;" onclick="window.AppRouter.navigate('report-waste', { category: 'harmful' })">
-                  Report Harmful Waste (+5 GC)
+                  Report Harmful Waste (+5 Credits)
                 </button>
               </div>
 
@@ -321,7 +321,7 @@ export const LandingPage = {
                 <div class="form-group">
                   <div class="flex-between">
                     <label class="form-label" style="margin: 0;">Wet Waste (Pickups / Month):</label>
-                    <span id="calc-wet-val" style="font-weight: 800; color: var(--waste-wet);">8 pickups (80 GC)</span>
+                    <span id="calc-wet-val" style="font-weight: 800; color: var(--waste-wet);">8 pickups (80 Credits)</span>
                   </div>
                   <input type="range" id="calc-wet-slider" min="0" max="30" value="8" style="width: 100%; accent-color: var(--waste-wet);" oninput="window.LandingPage.updateCalculator()">
                 </div>
@@ -329,7 +329,7 @@ export const LandingPage = {
                 <div class="form-group">
                   <div class="flex-between">
                     <label class="form-label" style="margin: 0;">Dry Recyclable Waste (Pickups / Month):</label>
-                    <span id="calc-dry-val" style="font-weight: 800; color: var(--waste-dry);">6 pickups (42 GC)</span>
+                    <span id="calc-dry-val" style="font-weight: 800; color: var(--waste-dry);">6 pickups (42 Credits)</span>
                   </div>
                   <input type="range" id="calc-dry-slider" min="0" max="30" value="6" style="width: 100%; accent-color: var(--waste-dry);" oninput="window.LandingPage.updateCalculator()">
                 </div>
@@ -337,7 +337,7 @@ export const LandingPage = {
                 <div class="form-group">
                   <div class="flex-between">
                     <label class="form-label" style="margin: 0;">Weekly Streaks & Challenges:</label>
-                    <span id="calc-bonus-val" style="font-weight: 800; color: #F59E0B;">+75 GC Bonus</span>
+                    <span id="calc-bonus-val" style="font-weight: 800; color: #F59E0B;">+75 Credits Bonus</span>
                   </div>
                   <input type="range" id="calc-bonus-slider" min="0" max="200" value="75" step="25" style="width: 100%; accent-color: #F59E0B;" oninput="window.LandingPage.updateCalculator()">
                 </div>
@@ -382,6 +382,10 @@ export const LandingPage = {
 
       </div>
     `;
+
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
   },
 
   updateCalculator() {
@@ -400,9 +404,9 @@ export const LandingPage = {
     const totalGp = wetGp + dryGp + bonusGp;
     const totalInr = (totalGp / 10).toFixed(2);
 
-    document.getElementById('calc-wet-val').textContent = `${wetCount} pickups (${wetGp} GC)`;
-    document.getElementById('calc-dry-val').textContent = `${dryCount} pickups (${dryGp} GC)`;
-    document.getElementById('calc-bonus-val').textContent = `+${bonusGp} GC Bonus`;
+    document.getElementById('calc-wet-val').textContent = `${wetCount} pickups (${wetGp} Credits)`;
+    document.getElementById('calc-dry-val').textContent = `${dryCount} pickups (${dryGp} Credits)`;
+    document.getElementById('calc-bonus-val').textContent = `+${bonusGp} Credits Bonus`;
     document.getElementById('calc-total-inr').textContent = `₹${totalInr} / month`;
     document.getElementById('calc-total-gp').textContent = `(${totalGp} Credits)`;
   }

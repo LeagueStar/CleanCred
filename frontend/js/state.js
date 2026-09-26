@@ -8,8 +8,8 @@ import { Formatters } from './utils/formatters.js';
 const API_BASE_URL = 'http://127.0.0.1:8000';
 
 // Demo persistence (localStorage) — see saveState()/restoreState()/resetState()
-const STORAGE_KEY = 'greenLegacyDemoState';
-const STORAGE_VERSION = 1;
+const STORAGE_KEY = 'cleancredDemoState_v2';
+const STORAGE_VERSION = 2;
 
 class StateStore {
   constructor() {
@@ -35,7 +35,7 @@ class StateStore {
         phone: '+91 98765 43210',
         avatar: 'DT',
         address: 'Flat 402, Green Meadows, Ward 4B, Mumbai',
-        greenPoints: 1250, // 100 GC = ₹10 => ₹125
+        greenPoints: 1250, // 100 Credits = ₹10 => ₹125
         get greenCredits() { return this.greenPoints; },
         set greenCredits(val) { this.greenPoints = val; },
         lifetimeWasteKg: 125,
@@ -404,7 +404,7 @@ class StateStore {
         {
           id: 'notif_3',
           title: '🔥 8-Day Green Streak!',
-          message: 'Keep logging segregated waste daily to unlock the Eco Master +50 GC milestone.',
+          message: 'Keep logging segregated waste daily to unlock the Eco Master +50 Credits milestone.',
           timestamp: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
           read: true,
           type: 'streak'
@@ -430,12 +430,13 @@ class StateStore {
   // saved is missing/corrupted/from an incompatible schema version.
   restoreState() {
     try {
+      try { localStorage.removeItem('greenLegacyDemoState'); } catch (_) {}
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return null;
 
       const parsed = JSON.parse(raw);
       const looksValid = parsed
-        && parsed.version === STORAGE_VERSION
+        && (parsed.version === STORAGE_VERSION || parsed.schemaVersion === STORAGE_VERSION)
         && parsed.state
         && parsed.state.user
         && parsed.state.cityStats
@@ -443,7 +444,7 @@ class StateStore {
         && Array.isArray(parsed.state.transactions);
 
       if (!looksValid) {
-        console.warn('Green Legacy: saved demo state was missing/invalid — starting from the seed state.');
+        console.warn('CleanCred: saved demo state was missing/invalid or outdated — starting from the seed state.');
         return null;
       }
 
@@ -458,7 +459,7 @@ class StateStore {
 
       return parsed.state;
     } catch (e) {
-      console.warn('Green Legacy: saved demo state was corrupted — starting from the seed state.', e);
+      console.warn('CleanCred: saved demo state was corrupted — starting from the seed state.', e);
       return null;
     }
   }
@@ -470,10 +471,11 @@ class StateStore {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         version: STORAGE_VERSION,
+        schemaVersion: STORAGE_VERSION,
         state: this.state
       }));
     } catch (e) {
-      console.warn('Green Legacy: could not save demo state to localStorage.', e);
+      console.warn('CleanCred: could not save demo state to localStorage.', e);
     }
   }
 
@@ -481,6 +483,7 @@ class StateStore {
   resetState() {
     try {
       localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem('greenLegacyDemoState');
     } catch (e) {
       // Ignore — saveState() below will just overwrite it if it still exists.
     }
@@ -1143,7 +1146,7 @@ class StateStore {
 
     this.addNotification({
       title: `🎁 Redemption Successful`,
-      message: `${title} applied for ₹${inrValue} (${amountGp} GC deducted).`,
+      message: `${title} applied for ₹${inrValue} (${amountGp} Credits deducted).`,
       type: 'reward'
     });
 
@@ -1185,7 +1188,7 @@ class StateStore {
     this.state.illegalDumpingReports.unshift(newReport);
     this.addNotification({
       title: '🚨 Illegal Dumping Reported',
-      message: `Report #${newReport.id} registered. Once municipal inspection resolves this site, +20 GC will be credited.`,
+      message: `Report #${newReport.id} registered. Once municipal inspection resolves this site, +20 Credits will be credited.`,
       type: 'info'
     });
 

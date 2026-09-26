@@ -72,12 +72,12 @@ export const DashboardView = {
 
           <div class="points-oversized-value">
             <span id="citizen-points-balance">${Formatters.formatNumber(balance)}</span>
-            <span style="font-size: 1.5rem; font-weight: 800; color: var(--color-primary);">GC</span>
+            <span style="font-size: 1.5rem; font-weight: 800; color: var(--color-primary);">Credits</span>
           </div>
 
           <div style="margin-top: 0.25rem;">
             <div class="flex-between" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.35rem;">
-              <span>Next reward: ${Formatters.formatNumber(nextTierGc)} GC</span>
+              <span>Next reward: ${Formatters.formatNumber(nextTierGc)} Credits</span>
               <span class="hide-on-mobile" style="color: var(--color-primary-dark); font-weight: 800;">${progressPct}% Reached</span>
             </div>
             <div class="progress-track neu-card-inset" role="progressbar" aria-valuenow="${progressPct}" aria-valuemin="0" aria-valuemax="100">
@@ -213,7 +213,7 @@ export const DashboardView = {
                 <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--waste-wet-bg); color: var(--waste-wet); display: flex; align-items: center; justify-content: center;">
                   <i data-lucide="apple" class="lucide-icon-md"></i>
                 </div>
-                <span class="badge badge-green">+10 GC</span>
+                <span class="badge badge-green">+10 Credits</span>
               </div>
               <strong style="font-size: 1.05rem; color: var(--color-navy); margin-top: 0.5rem; display: block;">Wet Waste</strong>
               <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.25rem 0;">Kitchen scraps, vegetable peels, food leftovers, organic florals.</p>
@@ -228,7 +228,7 @@ export const DashboardView = {
                 <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--waste-dry-bg); color: var(--waste-dry); display: flex; align-items: center; justify-content: center;">
                   <i data-lucide="package" class="lucide-icon-md"></i>
                 </div>
-                <span class="badge badge-blue">+7 GC</span>
+                <span class="badge badge-blue">+7 Credits</span>
               </div>
               <strong style="font-size: 1.05rem; color: var(--color-navy); margin-top: 0.5rem; display: block;">Dry Waste</strong>
               <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.25rem 0;">Clean cardboard cartons, PET bottles, tins, dry paper, textiles.</p>
@@ -243,7 +243,7 @@ export const DashboardView = {
                 <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--waste-harmful-bg); color: var(--waste-harmful); display: flex; align-items: center; justify-content: center;">
                   <i data-lucide="battery-charging" class="lucide-icon-md"></i>
                 </div>
-                <span class="badge badge-red">+5 GC</span>
+                <span class="badge badge-red">+5 Credits</span>
               </div>
               <strong style="font-size: 1.05rem; color: var(--color-navy); margin-top: 0.5rem; display: block;">Harmful Waste</strong>
               <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.25rem 0;">Lithium batteries, electronics, circuit boards, CFLs, medicines.</p>
@@ -284,7 +284,7 @@ export const DashboardView = {
 
                 <div>
                   ${p.status === 'verified' ? `
-                    <span class="badge badge-green">+${p.pointsCredited || p.pointsReward} GC Verified</span>
+                    <span class="badge badge-green">+${p.pointsCredited || p.pointsReward} Credits Verified</span>
                   ` : p.status === 'on_the_way' ? `
                     <span class="badge badge-amber">Collection En Route</span>
                   ` : `
@@ -317,7 +317,7 @@ export const DashboardView = {
               <i data-lucide="shield-alert" class="lucide-icon-sm"></i>
             </div>
             <strong style="color: var(--color-navy); font-size: 0.95rem; display: block;">Report Dump Site</strong>
-            <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">Flag civic black spots and earn +20 GC →</p>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">Flag civic black spots and earn +20 Credits →</p>
           </div>
           <div class="neu-card neu-card-raised" style="padding: 1.25rem; border-radius: var(--radius-lg); cursor: pointer;" onclick="window.AppRouter.navigate('institutions')">
             <div style="width: 38px; height: 38px; border-radius: 50%; background: #E0E7FF; color: #4338CA; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem;">

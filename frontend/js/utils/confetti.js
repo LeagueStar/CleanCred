@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GREEN LEGACY — CANVAS CONFETTI PARTICLE ENGINE
+   CLEANCRED — CANVAS CONFETTI PARTICLE ENGINE
    ========================================================================== */
 
 export class ConfettiManager {

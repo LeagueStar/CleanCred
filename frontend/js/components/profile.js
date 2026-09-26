@@ -49,7 +49,7 @@ export const ProfileView = {
             <div class="neu-card-inset" style="border-radius: var(--radius-md); padding: 1rem; text-align: left; font-size: 0.85rem; display: flex; flex-direction: column; gap: 0.6rem;">
               <div class="flex-between">
                 <span style="color: var(--text-muted);">Credits:</span>
-                <strong style="color: var(--color-primary-dark);">${user.greenPoints} GC (₹${Formatters.gpToInr(user.greenPoints)})</strong>
+                <strong style="color: var(--color-primary-dark);">${user.greenPoints} Credits (₹${Formatters.gpToInr(user.greenPoints)})</strong>
               </div>
               <div class="flex-between">
                 <span style="color: var(--text-muted);">Current Ward Rank:</span>

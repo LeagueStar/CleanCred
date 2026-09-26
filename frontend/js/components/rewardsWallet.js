@@ -50,7 +50,7 @@ export const RewardsWallet = {
           <!-- Fast Conversion Banner -->
           <div class="neu-card-inset rewards-rate-banner">
             <i data-lucide="scale" class="lucide-icon-sm"></i>
-            <span>Standard Rate: 100 GC = ₹10 INR</span>
+            <span>Standard Rate: 100 Credits = ₹10 INR</span>
           </div>
         </div>
 
@@ -66,7 +66,7 @@ export const RewardsWallet = {
               </div>
             </div>
             <div class="rewards-card-amount">
-              ${Formatters.formatNumber(user.greenPoints)} <span style="font-size: 1.25rem; font-weight: 600; opacity: 0.9;">GC</span>
+              ${Formatters.formatNumber(user.greenPoints)} <span style="font-size: 1.25rem; font-weight: 600; opacity: 0.9;">Credits</span>
             </div>
             <div style="font-size: 1rem; font-weight: 700; color: #DCFCE7;">
               ≈ ${Formatters.formatCurrency(inrValue)}
@@ -92,7 +92,7 @@ export const RewardsWallet = {
               </div>
             </div>
             <div class="rewards-card-amount" style="color: var(--color-navy);">
-              ${Formatters.formatNumber(lifetimeEarnedGp)} <span style="font-size: 1.25rem; font-weight: 600; color: var(--text-muted);">GC</span>
+              ${Formatters.formatNumber(lifetimeEarnedGp)} <span style="font-size: 1.25rem; font-weight: 600; color: var(--text-muted);">Credits</span>
             </div>
             <div style="font-size: 0.9rem; color: var(--color-primary-dark); font-weight: 700;">
               <span class="desc-full">≈ ${Formatters.formatCurrency(lifetimeEarnedInr)} via ${user.pickupsCompleted} verified pickups</span>
@@ -112,7 +112,7 @@ export const RewardsWallet = {
               </div>
             </div>
             <div class="rewards-card-amount" style="color: var(--color-navy);">
-              ${Formatters.formatNumber(totalRedeemedGp)} <span style="font-size: 1.25rem; font-weight: 600; color: var(--text-muted);">GC</span>
+              ${Formatters.formatNumber(totalRedeemedGp)} <span style="font-size: 1.25rem; font-weight: 600; color: var(--text-muted);">Credits</span>
             </div>
             <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">
               <span class="desc-full">${Formatters.formatCurrency(totalRedeemedInr)} redeemed (Recharge & Vouchers)</span>
@@ -153,7 +153,7 @@ export const RewardsWallet = {
               <div class="neu-card neu-card-raised" style="text-align: center; border-top: 3px solid var(--color-primary);">
                 <div style="font-size: 1.5rem; font-weight: 900; color: var(--color-navy); margin-bottom: 0.25rem;">₹10</div>
                 <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.85rem;">Talktime / Topup</div>
-                <div class="badge badge-points" style="margin-bottom: 1rem;">100 GC</div>
+                <div class="badge badge-points" style="margin-bottom: 1rem;">100 Credits</div>
                 <button class="btn btn-primary btn-sm btn-block" onclick="window.RewardsWallet.redeemQuick('RECHARGE', 'Mobile Topup ₹10', 100)">
                   Redeem ₹10
                 </button>
@@ -163,7 +163,7 @@ export const RewardsWallet = {
               <div class="neu-card neu-card-raised" style="text-align: center; border-top: 3px solid var(--color-primary);">
                 <div style="font-size: 1.5rem; font-weight: 900; color: var(--color-navy); margin-bottom: 0.25rem;">₹50</div>
                 <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.85rem;">5GB + talktime</div>
-                <div class="badge badge-points" style="margin-bottom: 1rem;">500 GC</div>
+                <div class="badge badge-points" style="margin-bottom: 1rem;">500 Credits</div>
                 <button class="btn btn-primary btn-sm btn-block" onclick="window.RewardsWallet.redeemQuick('RECHARGE', 'Mobile Data Pack ₹50', 500)">
                   Redeem ₹50
                 </button>
@@ -173,7 +173,7 @@ export const RewardsWallet = {
               <div class="neu-card neu-card-raised" style="text-align: center; border-top: 3px solid var(--color-primary);">
                 <div style="font-size: 1.5rem; font-weight: 900; color: var(--color-navy); margin-bottom: 0.25rem;">₹100</div>
                 <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.85rem;">Full talktime pack</div>
-                <div class="badge badge-points" style="margin-bottom: 1rem;">1,000 GC</div>
+                <div class="badge badge-points" style="margin-bottom: 1rem;">1,000 Credits</div>
                 <button class="btn btn-primary btn-sm btn-block" onclick="window.RewardsWallet.redeemQuick('RECHARGE', 'Full Talktime Pack ₹100', 1000)">
                   Redeem ₹100
                 </button>
@@ -183,7 +183,7 @@ export const RewardsWallet = {
               <div class="neu-card neu-card-raised" style="text-align: center; border-top: 3px solid var(--color-primary);">
                 <div style="font-size: 1.5rem; font-weight: 900; color: var(--color-navy); margin-bottom: 0.25rem;">₹200</div>
                 <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.85rem;">Unlimited 28-day</div>
-                <div class="badge badge-points" style="margin-bottom: 1rem;">2,000 GC</div>
+                <div class="badge badge-points" style="margin-bottom: 1rem;">2,000 Credits</div>
                 <button class="btn btn-secondary btn-sm btn-block" onclick="window.RewardsWallet.redeemQuick('RECHARGE', 'Unlimited 28-Day Plan ₹200', 2000)">
                   Redeem ₹200
                 </button>
@@ -214,7 +214,7 @@ export const RewardsWallet = {
                 </div>
                 <strong style="color: var(--color-navy); display: block; font-size: 0.95rem;">Electricity Bill</strong>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.85rem;">Tata Power / BESCOM / Adani</p>
-                <div class="badge badge-points" style="margin-bottom: 1rem;">₹50 Off (500 GC)</div>
+                <div class="badge badge-points" style="margin-bottom: 1rem;">₹50 Off (500 Credits)</div>
                 <button class="btn btn-emerald-outline btn-sm btn-block" onclick="window.RewardsWallet.openBillsModal('Electricity')">
                   Pay Bill
                 </button>
@@ -227,7 +227,7 @@ export const RewardsWallet = {
                 </div>
                 <strong style="color: var(--color-navy); display: block; font-size: 0.95rem;">Water Board Bill</strong>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.85rem;">Municipal Corporation Jal Board</p>
-                <div class="badge badge-points" style="margin-bottom: 1rem;">₹50 Off (500 GC)</div>
+                <div class="badge badge-points" style="margin-bottom: 1rem;">₹50 Off (500 Credits)</div>
                 <button class="btn btn-emerald-outline btn-sm btn-block" onclick="window.RewardsWallet.openBillsModal('Water')">
                   Pay Bill
                 </button>
@@ -240,7 +240,7 @@ export const RewardsWallet = {
                 </div>
                 <strong style="color: var(--color-navy); display: block; font-size: 0.95rem;">Piped Gas Bill</strong>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.85rem;">Mahanagar Gas / IGL / Adani</p>
-                <div class="badge badge-points" style="margin-bottom: 1rem;">₹50 Off (500 GC)</div>
+                <div class="badge badge-points" style="margin-bottom: 1rem;">₹50 Off (500 Credits)</div>
                 <button class="btn btn-emerald-outline btn-sm btn-block" onclick="window.RewardsWallet.openBillsModal('Gas')">
                   Pay Bill
                 </button>
@@ -253,7 +253,7 @@ export const RewardsWallet = {
                 </div>
                 <strong style="color: var(--color-navy); display: block; font-size: 0.95rem;">Broadband Bill</strong>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.85rem;">Airtel Fiber / JioFiber / ACT</p>
-                <div class="badge badge-points" style="margin-bottom: 1rem;">₹100 Off (1,000 GC)</div>
+                <div class="badge badge-points" style="margin-bottom: 1rem;">₹100 Off (1,000 Credits)</div>
                 <button class="btn btn-emerald-outline btn-sm btn-block" onclick="window.RewardsWallet.openBillsModal('Broadband')">
                   Pay Bill
                 </button>
@@ -282,7 +282,7 @@ export const RewardsWallet = {
                 <strong style="color: var(--color-navy); display: block;">BigBasket Organic</strong>
                 <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">₹100 grocery voucher</p>
                 <div class="flex-between">
-                  <span class="badge badge-points">1,000 GC</span>
+                  <span class="badge badge-points">1,000 Credits</span>
                   <button class="btn btn-primary btn-sm" onclick="window.RewardsWallet.redeemQuick('SHOPPING', 'BigBasket Organic ₹100 Voucher', 1000)">
                     Claim
                   </button>
@@ -294,7 +294,7 @@ export const RewardsWallet = {
                 <strong style="color: var(--color-navy); display: block;">Bamboo India Store</strong>
                 <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">₹50 eco gift card</p>
                 <div class="flex-between">
-                  <span class="badge badge-points">500 GC</span>
+                  <span class="badge badge-points">500 Credits</span>
                   <button class="btn btn-primary btn-sm" onclick="window.RewardsWallet.redeemQuick('SHOPPING', 'Bamboo India ₹50 Voucher', 500)">
                     Claim
                   </button>
@@ -306,7 +306,7 @@ export const RewardsWallet = {
                 <strong style="color: var(--color-navy); display: block;">Starbucks Coffee</strong>
                 <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">Free reusable tumbler</p>
                 <div class="flex-between">
-                  <span class="badge badge-points">1,200 GC</span>
+                  <span class="badge badge-points">1,200 Credits</span>
                   <button class="btn btn-primary btn-sm" onclick="window.RewardsWallet.redeemQuick('CAFE', 'Starbucks Eco Tumbler Voucher', 1200)">
                     Claim
                   </button>
@@ -318,7 +318,7 @@ export const RewardsWallet = {
                 <strong style="color: var(--color-navy); display: block;">Subway Green Meal</strong>
                 <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.25rem 0 1rem 0;">₹50 green meal</p>
                 <div class="flex-between">
-                  <span class="badge badge-points">500 GC</span>
+                  <span class="badge badge-points">500 Credits</span>
                   <button class="btn btn-primary btn-sm" onclick="window.RewardsWallet.redeemQuick('CAFE', 'Subway ₹50 Meal Discount', 500)">
                     Claim
                   </button>
@@ -342,10 +342,10 @@ export const RewardsWallet = {
                 All
               </button>
               <button class="btn btn-sm ${this.currentTab === 'credit' ? 'btn-primary' : 'btn-secondary'}" onclick="window.RewardsWallet.filterLedger('credit')">
-                Credits (+GC)
+                Credits earned
               </button>
               <button class="btn btn-sm ${this.currentTab === 'debit' ? 'btn-primary' : 'btn-secondary'}" onclick="window.RewardsWallet.filterLedger('debit')">
-                Debits (-GC)
+                Credits deducted
               </button>
             </div>
           </div>
@@ -369,7 +369,7 @@ export const RewardsWallet = {
 
                   <div class="rewards-tx-amount">
                     <div style="font-size: 1.15rem; font-weight: 800; color: ${t.type === 'credit' ? 'var(--color-primary-dark)' : '#EF4444'};">
-                      ${t.type === 'credit' ? '+' : '-'}${t.amountGp} GC
+                      ${t.type === 'credit' ? '+' : '-'}${t.amountGp} Credits
                     </div>
                     <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">
                       ${t.type === 'credit' ? '+' : '-'}${Formatters.formatCurrency(t.equivalentInr)}
@@ -427,7 +427,7 @@ export const RewardsWallet = {
           <div class="neu-card-inset" style="padding: 0.85rem 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; font-size: 0.85rem;">
             <div class="flex-between">
               <span style="color: var(--text-muted);">Current Available Balance:</span>
-              <strong style="color: var(--color-primary-dark);">${user.greenPoints} GC (₹${inrValue})</strong>
+              <strong style="color: var(--color-primary-dark);">${user.greenPoints} Credits (₹${inrValue})</strong>
             </div>
           </div>
 
@@ -514,6 +514,7 @@ export const RewardsWallet = {
   closeModals() {
     SoundFX.playClick();
     document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+    if (window.lucide) window.lucide.createIcons();
   },
 
   redeemQuick(cat, title, amountGp) {
@@ -521,7 +522,7 @@ export const RewardsWallet = {
     if (res.success) {
       SoundFX.playRedeemCash();
       Confetti.trigger(75);
-      window.AppRouter.showToast(`Redeemed ${title} (-${amountGp} GC)`);
+      window.AppRouter.showToast(`Redeemed ${title} (-${amountGp} Credits)`);
       this.render();
     } else {
       alert(res.message || 'Insufficient Credits balance');
@@ -555,7 +556,7 @@ export const RewardsWallet = {
       this.closeModals();
       SoundFX.playRedeemCash();
       Confetti.trigger(90);
-      window.AppRouter.showToast(`${service} bill discount applied (-${amountGp} GC)`);
+      window.AppRouter.showToast(`${service} bill discount applied (-${amountGp} Credits)`);
       this.render();
     } else {
       alert(res.message);
@@ -566,6 +567,7 @@ export const RewardsWallet = {
     SoundFX.playClick();
     this.currentTab = tab;
     this.render();
+    if (window.lucide) window.lucide.createIcons();
   }
 };
 

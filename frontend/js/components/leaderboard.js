@@ -54,10 +54,10 @@ export const LeaderboardView = {
               <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Your Standing</div>
               ${currentUserEntry ? `
                 <strong style="font-size: 1rem; color: var(--color-navy); display: block;">
-                  #${currentUserEntry.rank} ${State.state.user.name} (${Formatters.formatNumber(currentUserEntry.points)} GC)
+                  #${currentUserEntry.rank} ${State.state.user.name} (${Formatters.formatNumber(currentUserEntry.points)} Credits)
                 </strong>
                 <div style="font-size: 0.75rem; color: var(--color-primary-dark); font-weight: 600;">
-                  ${gapToNextRank > 0 ? `${Formatters.formatNumber(gapToNextRank)} GC needed to reach #${aheadOfUser.rank}` : "You currently lead this standing"}
+                  ${gapToNextRank > 0 ? `${Formatters.formatNumber(gapToNextRank)} Credits needed to reach #${aheadOfUser.rank}` : "You currently lead this standing"}
                 </div>
               ` : `
                 <strong style="font-size: 1rem; color: var(--color-navy); display: block;">Not Ranked Here</strong>
@@ -107,7 +107,7 @@ export const LeaderboardView = {
                 <strong style="font-size: 0.95rem; color: var(--color-navy); display: block;">${top3[1].name}</strong>
                 <span style="font-size: 0.78rem; color: var(--text-muted);">${top3[1].location}</span>
                 <div class="neu-card-raised" style="width: 100%; height: 110px; border-radius: var(--radius-md) var(--radius-md) 0 0; margin-top: 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; color: #334155; border-top: 4px solid #94A3B8;">
-                  <span style="font-size: 1.15rem;">${top3[1].points} GC</span>
+                  <span style="font-size: 1.15rem;">${top3[1].points} Credits</span>
                   <span style="font-size: 0.75rem; color: #64748B;">${top3[1].wasteKg} KG Waste</span>
                 </div>
               </div>
@@ -125,7 +125,7 @@ export const LeaderboardView = {
                 <strong style="font-size: 1.05rem; color: var(--color-navy); display: block;">${top3[0].name}</strong>
                 <span style="font-size: 0.8rem; color: var(--text-muted);">${top3[0].location}</span>
                 <div class="neu-card-raised" style="width: 100%; height: 145px; border-radius: var(--radius-md) var(--radius-md) 0 0; margin-top: 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 900; color: #78350F; border-top: 4px solid #F59E0B; background: linear-gradient(180deg, #FEF3C7 0%, var(--bg-surface) 100%);">
-                  <span style="font-size: 1.35rem; color: #B45309;">${top3[0].points} GC</span>
+                  <span style="font-size: 1.35rem; color: #B45309;">${top3[0].points} Credits</span>
                   <span style="font-size: 0.8rem; color: #92400E;">${top3[0].wasteKg} KG Waste</span>
                 </div>
               </div>
@@ -143,7 +143,7 @@ export const LeaderboardView = {
                 <strong style="font-size: 0.95rem; color: var(--color-navy); display: block;">${top3[2].name}</strong>
                 <span style="font-size: 0.78rem; color: var(--text-muted);">${top3[2].location}</span>
                 <div class="neu-card-raised" style="width: 100%; height: 85px; border-radius: var(--radius-md) var(--radius-md) 0 0; margin-top: 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; color: #7C2D12; border-top: 4px solid #EA580C;">
-                  <span style="font-size: 1.15rem;">${top3[2].points} GC</span>
+                  <span style="font-size: 1.15rem;">${top3[2].points} Credits</span>
                   <span style="font-size: 0.75rem; color: #9A3412;">${top3[2].wasteKg} KG Waste</span>
                 </div>
               </div>
@@ -178,7 +178,7 @@ export const LeaderboardView = {
                   </div>
 
                   <div style="text-align: right;">
-                    <span class="badge badge-points" style="font-size: 0.85rem;">${Formatters.formatNumber(u.points)} GC</span>
+                    <span class="badge badge-points" style="font-size: 0.85rem;">${Formatters.formatNumber(u.points)} Credits</span>
                     ${u.streak ? `
                       <div style="font-size: 0.72rem; color: #EA580C; font-weight: 700; margin-top: 2px; display: flex; align-items: center; justify-content: flex-end; gap: 0.2rem;">
                         <i data-lucide="flame" style="width: 12px; height: 12px;"></i>
@@ -225,7 +225,7 @@ export const LeaderboardView = {
                   <div class="neu-card-flat" style="padding: 1rem; border-radius: var(--radius-md);">
                     <div class="flex-between" style="margin-bottom: 0.35rem;">
                       <strong style="color: var(--color-navy); font-size: 0.88rem;">${c.title}</strong>
-                      <span class="badge badge-points">+${c.rewardGp} GC</span>
+                      <span class="badge badge-points">+${c.rewardGp} Credits</span>
                     </div>
                     <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.65rem;">${c.description}</p>
                     

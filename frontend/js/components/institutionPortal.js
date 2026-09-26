@@ -139,7 +139,7 @@ export const InstitutionPortalView = {
                 <h3 style="color: var(--color-navy); font-size: 1.4rem; font-weight: 800;">Delhi Public School — Green Brigade</h3>
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">Student Body: 1,420 Active Recyclers &bull; Sustainability Score: 94/100</p>
               </div>
-              <div class="badge badge-points" style="font-size: 1rem; padding: 0.5rem 1rem;">19,500 Total GC</div>
+              <div class="badge badge-points" style="font-size: 1rem; padding: 0.5rem 1rem;">19,500 Total Credits</div>
             </div>
 
             <div class="institution-feature-grid">
@@ -173,7 +173,7 @@ export const InstitutionPortalView = {
                 <h3 style="color: var(--color-navy); font-size: 1.4rem; font-weight: 800;">IIT Bombay — Campus Eco Cell</h3>
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">Hostel Waste Decentralization & Tech-Driven Composting &bull; Score: 98/100</p>
               </div>
-              <div class="badge badge-points" style="font-size: 1rem; padding: 0.5rem 1rem;">38,400 Total GC</div>
+              <div class="badge badge-points" style="font-size: 1rem; padding: 0.5rem 1rem;">38,400 Total Credits</div>
             </div>
 
             <div class="institution-feature-grid">

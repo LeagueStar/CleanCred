@@ -323,7 +323,7 @@ export const AdminDashboardView = {
                           ${p.quantityKg} KG
                         </td>
                         <td style="padding: 0.75rem 0.5rem; font-weight: 800; color: var(--color-primary-dark);">
-                          +${p.pointsReward} GC
+                          +${p.pointsReward} Credits
                         </td>
                         <td style="padding: 0.75rem 0.5rem;">
                           ${p.status === 'verified' ? `
