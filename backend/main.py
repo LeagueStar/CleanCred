@@ -1,775 +1,185 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Request, Body
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, DateTime, ForeignKey
-from sqlalchemy.orm import declarative_base, sessionmaker, relationship
-from datetime import datetime
+import os, json, secrets, hashlib
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
-from typing import Optional, List, Dict, Any
-from pydantic import BaseModel
-import shutil
-import uuid
-import random
+from collections import Counter
+from dotenv import load_dotenv
+from fastapi import FastAPI, File, Form, Header, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from pydantic import BaseModel, Field
+from db import get_conn, init_db
+from geo import haversine_m
+from security import make_qr_token, hash_token, token_matches, sha256_bytes
+from ai import verify_image
 
-# Gupta's Geodesic Proximity Verification module
-from proximity import within_50_meters as geo_within_50m
+BASE = Path(__file__).resolve().parent
+UPLOADS = BASE / "uploads"; UPLOADS.mkdir(exist_ok=True)
+load_dotenv(BASE / ".env")
+init_db()
+app = FastAPI(title="CleanCred Verified Waste API", version="3.0.0")
+app.add_middleware(CORSMiddleware, allow_origins=[x.strip() for x in os.getenv("CORS_ORIGINS","*").split(",")], allow_credentials=False, allow_methods=["*"], allow_headers=["*"])
+GPS_RADIUS=float(os.getenv("GPS_RADIUS_METERS","50")); WINDOW_MIN=int(os.getenv("VERIFICATION_WINDOW_MINUTES","1440")); BASE_CREDITS=int(os.getenv("CREDITS_PER_VERIFIED_ACTION","10"))
+SESSIONS={}
 
-# Deterministic Catalog-Based Purity module
-from purity import calculate_purity_score
+def now(): return datetime.now(timezone.utc)
+def iso(dt): return dt.astimezone(timezone.utc).isoformat()
+def parse_dt(v): return datetime.fromisoformat(v.replace("Z","+00:00"))
+def pin_hash(pin): return hashlib.pbkdf2_hmac("sha256", pin.encode(), b"cleancred-demo-v3", 150000).hex()
+def auth_user(auth):
+    if not auth or not auth.startswith("Bearer "): raise HTTPException(401,"Login required")
+    uid=SESSIONS.get(auth[7:].strip())
+    if not uid: raise HTTPException(401,"Invalid or expired session")
+    c=get_conn(); row=c.execute("SELECT * FROM users WHERE id=?",(uid,)).fetchone(); c.close()
+    if not row: raise HTTPException(401,"User no longer exists")
+    return row
+def require_role(auth, role):
+    u=auth_user(auth)
+    if u["role"]!=role: raise HTTPException(403,f"{role} access required")
+    return u
 
-# -------------------------------------------------
-# DATABASE SETUP
-# -------------------------------------------------
-DATABASE_URL = "sqlite:///./cleancred.db"
+def rowdict(row): return dict(row) if row else None
+class CreateUser(BaseModel): name:str=Field(min_length=1,max_length=80); role:str; pin:str=Field(min_length=4,max_length=32)
+class LoginRequest(BaseModel): user_id:int; pin:str=Field(min_length=4,max_length=32)
+class VerifyRequest(BaseModel): report_id:int; segregated:bool; worker_lat:float=Field(ge=-90,le=90); worker_lon:float=Field(ge=-180,le=180)
+class CollectRequest(BaseModel): report_id:int; qr_token:str=Field(min_length=10); worker_lat:float=Field(ge=-90,le=90); worker_lon:float=Field(ge=-180,le=180)
 
-engine = create_engine(
-    DATABASE_URL,
-    connect_args={"check_same_thread": False}
-)
-SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
-Base = declarative_base()
+@app.get("/health")
+def health(): return {"ok":True,"service":"cleancred-api","version":app.version,"demo_ai":os.getenv("DEMO_AI_MODE","0")=="1"}
 
-# -------------------------------------------------
-# DATABASE MODELS
-# -------------------------------------------------
-class User(Base):
-    __tablename__ = "users"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    email = Column(String, unique=True, index=True, nullable=False)
-    phone = Column(String, nullable=True)
-    address = Column(String, nullable=True)
-    green_points = Column(Integer, default=1250)
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-    reports = relationship("WasteReport", back_populates="user")
-
-
-class WasteReport(Base):
-    __tablename__ = "waste_reports"
-
-    id = Column(Integer, primary_key=True, index=True)
-    request_id = Column(String, unique=True, index=True, nullable=True)
-
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    waste_type = Column(String, nullable=False)
-    category = Column(String, nullable=True)
-    subtype = Column(String, nullable=True)
-    pickup_slot = Column(String, nullable=True)
-    otp = Column(String, nullable=True)
-    worker_name = Column(String, nullable=True)
-    worker_eta = Column(Integer, nullable=True)
-    address = Column(String, nullable=True)
-
-    approximate_weight = Column(Float, default=0)
-
-    latitude = Column(Float, nullable=False)
-    longitude = Column(Float, nullable=False)
-
-    image_path = Column(String, nullable=True)
-
-    ai_segregated = Column(Boolean, nullable=True)
-    verification_status = Column(String, default="pending")
-    collection_status = Column(String, default="reported")
-
-    worker_latitude = Column(Float, nullable=True)
-    worker_longitude = Column(Float, nullable=True)
-
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-    user = relationship("User", back_populates="reports")
-
-
-class PointTransaction(Base):
-    __tablename__ = "point_transactions"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    points = Column(Integer, nullable=False)
-    reason = Column(String, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-
-class DumpingReport(Base):
-    __tablename__ = "dumping_reports"
-
-    id = Column(Integer, primary_key=True, index=True)
-    report_id = Column(String, unique=True, index=True)
-    location = Column(String, nullable=False)
-    waste_type = Column(String, nullable=False)
-    status = Column(String, default="Submitted")
-    photo_url = Column(String, nullable=True)
-    reward_gp = Column(Integer, default=20)
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-
-Base.metadata.create_all(bind=engine)
-
-# -------------------------------------------------
-# SEED CITIZEN USER
-# -------------------------------------------------
-def init_seed_user():
-    db = SessionLocal()
-    try:
-        user = db.query(User).filter(User.id == 1).first()
-        if not user:
-            user = User(
-                id=1,
-                name="Shivansh Prajapati",
-                email="shivansh.green@karma.org",
-                phone="+91 98765 43210",
-                address="Flat 402, Green Meadows, Ward 4B, Mumbai",
-                green_points=1250,
-            )
-            db.add(user)
-            db.commit()
-    finally:
-        db.close()
-
-init_seed_user()
-
-# -------------------------------------------------
-# FASTAPI APP & CORS (STEP 4)
-# -------------------------------------------------
-app = FastAPI(
-    title="CleanCred Backend Engine",
-    description="Unified backend for waste reporting, geodesic proximity verification, deterministic purity checking, and Green Points ledger",
-    version="2.0.0"
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-UPLOAD_DIR = Path("uploads")
-UPLOAD_DIR.mkdir(exist_ok=True)
-app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
-
-
-# -------------------------------------------------
-# HELPER FUNCTIONS
-# -------------------------------------------------
-def get_db():
-    return SessionLocal()
-
-
-def resolve_user(db, user_id_val: Any) -> Optional[User]:
-    """Find user by numeric ID or fallback to the seed citizen user."""
-    user = None
-    try:
-        uid = int(user_id_val)
-        user = db.query(User).filter(User.id == uid).first()
-    except (ValueError, TypeError):
-        pass
-
-    if not user and str(user_id_val) in ("usr_shivansh_99", "citizen", "1"):
-        user = db.query(User).filter(User.id == 1).first()
-
-    if not user:
-        user = db.query(User).first()
-    return user
-
-
-def find_report(db, report_identifier: Any) -> Optional[WasteReport]:
-    """Find waste report by primary key or request_id string (e.g. GK-2026-89421)."""
-    if str(report_identifier).isdigit():
-        rep = db.query(WasteReport).filter(WasteReport.id == int(report_identifier)).first()
-        if rep:
-            return rep
-    rep = db.query(WasteReport).filter(WasteReport.request_id == str(report_identifier)).first()
-    return rep
-
-
-def add_points(db, user_id: int, points: int, reason: str):
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        return
-
-    user.green_points += points
-    transaction = PointTransaction(
-        user_id=user_id,
-        points=points,
-        reason=reason
-    )
-    db.add(transaction)
-    db.commit()
-
-
-def report_to_dict(report: WasteReport) -> dict:
-    """Serialize report with full schema expected by frontend UI/UX."""
-    points_map = {"wet": 10, "dry": 7, "harmful": 5}
-    cat = (report.category or report.waste_type or "wet").lower()
-    category_name_map = {
-        "wet": "Wet Waste (Organic)",
-        "dry": "Dry Waste (Recyclable)",
-        "harmful": "Harmful Waste (Hazardous)"
-    }
-
-    # Map database status to state.js pickup status:
-    status = "created"
-    if report.verification_status == "approved":
-        status = "verified"
-    elif report.verification_status == "rejected":
-        status = "rejected"
-    elif report.collection_status == "collected":
-        status = "collected"
-    elif report.collection_status in ("assigned", "on_the_way"):
-        status = report.collection_status
-
-    created_iso = report.created_at.isoformat() if report.created_at else datetime.utcnow().isoformat()
-    req_id = report.request_id or f"GK-{report.created_at.year if report.created_at else 2026}-{report.id:05d}"
-
-    return {
-        "id": req_id,
-        "report_id": report.id,
-        "requestId": req_id,
-        "user_id": report.user_id,
-        "userName": report.user.name if report.user else "Shivansh Prajapati",
-        "category": cat,
-        "categoryName": category_name_map.get(cat, "Wet Waste (Organic)"),
-        "waste_type": cat,
-        "subType": report.subtype or "General segregated waste",
-        "subtype": report.subtype or "General segregated waste",
-        "quantityKg": report.approximate_weight or 3.0,
-        "approximate_weight": report.approximate_weight or 3.0,
-        "pointsReward": points_map.get(cat, 5),
-        "pointsCredited": points_map.get(cat, 5) if report.verification_status == "approved" else 0,
-        "address": report.address or "Flat 402, Green Meadows, Ward 4B, Mumbai",
-        "pickupSlot": report.pickup_slot or "Morning Route (08:00 AM - 11:00 AM)",
-        "pickup_slot": report.pickup_slot or "Morning Route (08:00 AM - 11:00 AM)",
-        "scheduledDate": "Today",
-        "scheduledTime": "08:00 AM - 11:00 AM",
-        "status": status,
-        "workerName": report.worker_name or "Ramesh Kumar (Ward 4B Fleet)",
-        "worker_name": report.worker_name or "Ramesh Kumar (Ward 4B Fleet)",
-        "workerPhone": "+91 98111 22334",
-        "vehicleNo": "MH-02-GK-4091",
-        "otp": report.otp or "8492",
-        "etaMinutes": report.worker_eta if report.worker_eta is not None else 18,
-        "worker_eta": report.worker_eta if report.worker_eta is not None else 18,
-        "latitude": report.latitude,
-        "longitude": report.longitude,
-        "geoCoords": [report.latitude, report.longitude] if (report.latitude and report.longitude) else [19.0760, 72.8777],
-        "image_path": report.image_path,
-        "photoUrl": f"http://localhost:8000/{report.image_path}" if report.image_path else "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&q=80",
-        "photoSource": "upload" if report.image_path else "demo",
-        "ai_segregated": report.ai_segregated,
-        "verification_status": report.verification_status,
-        "collection_status": report.collection_status,
-        "createdAt": created_iso,
-        "created_at": report.created_at
-    }
-
-
-# -------------------------------------------------
-# BASIC ROUTES
-# -------------------------------------------------
-@app.get("/")
-def home():
-    return {
-        "status": "online",
-        "message": "CleanCred Backend Engine v2.0 is running",
-        "docs": "http://localhost:8000/docs"
-    }
-
-
-# -------------------------------------------------
-# USER ROUTES
-# -------------------------------------------------
 @app.post("/users")
-def create_user(name: str, email: str, phone: Optional[str] = None, address: Optional[str] = None):
-    db = get_db()
-    try:
-        existing_user = db.query(User).filter(User.email == email).first()
-        if existing_user:
-            raise HTTPException(
-                status_code=400,
-                detail="User with this email already exists"
-            )
+def create_user(body:CreateUser):
+    role=body.role.lower()
+    if role not in {"citizen","worker","admin"}: raise HTTPException(400,"Invalid role")
+    c=get_conn(); cur=c.execute("INSERT INTO users(name,role,pin_hash,points,created_at) VALUES(?,?,?,?,?)",(body.name.strip(),role,pin_hash(body.pin),0,iso(now()))); c.commit(); row=c.execute("SELECT id,name,role,points,created_at FROM users WHERE id=?",(cur.lastrowid,)).fetchone(); c.close(); return dict(row)
 
-        user = User(
-            name=name,
-            email=email,
-            phone=phone,
-            address=address,
-            green_points=1250
-        )
-        db.add(user)
-        db.commit()
-        db.refresh(user)
+@app.post("/auth/login")
+def login(body:LoginRequest):
+    c=get_conn(); row=c.execute("SELECT * FROM users WHERE id=?",(body.user_id,)).fetchone(); c.close()
+    if not row or not secrets.compare_digest(row["pin_hash"],pin_hash(body.pin)): raise HTTPException(401,"Invalid user ID or PIN")
+    token=secrets.token_urlsafe(32); SESSIONS[token]=row["id"]
+    return {"access_token":token,"user":{"id":row["id"],"name":row["name"],"role":row["role"],"points":row["points"]}}
 
-        return {
-            "message": "User created successfully",
-            "user_id": user.id,
-            "green_points": user.green_points
-        }
-    finally:
-        db.close()
+@app.get("/users")
+def users(auth: str|None=Header(default=None)):
+    require_role(auth,"admin"); c=get_conn(); rows=c.execute("SELECT id,name,role,points,created_at FROM users ORDER BY id").fetchall(); c.close(); return [dict(r) for r in rows]
 
-
-@app.get("/users/{user_id}")
-def get_user(user_id: str):
-    db = get_db()
-    try:
-        user = resolve_user(db, user_id)
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-
-        return {
-            "id": user.id,
-            "backendId": user.id,
-            "name": user.name,
-            "email": user.email,
-            "phone": user.phone or "+91 98765 43210",
-            "address": user.address or "Flat 402, Green Meadows, Ward 4B, Mumbai",
-            "green_points": user.green_points,
-            "greenPoints": user.green_points
-        }
-    finally:
-        db.close()
-
-
-# PUT /users/{user_id} — Profile save (STEP 3 & 5)
-class UserUpdateRequest(BaseModel):
-    name: Optional[str] = None
-    email: Optional[str] = None
-    phone: Optional[str] = None
-    address: Optional[str] = None
-
-@app.put("/users/{user_id}")
-async def update_user(user_id: str, request: Request):
-    db = get_db()
-    try:
-        user = resolve_user(db, user_id)
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-
-        # Parse either JSON or Form data
-        content_type = request.headers.get("content-type", "")
-        if "application/json" in content_type:
-            data = await request.json()
-        else:
-            form = await request.form()
-            data = dict(form)
-
-        if "name" in data and data["name"]:
-            user.name = str(data["name"])
-        if "email" in data and data["email"]:
-            user.email = str(data["email"])
-        if "phone" in data and data["phone"]:
-            user.phone = str(data["phone"])
-        if "address" in data and data["address"]:
-            user.address = str(data["address"])
-
-        db.commit()
-        db.refresh(user)
-
-        return {
-            "message": "Profile updated successfully",
-            "user": {
-                "id": user.id,
-                "name": user.name,
-                "email": user.email,
-                "phone": user.phone,
-                "address": user.address,
-                "green_points": user.green_points
-            }
-        }
-    finally:
-        db.close()
-
-
-# POST /users/{user_id}/redeem — Redeem Points (STEP 3 & 5)
-@app.post("/users/{user_id}/redeem")
-async def redeem_points(user_id: str, request: Request):
-    db = get_db()
-    try:
-        user = resolve_user(db, user_id)
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-
-        content_type = request.headers.get("content-type", "")
-        if "application/json" in content_type:
-            data = await request.json()
-        else:
-            form = await request.form()
-            data = dict(form)
-
-        amount_gp = int(data.get("amountGp") or data.get("amount_gp") or data.get("amount") or 100)
-        category = str(data.get("category") or "RECHARGE")
-        title = str(data.get("title") or "Green Credits Redemption")
-        metadata = str(data.get("metadata") or data.get("meta") or "")
-
-        if user.green_points < amount_gp:
-            raise HTTPException(status_code=400, detail="Insufficient Green Credits balance")
-
-        user.green_points -= amount_gp
-
-        transaction = PointTransaction(
-            user_id=user.id,
-            points=-amount_gp,
-            reason=f"Redeemed: {title} ({category})"
-        )
-        db.add(transaction)
-        db.commit()
-
-        inr_value = (amount_gp // 100) * 10
-
-        return {
-            "success": True,
-            "message": f"{title} applied successfully",
-            "redeemed_points": amount_gp,
-            "new_balance": user.green_points,
-            "newBalanceGp": user.green_points,
-            "inrValue": inr_value
-        }
-    finally:
-        db.close()
-
-
-# -------------------------------------------------
-# WASTE REPORT ROUTES (STEP 3 & 5)
-# -------------------------------------------------
 @app.post("/reports")
-def create_report(
-    user_id: Optional[str] = Form("1"),
-    waste_type: Optional[str] = Form("wet"),
-    category: Optional[str] = Form(None),
-    subtype: Optional[str] = Form(None),
-    subType: Optional[str] = Form(None),
-    approximate_weight: Optional[float] = Form(3.0),
-    quantity: Optional[float] = Form(None),
-    latitude: Optional[float] = Form(19.0760),
-    longitude: Optional[float] = Form(72.8777),
-    address: Optional[str] = Form(None),
-    pickup_slot: Optional[str] = Form(None),
-    pickupSlot: Optional[str] = Form(None),
-    image: Optional[UploadFile] = File(None)
-):
-    db = get_db()
-    try:
-        user = resolve_user(db, user_id)
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+async def create_report(authorization:str|None=Header(default=None),category:str=Form(...),latitude:float=Form(...),longitude:float=Form(...),image:UploadFile=File(...)):
+    user=require_role(authorization,"citizen"); category=category.upper()
+    if category not in {"WET","DRY","HAZARDOUS"}: raise HTTPException(400,"Category must be WET, DRY or HAZARDOUS")
+    if not image.content_type or not image.content_type.startswith("image/"): raise HTTPException(400,"Only image data is accepted")
+    data=await image.read()
+    if len(data)>8*1024*1024: raise HTTPException(413,"Image is larger than 8 MB")
+    digest=sha256_bytes(data)
+    c=get_conn(); dup=c.execute("SELECT id,status FROM reports WHERE image_sha256=? ORDER BY id DESC LIMIT 1",(digest,)).fetchone()
+    if dup: c.close(); raise HTTPException(409,f"Duplicate evidence detected: image already belongs to event #{dup['id']}")
+    suffix=Path(image.filename or "").suffix.lower(); suffix=suffix if suffix in {".jpg",".jpeg",".png",".webp"} else ".jpg"
+    path=UPLOADS/f"{secrets.token_hex(16)}{suffix}"; path.write_bytes(data); captured=iso(now())
+    cur=c.execute("INSERT INTO reports(user_id,category,image_path,image_sha256,report_lat,report_lon,captured_at,status) VALUES(?,?,?,?,?,?,?,?)",(user["id"],category,str(path),digest,latitude,longitude,captured,"SUBMITTED")); c.commit(); c.close()
+    return {"report_id":cur.lastrowid,"status":"SUBMITTED","server_timestamp":captured,"evidence_hash":digest[:12]+"…"}
 
-        resolved_category = (category or waste_type or "wet").lower()
-        resolved_subtype = subtype or subType or "General segregated waste"
-        resolved_weight = quantity if quantity is not None else (approximate_weight or 3.0)
-        resolved_slot = pickupSlot or pickup_slot or "Morning Route (08:00 AM - 11:00 AM)"
-        resolved_address = address or user.address or "Flat 402, Green Meadows, Ward 4B, Mumbai"
+def load_report(rid):
+    c=get_conn(); r=c.execute("SELECT * FROM reports WHERE id=?",(rid,)).fetchone(); a=c.execute("SELECT * FROM ai_verifications WHERE report_id=?",(rid,)).fetchone(); w=c.execute("SELECT * FROM worker_verifications WHERE report_id=?",(rid,)).fetchone(); col=c.execute("SELECT * FROM collections WHERE report_id=?",(rid,)).fetchone(); c.close(); return r,a,w,col
 
-        # Generate request_id in same format as frontend formatters.js: GK-2026-XXXXX
-        year = datetime.utcnow().year
-        random_suffix = random.randint(10000, 99999)
-        request_id = f"GK-{year}-{random_suffix}"
+def risk_and_score(report, ai, distance, duplicate_count=0):
+    score=0; flags=[]
+    if ai and ai["accepted"]: score+=40
+    if ai and ai["confidence"]>=.85: score+=10
+    if distance<=GPS_RADIUS: score+=30
+    if duplicate_count==0: score+=20
+    else: flags.append("DUPLICATE_PATTERN")
+    if distance>GPS_RADIUS: flags.append("GPS_MISMATCH")
+    if not ai or not ai["accepted"]: flags.append("AI_UNCERTAIN")
+    level="LOW" if score>=90 else ("MEDIUM" if score>=65 else "HIGH")
+    return score,level,flags
 
-        # Generate 4-digit OTP
-        otp_str = str(random.randint(1000, 9999))
+@app.post("/verify")
+def verify(body:VerifyRequest,authorization:str|None=Header(default=None)):
+    worker=require_role(authorization,"worker"); report,ai,old_worker,collection=load_report(body.report_id)
+    if not report: raise HTTPException(404,"Report not found")
+    if collection: raise HTTPException(409,"Report is already collected")
+    if old_worker: raise HTTPException(409,"Worker verification already recorded")
+    if not ai:
+        try: result=verify_image(report["image_path"])
+        except Exception as e: raise HTTPException(502,f"Image verification failed: {e}")
+        c=get_conn(); c.execute("INSERT INTO ai_verifications(report_id,predicted_category,accepted,confidence,explanation,model,verified_at) VALUES(?,?,?,?,?,?,?)",(body.report_id,result["category"],int(result["accepted"]),result["confidence"],result["explanation"],result["model"],iso(now()))); c.commit(); c.close(); report,ai,old_worker,collection=load_report(body.report_id)
+    age=now()-parse_dt(report["captured_at"])
+    if age<timedelta(seconds=-60) or age>timedelta(minutes=WINDOW_MIN): raise HTTPException(403,"Timestamp/freshness gate failed")
+    if not body.segregated:
+        c=get_conn(); c.execute("UPDATE reports SET status=?,risk_level=?,risk_flags=? WHERE id=?",("WORKER_REJECTED","HIGH",json.dumps(["WORKER_REJECTED"]),body.report_id)); c.commit(); c.close(); raise HTTPException(403,"Worker rejected segregation; no QR and no credits")
+    if not ai["accepted"]: raise HTTPException(403,"AI verification did not pass")
+    if ai["predicted_category"]!=report["category"]: raise HTTPException(403,f"AI classified {ai['predicted_category']}, but report says {report['category']}")
+    distance=haversine_m(report["report_lat"],report["report_lon"],body.worker_lat,body.worker_lon)
+    if distance>GPS_RADIUS: raise HTTPException(403,f"GPS gate failed: worker is {distance:.2f} m away; maximum is {GPS_RADIUS:.0f} m")
+    c=get_conn(); dup_count=c.execute("SELECT COUNT(*) n FROM reports WHERE image_sha256=?",(report["image_sha256"],)).fetchone()["n"]; c.close()
+    score,level,flags=risk_and_score(report,ai,distance,dup_count-1)
+    token=make_qr_token(); verified=iso(now())
+    c=get_conn(); c.execute("INSERT INTO worker_verifications(report_id,worker_id,segregated,worker_lat,worker_lon,distance_m,verified_at) VALUES(?,?,?,?,?,?,?)",(body.report_id,worker["id"],1,body.worker_lat,body.worker_lon,distance,verified)); c.execute("UPDATE reports SET qr_token_hash=?,status=?,verification_score=?,risk_level=?,risk_flags=? WHERE id=?",(hash_token(token),"READY_FOR_COLLECTION",score,level,json.dumps(flags),body.report_id)); c.commit(); c.close()
+    return {"ok":True,"report_id":body.report_id,"status":"READY_FOR_COLLECTION","verification_score":score,"risk_level":level,"risk_flags":flags,"ai":{"category":ai["predicted_category"],"accepted":bool(ai["accepted"]),"confidence":ai["confidence"],"explanation":ai["explanation"],"model":ai["model"]},"distance_m":round(distance,2),"gps_limit_m":GPS_RADIUS,"qr_token":token,"verified_at":verified}
 
-        image_path = None
-        if image and image.filename:
-            extension = Path(image.filename).suffix
-            filename = f"{uuid.uuid4()}{extension}"
-            image_path = str(UPLOAD_DIR / filename)
-            with open(image_path, "wb") as buffer:
-                shutil.copyfileobj(image.file, buffer)
+@app.post("/collect")
+def collect(body:CollectRequest,authorization:str|None=Header(default=None)):
+    worker=require_role(authorization,"worker"); report,ai,wcheck,collection=load_report(body.report_id)
+    if not report: raise HTTPException(404,"Report not found")
+    if collection: raise HTTPException(409,"QR has already been consumed")
+    if not wcheck: raise HTTPException(403,"Worker verification is required first")
+    if wcheck["worker_id"]!=worker["id"]: raise HTTPException(403,"Only the verifying worker can collect this report")
+    distance=haversine_m(report["report_lat"],report["report_lon"],body.worker_lat,body.worker_lon)
+    if distance>GPS_RADIUS: raise HTTPException(403,f"Collection GPS gate failed: {distance:.2f} m > {GPS_RADIUS:.0f} m")
+    if not report["qr_token_hash"] or not token_matches(body.qr_token,report["qr_token_hash"]): raise HTTPException(403,"Invalid one-time QR token")
+    collected=iso(now()); points=BASE_CREDITS + ({"HAZARDOUS":5,"WET":2,"DRY":3}.get(report["category"],0))
+    c=get_conn(); c.execute("INSERT INTO collections(report_id,worker_id,collected_at,qr_used) VALUES(?,?,?,1)",(body.report_id,worker["id"],collected)); c.execute("UPDATE reports SET status=?,qr_token_hash=NULL WHERE id=?",("COLLECTED",body.report_id)); cur=c.execute("INSERT OR IGNORE INTO credit_transactions(user_id,report_id,points,reason,created_at) VALUES(?,?,?,?,?)",(report["user_id"],body.report_id,points,"VERIFIED_COLLECTION",collected)); awarded=points if cur.rowcount==1 else 0
+    if awarded: c.execute("UPDATE users SET points=points+? WHERE id=?",(awarded,report["user_id"]))
+    c.commit(); user=c.execute("SELECT id,name,role,points FROM users WHERE id=?",(report["user_id"],)).fetchone(); c.close()
+    return {"ok":True,"report_id":body.report_id,"status":"COLLECTED","credits_awarded":awarded,"user":dict(user),"collected_at":collected,"collection_distance_m":round(distance,2)}
 
-        report = WasteReport(
-            request_id=request_id,
-            user_id=user.id,
-            waste_type=resolved_category,
-            category=resolved_category,
-            subtype=resolved_subtype,
-            approximate_weight=resolved_weight,
-            latitude=latitude if latitude is not None else 19.0760,
-            longitude=longitude if longitude is not None else 72.8777,
-            address=resolved_address,
-            pickup_slot=resolved_slot,
-            otp=otp_str,
-            worker_name="Ramesh Kumar (Ward 4B Fleet)",
-            worker_eta=18,
-            image_path=image_path,
-            verification_status="pending",
-            collection_status="created"
-        )
+@app.get("/reports/mine")
+def reports_mine(authorization:str|None=Header(default=None)):
+    user=require_role(authorization,"citizen"); c=get_conn(); rows=c.execute("""SELECT r.id,r.user_id,u.name citizen,r.category,r.report_lat,r.report_lon,r.captured_at,r.status,r.verification_score,r.risk_level,r.risk_flags,a.predicted_category,a.accepted ai_accepted,a.confidence,a.explanation,a.model,a.verified_at ai_verified_at,w.worker_id,w.distance_m,w.verified_at worker_verified_at,col.collected_at FROM reports r JOIN users u ON u.id=r.user_id LEFT JOIN ai_verifications a ON a.report_id=r.id LEFT JOIN worker_verifications w ON w.report_id=r.id LEFT JOIN collections col ON col.report_id=r.id WHERE r.user_id=? ORDER BY r.id DESC""",(user["id"],)).fetchall(); c.close(); return [dict(x) for x in rows]
 
-        db.add(report)
-        db.commit()
-        db.refresh(report)
+@app.get("/reports")
+def reports(authorization:str|None=Header(default=None)):
+    require_role(authorization,"admin"); c=get_conn(); rows=c.execute("""SELECT r.id,r.user_id,u.name citizen,r.category,r.report_lat,r.report_lon,r.captured_at,r.status,r.verification_score,r.risk_level,r.risk_flags,a.predicted_category,a.accepted ai_accepted,a.confidence,a.explanation,a.model,a.verified_at ai_verified_at,w.worker_id,w.distance_m,w.verified_at worker_verified_at,col.collected_at FROM reports r JOIN users u ON u.id=r.user_id LEFT JOIN ai_verifications a ON a.report_id=r.id LEFT JOIN worker_verifications w ON w.report_id=r.id LEFT JOIN collections col ON col.report_id=r.id ORDER BY r.id DESC""").fetchall(); c.close(); return [dict(x) for x in rows]
 
-        return {
-            "message": "Waste report created successfully",
-            "report": report_to_dict(report)
-        }
-    finally:
-        db.close()
+@app.get("/reports/{report_id}/timeline")
+def timeline(report_id:int,authorization:str|None=Header(default=None)):
+    current=auth_user(authorization); r,a,w,col=load_report(report_id)
+    if not r: raise HTTPException(404,"Report not found")
+    if current["role"] not in {"admin","worker"} and current["id"]!=r["user_id"]: raise HTTPException(403,"Not allowed")
+    events=[{"stage":"REPORT","time":r["captured_at"],"status":"SUBMITTED","detail":"Citizen evidence captured with server timestamp"}]
+    if a: events.append({"stage":"AI VERIFY","time":a["verified_at"],"status":"PASSED" if a["accepted"] else "REJECTED","detail":f"{a['predicted_category']} · {a['confidence']:.0%} confidence"})
+    if w: events.append({"stage":"WORKER VERIFY","time":w["verified_at"],"status":"PASSED" if w["segregated"] else "REJECTED","detail":f"GPS distance {w['distance_m']:.1f} m"})
+    if col: events.append({"stage":"COLLECT","time":col["collected_at"],"status":"CONFIRMED","detail":"One-time QR consumed; credit ledger unlocked"})
+    c=get_conn(); tx=c.execute("SELECT points,created_at FROM credit_transactions WHERE report_id=?",(report_id,)).fetchone(); c.close()
+    if tx: events.append({"stage":"EARN","time":tx["created_at"],"status":"CREDITED","detail":f"+{tx['points']} Green Credits"})
+    return {"report_id":report_id,"status":r["status"],"verification_score":r["verification_score"],"risk_level":r["risk_level"],"events":events}
 
+@app.get("/wallet/{user_id}")
+def wallet(user_id:int,authorization:str|None=Header(default=None)):
+    current=auth_user(authorization)
+    if current["id"]!=user_id and current["role"]!="admin": raise HTTPException(403,"Not allowed")
+    c=get_conn(); user=c.execute("SELECT id,name,role,points FROM users WHERE id=?",(user_id,)).fetchone(); tx=c.execute("SELECT report_id,points,reason,created_at FROM credit_transactions WHERE user_id=? ORDER BY id DESC",(user_id,)).fetchall(); c.close()
+    if not user: raise HTTPException(404,"User not found")
+    return {"user":dict(user),"transactions":[dict(x) for x in tx]}
 
-@app.get("/reports/{report_id}")
-def get_report(report_id: str):
-    db = get_db()
-    try:
-        report = find_report(db, report_id)
-        if not report:
-            raise HTTPException(status_code=404, detail="Report not found")
-        return report_to_dict(report)
-    finally:
-        db.close()
+@app.get("/leaderboard")
+def leaderboard():
+    c=get_conn(); rows=c.execute("SELECT id,name,points FROM users WHERE role='citizen' ORDER BY points DESC,name LIMIT 20").fetchall(); c.close(); return [dict(x) for x in rows]
 
+@app.get("/analytics")
+def analytics(authorization:str|None=Header(default=None)):
+    require_role(authorization,"admin"); c=get_conn()
+    total=c.execute("SELECT COUNT(*) n FROM reports").fetchone()["n"]; verified=c.execute("SELECT COUNT(*) n FROM worker_verifications").fetchone()["n"]; collected=c.execute("SELECT COUNT(*) n FROM collections").fetchone()["n"]; credits=c.execute("SELECT COALESCE(SUM(points),0) n FROM credit_transactions").fetchone()["n"]; users=c.execute("SELECT COUNT(*) n FROM users WHERE role='citizen'").fetchone()["n"]
+    cats=[dict(x) for x in c.execute("SELECT category,COUNT(*) count FROM reports GROUP BY category ORDER BY count DESC").fetchall()]
+    hotspots=[dict(x) for x in c.execute("SELECT ROUND(report_lat,3) lat,ROUND(report_lon,3) lon,COUNT(*) reports FROM reports GROUP BY ROUND(report_lat,3),ROUND(report_lon,3) HAVING COUNT(*)>=2 ORDER BY reports DESC LIMIT 10").fetchall()]
+    risks=[dict(x) for x in c.execute("SELECT risk_level,COUNT(*) count FROM reports GROUP BY risk_level").fetchall()]; c.close()
+    return {"totals":{"reports":total,"verified":verified,"collected":collected,"citizens":users,"credits":credits},"collection_rate":round((collected/total*100) if total else 0,1),"categories":cats,"risk_distribution":risks,"hotspots":hotspots}
 
-@app.get("/users/{user_id}/reports")
-def get_user_reports(user_id: str):
-    db = get_db()
-    try:
-        user = resolve_user(db, user_id)
-        if not user:
-            return []
-
-        reports = db.query(WasteReport).filter(
-            WasteReport.user_id == user.id
-        ).order_by(WasteReport.id.desc()).all()
-
-        return [report_to_dict(report) for report in reports]
-    finally:
-        db.close()
-
-
-# -------------------------------------------------
-# LOCATION VERIFICATION (STEP 1: Gupta's Proximity)
-# -------------------------------------------------
-@app.post("/reports/{report_id}/verify-location")
-def verify_location(
-    report_id: str,
-    worker_latitude: float = 19.0761,
-    worker_longitude: float = 72.8778
-):
-    """Gupta's geodesic proximity verification."""
-    db = get_db()
-    try:
-        report = find_report(db, report_id)
-        if not report:
-            raise HTTPException(status_code=404, detail="Report not found")
-
-        # Gupta's function takes two (lat, lon) tuples:
-        is_near = geo_within_50m(
-            (report.latitude, report.longitude),
-            (worker_latitude, worker_longitude)
-        )
-
-        report.worker_latitude = worker_latitude
-        report.worker_longitude = worker_longitude
-        db.commit()
-
-        return {
-            "report_id": report.request_id or report.id,
-            "within_50_meters": is_near
-        }
-    finally:
-        db.close()
-
-
-# -------------------------------------------------
-# AI / WORKER VERIFICATION (STEP 2: Deterministic Purity Check)
-# -------------------------------------------------
-@app.post("/reports/{report_id}/verify")
-def verify_report(
-    report_id: str,
-    segregated: Optional[bool] = None,
-    source: str = "worker"
-):
-    """Deterministic catalog-based purity verification."""
-    db = get_db()
-    try:
-        report = find_report(db, report_id)
-        if not report:
-            raise HTTPException(status_code=404, detail="Report not found")
-
-        # Reconciled deterministic purity check logic (STEP 2):
-        score, accepted, rationale = calculate_purity_score(
-            report.waste_type or report.category,
-            report.subtype
-        )
-
-        # Segregated flag is driven deterministically by the purity check
-        segregated = accepted
-
-        # Prevent duplicate points
-        already_verified = report.verification_status == "approved"
-        report.ai_segregated = segregated
-
-        points_awarded = 0
-        if segregated:
-            report.verification_status = "approved"
-            if not already_verified:
-                points_map = {"wet": 10, "dry": 7, "harmful": 5}
-                cat = (report.waste_type or report.category or "wet").lower()
-                points_awarded = points_map.get(cat, 10)
-                add_points(
-                    db,
-                    report.user_id,
-                    points_awarded,
-                    f"Verified segregated {cat} waste report #{report.request_id or report.id}"
-                )
-        else:
-            report.verification_status = "rejected"
-
-        db.commit()
-
-        return {
-            "report_id": report.request_id or report.id,
-            "segregated": segregated,
-            "purity_score": score,
-            "accepted": accepted,
-            "rationale": rationale,
-            "points_awarded": points_awarded,
-            "verification_status": report.verification_status,
-            "verification_source": source
-        }
-    finally:
-        db.close()
-
-
-# -------------------------------------------------
-# COLLECTION STATUS (STEP 3 & 5)
-# -------------------------------------------------
-@app.post("/reports/{report_id}/collect")
-def update_collection_status(
-    report_id: str,
-    status: str = "collected"
-):
-    db = get_db()
-    try:
-        report = find_report(db, report_id)
-        if not report:
-            raise HTTPException(status_code=404, detail="Report not found")
-
-        report.collection_status = status
-        db.commit()
-
-        return {
-            "message": "Collection status updated",
-            "report_id": report.request_id or report.id,
-            "collection_status": report.collection_status
-        }
-    finally:
-        db.close()
-
-
-# -------------------------------------------------
-# DUMPING REPORTS (STEP 3: Missing Endpoint)
-# -------------------------------------------------
-@app.post("/dumping-reports")
-async def create_dumping_report(request: Request):
-    db = get_db()
-    try:
-        content_type = request.headers.get("content-type", "")
-        if "application/json" in content_type:
-            data = await request.json()
-        else:
-            form = await request.form()
-            data = dict(form)
-
-        location = str(data.get("location") or "Under Flyover, Link Road, Ward 4B")
-        waste_type = str(data.get("wasteType") or data.get("waste_type") or "Construction Debris & Mixed Plastics")
-        photo_url = str(data.get("photoUrl") or data.get("photo_url") or "https://images.unsplash.com/photo-1611288875785-58586c06a4b1?w=300&q=80")
-        reward_gp = int(data.get("rewardGp") or data.get("reward_gp") or 20)
-
-        dumping_id = f"DUMP-2026-{random.randint(100, 999)}"
-        dump_report = DumpingReport(
-            report_id=dumping_id,
-            location=location,
-            waste_type=waste_type,
-            status="Submitted",
-            photo_url=photo_url,
-            reward_gp=reward_gp
-        )
-        db.add(dump_report)
-        db.commit()
-        db.refresh(dump_report)
-
-        return {
-            "id": dump_report.report_id,
-            "location": dump_report.location,
-            "wasteType": dump_report.waste_type,
-            "status": dump_report.status,
-            "photoUrl": dump_report.photo_url,
-            "rewardGp": dump_report.reward_gp,
-            "reportedAt": dump_report.created_at.isoformat()
-        }
-    finally:
-        db.close()
-
-
-# -------------------------------------------------
-# POINTS / REWARDS
-# -------------------------------------------------
-@app.get("/users/{user_id}/points")
-def get_user_points(user_id: str):
-    db = get_db()
-    try:
-        user = resolve_user(db, user_id)
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-
-        transactions = db.query(PointTransaction).filter(
-            PointTransaction.user_id == user.id
-        ).order_by(PointTransaction.id.desc()).all()
-
-        return {
-            "user_id": user.id,
-            "total_green_points": user.green_points,
-            "transactions": [
-                {
-                    "id": f"TXN-{item.id:06d}",
-                    "points": item.points,
-                    "reason": item.reason,
-                    "created_at": item.created_at.isoformat() if item.created_at else None
-                }
-                for item in transactions
-            ]
-        }
-    finally:
-        db.close()
-
-
-# -------------------------------------------------
-# LIVE DASHBOARD DATA (STEP 6: Kreya's Dashboard)
-# -------------------------------------------------
-@app.get("/dashboard")
-def get_dashboard():
-    """Live dashboard endpoint returning counts, recovery metrics, and waste summary."""
-    db = get_db()
-    try:
-        reports = db.query(WasteReport).all()
-
-        waste_summary = {"wet": 0.0, "dry": 0.0, "harmful": 0.0}
-
-        for report in reports:
-            cat = (report.category or report.waste_type or "wet").lower()
-            weight = report.approximate_weight or 3.0
-            waste_summary[cat] = waste_summary.get(cat, 0.0) + weight
-
-        total_users = db.query(User).count()
-        total_reports = len(reports)
-
-        approved_reports = db.query(WasteReport).filter(
-            WasteReport.verification_status == "approved"
-        ).count()
-
-        collected_reports = db.query(WasteReport).filter(
-            WasteReport.collection_status == "collected"
-        ).count()
-
-        return {
-            "total_users": total_users,
-            "total_reports": total_reports,
-            "approved_reports": approved_reports,
-            "collected_reports": collected_reports,
-            "waste_summary": waste_summary
-        }
-    finally:
-        db.close()
+@app.get("/reports/{report_id}/image")
+def report_image(report_id:int,authorization:str|None=Header(default=None)):
+    current=auth_user(authorization); c=get_conn(); row=c.execute("SELECT image_path,user_id FROM reports WHERE id=?",(report_id,)).fetchone(); c.close()
+    if not row: raise HTTPException(404,"Image not found")
+    if current["role"] not in {"admin","worker"} and current["id"]!=row["user_id"]: raise HTTPException(403,"Not allowed")
+    path=Path(row["image_path"])
+    if not path.exists(): raise HTTPException(404,"Image not found")
+    return FileResponse(path)
