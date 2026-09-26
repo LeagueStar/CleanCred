@@ -178,12 +178,21 @@ export const LiveTrackingView = {
                   No citizen QR code generated for demo telemetry. Select a real pickup above to track your collection OTP and QR code.
                 </div>
               </div>
-              ` : pickup.status !== 'verified' ? `
+              ` : pickup.status !== 'verified' && pickup.status !== 'collected' ? `
               <div class="neu-card-flat" style="padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; text-align: center;">
                 <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                  Present this QR to ${Formatters.escapeHtml(pickup.workerName || 'Ramesh Kumar')} on arrival
+                  ${pickup.qr_token ? 'Present this Handover QR to ' + Formatters.escapeHtml(pickup.workerName || 'Ramesh Kumar') + ' on arrival' : 'QR Handover Token (Generated upon Worker Inspection)'}
                 </div>
                 <div id="live-tracking-qr" style="display: flex; justify-content: center;"></div>
+                ${pickup.qr_token ? `
+                  <div style="margin-top: 0.5rem; font-size: 0.78rem; color: var(--text-muted);">
+                    One-Time Token: <strong style="font-family: var(--font-mono); color: var(--color-primary-dark);">${pickup.qr_token}</strong>
+                  </div>
+                ` : `
+                  <div style="margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-muted);">
+                    Request #${pickup.id} &bull; OTP: <span style="font-family: var(--font-mono); font-weight: 700;">${pickup.otp || pickup.id}</span>
+                  </div>
+                `}
               </div>
               ` : `
               <div class="neu-card-flat" style="padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; text-align: center; background: #DCFCE7; border-color: #86EFAC;">
@@ -277,8 +286,8 @@ export const LiveTrackingView = {
     `;
 
     setTimeout(() => this.initMap(), 100);
-    if (!isDemoMode && pickup.status !== 'verified') {
-      setTimeout(() => QRCode.renderInto('live-tracking-qr', pickup.id), 50);
+    if (!isDemoMode && pickup.status !== 'verified' && pickup.status !== 'collected') {
+      setTimeout(() => QRCode.renderInto('live-tracking-qr', pickup.qr_token || pickup.id), 50);
     }
     if (window.lucide) {
       window.lucide.createIcons();

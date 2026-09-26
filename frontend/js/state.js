@@ -5,7 +5,7 @@
 
 import { Formatters } from './utils/formatters.js';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'http://127.0.0.1:8000';
 
 // Demo persistence (localStorage) — see saveState()/restoreState()/resetState()
 const STORAGE_KEY = 'greenLegacyDemoState';
@@ -15,7 +15,9 @@ class StateStore {
   constructor() {
     this.listeners = new Set();
     this.state = this.restoreState() || this.getSeedState();
-    this.syncWithBackend();
+    this.sessions = { citizen: null, worker: null, admin: null };
+    this.authReady = this.initAuth();
+    this.authReady.then(() => this.syncWithBackend()).catch(e => console.warn('CleanCred: Initial sync warning:', e));
   }
 
   // Original seed/demo dataset. Also used by resetState() to restore
@@ -504,78 +506,336 @@ class StateStore {
     this.notify();
   }
 
-  // Sync local reactive store with real backend on load & after actions
+  // ------------------------------------------------------------------
+  // Authentication & API Client
+  // ------------------------------------------------------------------
+  async initAuth() {
+    try {
+      const [citizenAuth, workerAuth, adminAuth] = await Promise.all([
+        this.loginOrRegister('citizen', 1, '1234', 'DemoTester'),
+        this.loginOrRegister('worker', 2, '5678', 'Ramesh Kumar'),
+        this.loginOrRegister('admin', 3, '9999', 'Admin Office')
+      ]);
+      if (citizenAuth) this.sessions.citizen = citizenAuth;
+      if (workerAuth) this.sessions.worker = workerAuth;
+      if (adminAuth) this.sessions.admin = adminAuth;
+    } catch (e) {
+      console.warn('CleanCred: Auth initialization warning:', e);
+    }
+  }
+
+  async loginOrRegister(role, id, pin, defaultName) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: id, pin })
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {
+      console.warn(`CleanCred: Auth login failed for ${role}:`, e);
+      return null;
+    }
+
+    // Attempt creation if user is not in database
+    try {
+      const reg = await fetch(`${API_BASE_URL}/users`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: defaultName, role, pin })
+      });
+      if (reg.ok) {
+        const u = await reg.json();
+        const res2 = await fetch(`${API_BASE_URL}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: u.id, pin })
+        });
+        if (res2.ok) return await res2.json();
+      }
+    } catch (e) {
+      console.warn(`CleanCred: User registration fallback failed for ${role}:`, e);
+    }
+    return null;
+  }
+
+  async apiFetch(path, options = {}, role = null) {
+    if (this.authReady) {
+      await this.authReady;
+    }
+    const currentRole = role || this.state.currentRole || 'citizen';
+    const session = this.sessions[currentRole] || this.sessions.citizen;
+    const headers = Object.assign({}, options.headers || {});
+    if (session && session.access_token) {
+      headers['Authorization'] = `Bearer ${session.access_token}`;
+    }
+    let body = options.body;
+    if (body && !(body instanceof FormData) && typeof body === 'object') {
+      headers['Content-Type'] = 'application/json';
+      body = JSON.stringify(body);
+    }
+    const res = await fetch(`${API_BASE_URL}${path}`, {
+      ...options,
+      headers,
+      body
+    });
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      const errorMsg = errorData.detail || errorData.message || res.statusText || `Request failed with status ${res.status}`;
+      const err = new Error(errorMsg);
+      err.status = res.status;
+      err.detail = errorData.detail;
+      throw err;
+    }
+    const contentType = res.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
+      return await res.json();
+    }
+    return res;
+  }
+
+  async ensureImageBlob(formData) {
+    if (formData.photoFile instanceof Blob) {
+      return formData.photoFile;
+    }
+    if (formData.photoUrl && formData.photoUrl.startsWith('data:image')) {
+      const res = await fetch(formData.photoUrl);
+      return await res.blob();
+    }
+    if (formData.photoUrl && (formData.photoUrl.startsWith('http://') || formData.photoUrl.startsWith('https://'))) {
+      try {
+        const res = await fetch(formData.photoUrl, { mode: 'cors' });
+        if (res.ok) {
+          const b = await res.blob();
+          return new File([b], 'demo_waste.jpg', { type: b.type || 'image/jpeg' });
+        }
+      } catch (e) {
+        // CORS fallback
+      }
+    }
+    // Synthesize realistic jpeg blob on canvas
+    const canvas = document.createElement('canvas');
+    canvas.width = 320;
+    canvas.height = 320;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = formData.category === 'wet' ? '#15803d' : (formData.category === 'dry' ? '#1d4ed8' : '#b91c1c');
+    ctx.fillRect(0, 0, 320, 320);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 22px sans-serif';
+    ctx.fillText(formData.subType || formData.category || 'Waste Evidence', 24, 160);
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.85));
+    return new File([blob], `${formData.category || 'waste'}_sample.jpg`, { type: 'image/jpeg' });
+  }
+
+  // ------------------------------------------------------------------
+  // Reactive Store & Backend Sync
+  // ------------------------------------------------------------------
   async syncWithBackend() {
     try {
-      // 1. Sync reports from backend
-      const reportsRes = await fetch(`${API_BASE_URL}/users/1/reports`);
-      if (reportsRes.ok) {
-        const backendReports = await reportsRes.json();
-        if (Array.isArray(backendReports) && backendReports.length > 0) {
-          const backendIds = new Set(backendReports.map(r => r.id));
-          const localOnly = this.state.pickups.filter(p => !backendIds.has(p.id));
-          this.state.pickups = [...backendReports, ...localOnly];
+      if (this.authReady) await this.authReady;
 
-          const workerQueueBackend = backendReports.map(r => ({
-            id: r.id,
-            userName: r.userName || this.state.user.name,
-            address: r.address,
-            pickupSlot: r.pickupSlot,
-            category: r.category,
-            subType: r.subType,
-            quantityKg: r.quantityKg,
-            pointsReward: r.pointsReward,
-            status: r.status,
-            otp: r.otp,
-            photoUrl: r.photoUrl,
-            photoSource: r.photoSource,
-            geoCoords: r.geoCoords
+      // 1. Sync Citizen's own reports via GET /reports/mine (Citizen auth)
+      try {
+        const myReports = await this.apiFetch('/reports/mine', {}, 'citizen');
+        if (Array.isArray(myReports)) {
+          const mappedReports = myReports.map(r => {
+            const rawCat = (r.category || 'WET').toLowerCase();
+            const cat = rawCat === 'hazardous' ? 'harmful' : rawCat;
+            const existing = this.state.pickups.find(p => String(p.id) === String(r.id));
+            let status = 'created';
+            if (r.collected_at || r.status === 'COLLECTED') {
+              status = 'collected';
+            } else if (r.status === 'READY_FOR_COLLECTION') {
+              status = 'READY_FOR_COLLECTION';
+            } else if (r.status === 'WORKER_REJECTED') {
+              status = 'rejected';
+            } else if (existing && (existing.status === 'assigned' || existing.status === 'on_the_way')) {
+              status = existing.status;
+            }
+
+            return {
+              id: String(r.id),
+              category: cat,
+              categoryName: cat === 'wet' ? 'Wet Waste (Organic)' : (cat === 'dry' ? 'Dry Waste (Recyclable)' : 'Harmful Waste (Hazardous)'),
+              pointsReward: r.category === 'HAZARDOUS' ? 15 : (r.category === 'WET' ? 12 : 13),
+              quantityKg: 3.5,
+              subType: `${r.category} Waste`,
+              address: this.state.user.address || 'Flat 402, Green Meadows, Ward 4B, Mumbai',
+              createdAt: r.captured_at,
+              status,
+              workerName: 'Ramesh Kumar (Ward 4B Fleet)',
+              workerPhone: '+91 98111 22334',
+              vehicleNo: 'MH-02-GK-4091',
+              otp: String(r.id).padStart(4, '0'),
+              etaMinutes: 12,
+              verification_score: r.verification_score,
+              risk_level: r.risk_level,
+              risk_flags: r.risk_flags,
+              ai: {
+                predicted_category: r.predicted_category,
+                accepted: r.ai_accepted,
+                confidence: r.confidence,
+                explanation: r.explanation,
+                model: r.model
+              },
+              qr_token: (existing && existing.qr_token) || null,
+              geoCoords: { lat: r.report_lat, lng: r.report_lon }
+            };
+          });
+
+          const backendIds = new Set(mappedReports.map(r => r.id));
+          const localOnly = this.state.pickups.filter(p => !backendIds.has(String(p.id)));
+          this.state.pickups = [...mappedReports, ...localOnly];
+        }
+      } catch (err) {
+        console.warn('Citizen reports sync warning:', err);
+      }
+
+      // 2. Sync Worker Queue via GET /reports (Admin auth)
+      try {
+        const allReports = await this.apiFetch('/reports', {}, 'admin');
+        if (Array.isArray(allReports)) {
+          const mappedQueue = allReports.map(r => {
+            const rawCat = (r.category || 'WET').toLowerCase();
+            const cat = rawCat === 'hazardous' ? 'harmful' : rawCat;
+            const existing = this.state.workerQueue.find(w => String(w.id) === String(r.id));
+            let status = 'created';
+            if (r.collected_at || r.status === 'COLLECTED') {
+              status = 'collected';
+            } else if (r.status === 'READY_FOR_COLLECTION') {
+              status = 'READY_FOR_COLLECTION';
+            } else if (r.status === 'WORKER_REJECTED') {
+              status = 'rejected';
+            } else if (existing && (existing.status === 'assigned' || existing.status === 'on_the_way')) {
+              status = existing.status;
+            }
+
+            return {
+              id: String(r.id),
+              userName: r.citizen || this.state.user.name,
+              address: this.state.user.address,
+              category: cat,
+              subType: `${r.category} Waste`,
+              quantityKg: 3.5,
+              pointsReward: r.category === 'HAZARDOUS' ? 15 : (r.category === 'WET' ? 12 : 13),
+              status,
+              otp: String(r.id).padStart(4, '0'),
+              photoUrl: (existing && existing.photoUrl) || 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=300&q=80',
+              geoCoords: { lat: r.report_lat, lng: r.report_lon },
+              verification_score: r.verification_score,
+              risk_level: r.risk_level,
+              qr_token: (existing && existing.qr_token) || (this.state.pickups.find(p => String(p.id) === String(r.id))?.qr_token) || null
+            };
+          });
+          const queueIds = new Set(mappedQueue.map(q => q.id));
+          const localQueueOnly = this.state.workerQueue.filter(w => !queueIds.has(String(w.id)));
+          this.state.workerQueue = [...mappedQueue, ...localQueueOnly];
+        }
+      } catch (err) {
+        console.warn('Worker queue sync warning:', err);
+      }
+
+      // 3. Sync User Profile & Wallet via GET /wallet/1 (Citizen auth)
+      try {
+        const wallet = await this.apiFetch('/wallet/1', {}, 'citizen');
+        if (wallet && wallet.user) {
+          this.state.user.greenPoints = wallet.user.points;
+          this.state.user.greenCredits = wallet.user.points;
+          if (Array.isArray(wallet.transactions)) {
+            const mappedTx = wallet.transactions.map(t => ({
+              id: `TXN-${t.report_id || Math.floor(100000 + Math.random() * 900000)}`,
+              title: 'Verified Waste Collection',
+              category: 'EARN',
+              amountGp: t.points,
+              equivalentInr: Formatters.gpToInr(t.points),
+              date: t.created_at,
+              type: 'credit',
+              status: 'SUCCESS',
+              refId: String(t.report_id)
+            }));
+            const txIds = new Set(mappedTx.map(t => t.id));
+            const localTx = this.state.transactions.filter(t => !txIds.has(t.id));
+            this.state.transactions = [...mappedTx, ...localTx];
+          }
+        }
+      } catch (err) {
+        console.warn('Wallet sync warning:', err);
+      }
+
+      // 4. Sync Municipal Analytics via GET /analytics (Admin auth)
+      try {
+        const analytics = await this.apiFetch('/analytics', {}, 'admin');
+        if (analytics && analytics.totals) {
+          this.state.cityStats.verifiedPickups = analytics.totals.verified + 87540;
+          this.state.cityStats.greenPointsIssued = analytics.totals.credits + 4850000;
+          this.state.cityStats.activeCitizens = analytics.totals.citizens + 125420;
+          this.state.cityStats.analytics = analytics;
+        }
+      } catch (err) {
+        console.warn('Analytics sync warning:', err);
+      }
+
+      // 5. Sync Leaderboard via GET /leaderboard (Public)
+      try {
+        const lb = await this.apiFetch('/leaderboard', {}, 'citizen');
+        if (Array.isArray(lb) && lb.length > 0) {
+          this.state.leaderboards.global = lb.map((u, idx) => ({
+            rank: idx + 1,
+            name: u.name,
+            avatar: (u.name || 'U').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase(),
+            points: u.points,
+            wasteKg: Math.round(u.points / 10),
+            streak: 8,
+            location: 'Mumbai',
+            isUser: u.id === 1
           }));
-          const localOnlyWorker = this.state.workerQueue.filter(w => !backendIds.has(w.id));
-          this.state.workerQueue = [...workerQueueBackend, ...localOnlyWorker];
         }
-      }
-
-      // 2. Sync user profile & green points balance
-      const userRes = await fetch(`${API_BASE_URL}/users/1`);
-      if (userRes.ok) {
-        const userData = await userRes.json();
-        if (userData && typeof userData.greenPoints === 'number') {
-          this.state.user.greenPoints = userData.greenPoints;
-          if (userData.name) this.state.user.name = userData.name;
-          if (userData.email) this.state.user.email = userData.email;
-          if (userData.phone) this.state.user.phone = userData.phone;
-          if (userData.address) this.state.user.address = userData.address;
-        }
-      }
-
-      // 3. Sync dashboard stats
-      const dashRes = await fetch(`${API_BASE_URL}/dashboard`);
-      if (dashRes.ok) {
-        const dash = await dashRes.json();
-        if (dash && typeof dash.total_reports === 'number') {
-          this.state.cityStats.verifiedPickups = (dash.approved_reports || 0) + 87540;
-        }
+      } catch (err) {
+        console.warn('Leaderboard sync warning:', err);
       }
 
       this.notify();
     } catch (err) {
-      console.warn('CleanCred: Backend sync info (offline fallback active):', err);
+      console.warn('CleanCred: Backend sync info:', err);
     }
   }
 
-  // Submit New Waste Request (STEP 5: Real API POST /reports)
-  createWasteRequest(formData) {
-    const pointsMap = { wet: 10, dry: 7, harmful: 5 };
+  // Submit New Waste Request (POST /reports)
+  async createWasteRequest(formData) {
     const slot = formData.pickupSlot || 'Morning Route (08:00 AM - 11:00 AM)';
-    const localId = Formatters.generateRequestId();
+    const rawCat = (formData.category || 'wet').toLowerCase();
+    const category = rawCat === 'harmful' ? 'HAZARDOUS' : rawCat.toUpperCase();
+    const coords = formData.geoCoords || { lat: 19.0760, lng: 72.8777 };
+    const lat = typeof coords.lat === 'number' ? coords.lat : (Array.isArray(coords) ? coords[0] : 19.0760);
+    const lon = typeof coords.lng === 'number' ? coords.lng : (Array.isArray(coords) ? coords[1] : 72.8777);
+
+    // Get real image blob
+    const photoBlob = await this.ensureImageBlob(formData);
+
+    const postData = new FormData();
+    postData.append('category', category);
+    postData.append('latitude', lat.toString());
+    postData.append('longitude', lon.toString());
+    postData.append('image', photoBlob, photoBlob.name || 'waste_evidence.jpg');
+
+    // Call backend POST /reports (citizen role auth)
+    // Throws error on 409 duplicate SHA-256 or bad request
+    const data = await this.apiFetch('/reports', {
+      method: 'POST',
+      body: postData
+    }, 'citizen');
+
+    const serverId = String(data.report_id);
+    const pointsMap = { wet: 12, dry: 13, harmful: 15, HAZARDOUS: 15, WET: 12, DRY: 13 };
 
     const newRequest = {
-      id: localId,
-      category: formData.category,
-      categoryName: formData.category === 'wet' ? 'Wet Waste (Organic)' : formData.category === 'dry' ? 'Dry Waste (Recyclable)' : 'Harmful Waste (Hazardous)',
-      pointsReward: pointsMap[formData.category] || 5,
-      quantityKg: parseFloat(formData.quantity) || 3.0,
+      id: serverId,
+      category: rawCat,
+      categoryName: rawCat === 'wet' ? 'Wet Waste (Organic)' : (rawCat === 'dry' ? 'Dry Waste (Recyclable)' : 'Harmful Waste (Hazardous)'),
+      pointsReward: pointsMap[category] || 10,
+      quantityKg: parseFloat(formData.quantity) || 3.5,
       subType: formData.subType || 'General segregated waste',
       description: formData.description || '',
       address: formData.address || this.state.user.address,
@@ -584,21 +844,21 @@ class StateStore {
       pickupSlot: slot,
       scheduledDate: 'Today',
       scheduledTime: slot.includes('Morning') ? '08:00 AM - 11:00 AM' : (slot.includes('Afternoon') ? '02:00 PM - 05:00 PM' : slot),
-      createdAt: new Date().toISOString(),
+      createdAt: data.server_timestamp || new Date().toISOString(),
       status: 'created',
       workerName: 'Ramesh Kumar (Ward 4B Fleet)',
       workerPhone: '+91 98111 22334',
       vehicleNo: 'MH-02-GK-4091',
-      otp: Math.floor(1000 + Math.random() * 9000).toString(),
+      otp: serverId.padStart(4, '0'),
       etaMinutes: 18,
       photoUrl: formData.photoUrl || null,
       photoSource: formData.photoSource || 'demo',
-      geoCoords: formData.geoCoords || [19.0760, 72.8777]
+      geoCoords: { lat, lng: lon }
     };
 
     this.state.pickups.unshift(newRequest);
     this.state.workerQueue.unshift({
-      id: newRequest.id,
+      id: serverId,
       userName: this.state.user.name,
       address: newRequest.address,
       pickupSlot: newRequest.pickupSlot,
@@ -613,205 +873,226 @@ class StateStore {
       geoCoords: newRequest.geoCoords
     });
 
-    this.state.lastSubmittedRequestId = newRequest.id;
+    this.state.lastSubmittedRequestId = serverId;
 
     this.addNotification({
       title: '📋 Waste Request Created',
-      message: `Your pickup request #${newRequest.id} is confirmed. Status: Awaiting Worker Assignment.`,
+      message: `Your pickup request #${serverId} is confirmed. Status: Awaiting Worker Assignment.`,
       type: 'pickup'
     });
 
     this.notify();
-
-    // Multipart/form-data payload to real backend
-    const postData = new FormData();
-    postData.append('user_id', '1');
-    postData.append('waste_type', formData.category || 'wet');
-    postData.append('category', formData.category || 'wet');
-    postData.append('subtype', formData.subType || 'General segregated waste');
-    postData.append('approximate_weight', parseFloat(formData.quantity) || 3.0);
-    const coords = formData.geoCoords || [19.0760, 72.8777];
-    postData.append('latitude', coords[0]);
-    postData.append('longitude', coords[1]);
-    postData.append('address', formData.address || this.state.user.address);
-    postData.append('pickup_slot', slot);
-
-    fetch(`${API_BASE_URL}/reports`, {
-      method: 'POST',
-      body: postData
-    })
-      .then(res => res.ok ? res.json() : Promise.reject(res.statusText))
-      .then(data => {
-        if (data && data.report) {
-          const serverId = data.report.id;
-          newRequest.id = serverId;
-          this.state.lastSubmittedRequestId = serverId;
-          if (window.ReportWasteView) {
-            window.ReportWasteView.lastSubmittedRequestId = serverId;
-          }
-          const workerItem = this.state.workerQueue.find(w => w.id === localId);
-          if (workerItem) workerItem.id = serverId;
-          this.notify();
-        }
-      })
-      .catch(err => {
-        console.warn('Real backend report creation fallback:', err);
-      });
-
+    this.syncWithBackend().catch(() => {});
     return newRequest;
   }
 
-  // Worker Verifies Waste & Credits GC (STEP 5: Real API POST /reports/{id}/verify)
-  verifyWasteSubmission(pickupId, approved = true, adjustedWeightKg = null) {
-    const pickup = this.state.pickups.find(p => p.id === pickupId);
-    const workerItem = this.state.workerQueue.find(p => p.id === pickupId);
+  // Worker Verifies Waste (POST /verify)
+  async verifyWasteSubmission(pickupId, approved = true, workerCoords = null) {
+    const pickup = this.state.pickups.find(p => String(p.id) === String(pickupId));
+    const workerItem = this.state.workerQueue.find(p => String(p.id) === String(pickupId));
 
-    const alreadyVerified = (pickup && pickup.status === 'verified') || (workerItem && workerItem.status === 'verified');
-    if (alreadyVerified) {
+    if (!pickup && !workerItem) {
+      throw new Error(`Pickup #${pickupId} not found.`);
+    }
+
+    const currentStatus = (pickup ? pickup.status : workerItem.status);
+    if (currentStatus === 'READY_FOR_COLLECTION' || currentStatus === 'collected' || currentStatus === 'verified') {
       return {
         success: false,
         alreadyVerified: true,
-        message: "Pickup has already been verified and credited.",
-        points: (pickup && pickup.pointsCredited) || (pickup && pickup.pointsReward) || 0,
-        awardedPoints: 0,
-        weight: pickup ? pickup.quantityKg : null
+        message: 'Pickup has already been verified and one-time QR issued.',
+        qr_token: (pickup && pickup.qr_token) || (workerItem && workerItem.qr_token)
       };
     }
 
-    if (!pickup && !workerItem) {
-      return { success: false, message: `Pickup ${pickupId} not found.` };
+    // Determine report coordinates
+    const baseCoords = (pickup && pickup.geoCoords) || (workerItem && workerItem.geoCoords) || { lat: 19.0760, lng: 72.8777 };
+    const repLat = typeof baseCoords.lat === 'number' ? baseCoords.lat : (Array.isArray(baseCoords) ? baseCoords[0] : 19.0760);
+    const repLon = typeof baseCoords.lng === 'number' ? baseCoords.lng : (Array.isArray(baseCoords) ? baseCoords[1] : 72.8777);
+
+    let workerLat = repLat;
+    let workerLon = repLon;
+
+    if (workerCoords) {
+      workerLat = typeof workerCoords.lat === 'number' ? workerCoords.lat : (Array.isArray(workerCoords) ? workerCoords[0] : workerLat);
+      workerLon = typeof workerCoords.lng === 'number' ? workerCoords.lng : (Array.isArray(workerCoords) ? workerCoords[1] : workerLon);
     }
 
-    // Call real backend verification endpoint
-    fetch(`${API_BASE_URL}/reports/${encodeURIComponent(pickupId)}/verify?segregated=${approved}&source=worker`, {
-      method: 'POST'
-    })
-      .then(res => res.ok ? res.json() : Promise.reject(res.statusText))
-      .then(data => {
-        if (data) {
-          if (pickup && data.purity_score !== undefined) {
-            pickup.purity_score = data.purity_score;
-          }
-          if (workerItem && data.purity_score !== undefined) {
-            workerItem.purity_score = data.purity_score;
-          }
-          this.syncWithBackend();
-        }
-      })
-      .catch(err => console.warn('Backend verify call fallback:', err));
-
-    if (approved) {
-      const rateMap = { wet: 10, dry: 7, harmful: 5 };
-      const rate = pickup ? (rateMap[pickup.category] || pickup.pointsReward || 10) : 10;
-      const weight = (adjustedWeightKg !== null && adjustedWeightKg !== undefined) ? adjustedWeightKg : (pickup ? pickup.quantityKg : 4.0);
-      const points = (adjustedWeightKg !== null && adjustedWeightKg !== undefined) ? Math.round(weight * rate) : (pickup ? pickup.pointsReward : 10);
-
-      // Update Pickup Status
-      if (pickup) {
-        pickup.status = 'verified';
-        pickup.quantityKg = weight;
-        pickup.pointsCredited = points;
-      }
-      if (workerItem) {
-        workerItem.status = 'verified';
-        workerItem.quantityKg = weight;
-        workerItem.pointsReward = points;
-      }
-
-      // Credit User Points & Impact locally
-      this.state.user.greenPoints += points;
-      this.state.user.lifetimeWasteKg += weight;
-      this.state.user.pickupsCompleted += 1;
-      this.state.user.co2SavedKg += Math.round(weight * 0.65 * 10) / 10;
-      this.state.user.treesEquivalent = Math.round((this.state.user.co2SavedKg / 13.5) * 10) / 10;
-
-      const category = pickup ? pickup.category : 'wet';
-      if (this.state.user.wasteByCategoryKg && this.state.user.wasteByCategoryKg[category] !== undefined) {
-        this.state.user.wasteByCategoryKg[category] = Math.round((this.state.user.wasteByCategoryKg[category] + weight) * 10) / 10;
-      }
-
-      // Update Municipal Stats
-      this.state.cityStats.verifiedPickups += 1;
-      this.state.cityStats.greenPointsIssued += points;
-      this.state.cityStats.totalWasteTons = Math.round((this.state.cityStats.totalWasteTons + weight / 1000) * 100) / 100;
-      if (this.state.cityStats.wasteByCategoryTons && this.state.cityStats.wasteByCategoryTons[category] !== undefined) {
-        this.state.cityStats.wasteByCategoryTons[category] = Math.round((this.state.cityStats.wasteByCategoryTons[category] + weight / 1000) * 100) / 100;
-      }
-
-      // Add Ledger Transaction
-      this.state.transactions.unshift({
-        id: `TXN-${Math.floor(100000 + Math.random() * 900000)}`,
-        title: `${pickup ? pickup.categoryName : 'Waste'} Pickup Verified`,
-        category: category,
-        amount: points,
-        amountGp: points,
-        equivalentInr: Formatters.gpToInr(points),
-        date: new Date().toISOString(),
-        type: 'credit',
-        status: 'SUCCESS',
-        refId: pickupId
-      });
-
-      // Add Notification
-      this.addNotification({
-        title: `+${points} Green Credits issued`,
-        message: `Waste pickup #${pickupId} (${weight} kg) has been verified. Green Wallet updated.`,
-        type: 'points'
-      });
-
+    const reportId = parseInt(pickupId, 10);
+    if (isNaN(reportId)) {
+      // Demo item fallback
+      const fakeToken = `DEMO-QR-${Date.now()}`;
+      if (pickup) { pickup.status = approved ? 'READY_FOR_COLLECTION' : 'rejected'; pickup.qr_token = fakeToken; }
+      if (workerItem) { workerItem.status = approved ? 'READY_FOR_COLLECTION' : 'rejected'; workerItem.qr_token = fakeToken; }
       this.notify();
-      const purityScore = (pickup && pickup.purity_score) || (workerItem && workerItem.purity_score) || 95;
-      return { success: true, points, awardedPoints: points, weight, purity_score: purityScore };
+      return { success: true, qr_token: fakeToken, verification_score: 95, risk_level: 'LOW' };
+    }
+
+    // Call backend POST /verify with worker auth
+    // Throws if GPS gate >50m or AI rejection or unsegregated
+    const data = await this.apiFetch('/verify', {
+      method: 'POST',
+      body: {
+        report_id: reportId,
+        segregated: Boolean(approved),
+        worker_lat: workerLat,
+        worker_lon: workerLon
+      }
+    }, 'worker');
+
+    if (pickup) {
+      pickup.status = 'READY_FOR_COLLECTION';
+      pickup.qr_token = data.qr_token;
+      pickup.verification_score = data.verification_score;
+      pickup.risk_level = data.risk_level;
+      pickup.risk_flags = data.risk_flags;
+      pickup.ai = data.ai;
+    }
+    if (workerItem) {
+      workerItem.status = 'READY_FOR_COLLECTION';
+      workerItem.qr_token = data.qr_token;
+      workerItem.verification_score = data.verification_score;
+      workerItem.risk_level = data.risk_level;
+      workerItem.risk_flags = data.risk_flags;
+      workerItem.ai = data.ai;
+    }
+
+    this.notify();
+    this.syncWithBackend().catch(() => {});
+    return {
+      success: true,
+      report_id: reportId,
+      status: 'READY_FOR_COLLECTION',
+      qr_token: data.qr_token,
+      verification_score: data.verification_score,
+      risk_level: data.risk_level,
+      distance_m: data.distance_m
+    };
+  }
+
+  // Worker Collects Waste via One-Time QR Token (POST /collect)
+  async collectReport(pickupId, qrToken, workerCoords = null) {
+    const pickup = this.state.pickups.find(p => String(p.id) === String(pickupId));
+    const workerItem = this.state.workerQueue.find(p => String(p.id) === String(pickupId));
+
+    const currentStatus = (pickup ? pickup.status : workerItem?.status);
+    if (currentStatus === 'collected' || currentStatus === 'verified') {
+      return {
+        success: false,
+        alreadyCollected: true,
+        message: 'QR has already been consumed and pickup collected.'
+      };
+    }
+
+    const baseCoords = (pickup && pickup.geoCoords) || (workerItem && workerItem.geoCoords) || { lat: 19.0760, lng: 72.8777 };
+    const repLat = typeof baseCoords.lat === 'number' ? baseCoords.lat : (Array.isArray(baseCoords) ? baseCoords[0] : 19.0760);
+    const repLon = typeof baseCoords.lng === 'number' ? baseCoords.lng : (Array.isArray(baseCoords) ? baseCoords[1] : 72.8777);
+
+    let workerLat = repLat;
+    let workerLon = repLon;
+
+    if (workerCoords) {
+      workerLat = typeof workerCoords.lat === 'number' ? workerCoords.lat : (Array.isArray(workerCoords) ? workerCoords[0] : workerLat);
+      workerLon = typeof workerCoords.lng === 'number' ? workerCoords.lng : (Array.isArray(workerCoords) ? workerCoords[1] : workerLon);
+    }
+
+    const reportId = parseInt(pickupId, 10);
+    if (isNaN(reportId)) {
+      // Demo item fallback
+      const pts = (pickup && pickup.pointsReward) || 10;
+      if (pickup) { pickup.status = 'collected'; pickup.pointsCredited = pts; }
+      if (workerItem) { workerItem.status = 'collected'; }
+      this.state.user.greenPoints += pts;
+      this.notify();
+      return { success: true, credits_awarded: pts };
+    }
+
+    // Call backend POST /collect with worker auth
+    // Throws if GPS >50m, invalid token, or already consumed
+    const data = await this.apiFetch('/collect', {
+      method: 'POST',
+      body: {
+        report_id: reportId,
+        qr_token: qrToken,
+        worker_lat: workerLat,
+        worker_lon: workerLon
+      }
+    }, 'worker');
+
+    const points = data.credits_awarded || 10;
+    if (pickup) {
+      pickup.status = 'collected';
+      pickup.pointsCredited = points;
+    }
+    if (workerItem) {
+      workerItem.status = 'collected';
+    }
+
+    if (data.user && typeof data.user.points === 'number') {
+      this.state.user.greenPoints = data.user.points;
+      this.state.user.greenCredits = data.user.points;
     } else {
-      if (pickup) pickup.status = 'rejected';
-      if (workerItem) workerItem.status = 'rejected';
-
-      this.addNotification({
-        title: `Waste submission rejected`,
-        message: `Pickup #${pickupId} was rejected due to improper segregation. Please re-segregate and try again.`,
-        type: 'error'
-      });
-
-      this.notify();
-      return { success: false };
+      this.state.user.greenPoints += points;
+      this.state.user.greenCredits += points;
     }
+
+    // Update transactions & notifications
+    this.state.transactions.unshift({
+      id: `TXN-${reportId}`,
+      title: 'Verified Waste Collection',
+      category: 'EARN',
+      amountGp: points,
+      equivalentInr: Formatters.gpToInr(points),
+      date: data.collected_at || new Date().toISOString(),
+      type: 'credit',
+      status: 'SUCCESS',
+      refId: String(reportId)
+    });
+
+    this.addNotification({
+      title: `+${points} Green Credits Issued`,
+      message: `Pickup #${reportId} verified & collected. One-time QR consumed.`,
+      type: 'points'
+    });
+
+    this.notify();
+    this.syncWithBackend().catch(() => {});
+    return {
+      success: true,
+      report_id: reportId,
+      status: 'COLLECTED',
+      credits_awarded: points,
+      user: data.user
+    };
   }
 
-  // Award Credits: backend auto-awards inside /verify (STEP 5)
+  // Award Credits backwards-compatible bridge
   awardCredits(pickupId, weight = null) {
-    return this.verifyWasteSubmission(pickupId, true, weight);
+    const pickup = this.state.pickups.find(p => String(p.id) === String(pickupId));
+    const token = (pickup && pickup.qr_token) || (this.state.workerQueue.find(w => String(w.id) === String(pickupId))?.qr_token);
+    if (token) {
+      return this.collectReport(pickupId, token);
+    }
+    return this.verifyWasteSubmission(pickupId, true);
   }
 
-  // Lifecycle status updates (STEP 5: Real API POST /collect and /verify-location)
+  // Lifecycle status updates
   updatePickupStatus(pickupId, newStatus) {
-    const validStatuses = ['created', 'assigned', 'on_the_way', 'collected', 'verified', 'rejected'];
+    const validStatuses = ['created', 'assigned', 'on_the_way', 'READY_FOR_COLLECTION', 'collected', 'verified', 'rejected'];
     if (!validStatuses.includes(newStatus)) {
       console.warn(`CleanCred: Invalid status ${newStatus}`);
       return { success: false, message: `Invalid status ${newStatus}` };
     }
 
-    const pickup = this.state.pickups.find(p => p.id === pickupId);
-    const workerItem = this.state.workerQueue.find(p => p.id === pickupId);
+    const pickup = this.state.pickups.find(p => String(p.id) === String(pickupId));
+    const workerItem = this.state.workerQueue.find(p => String(p.id) === String(pickupId));
 
     if (!pickup && !workerItem) {
       return { success: false, message: `Pickup ${pickupId} not found` };
     }
 
-    // Call corresponding backend endpoints (STEP 5)
-    if (newStatus === 'collected') {
-      fetch(`${API_BASE_URL}/reports/${encodeURIComponent(pickupId)}/collect`, {
-        method: 'POST'
-      }).catch(e => console.warn('Backend collect endpoint call:', e));
-    } else if (newStatus === 'on_the_way') {
-      const lat = (pickup && pickup.currentLocation && pickup.currentLocation[0]) || 19.0620;
-      const lon = (pickup && pickup.currentLocation && pickup.currentLocation[1]) || 72.8410;
-      fetch(`${API_BASE_URL}/reports/${encodeURIComponent(pickupId)}/verify-location?worker_latitude=${lat}&worker_longitude=${lon}`, {
-        method: 'POST'
-      }).catch(e => console.warn('Backend verify-location endpoint call:', e));
-    }
-
     const currentStatus = (pickup ? pickup.status : workerItem.status) || 'created';
-    if (currentStatus === 'verified' || currentStatus === 'rejected') {
+    if (currentStatus === 'collected' || currentStatus === 'verified' || currentStatus === 'rejected') {
       return { success: false, message: `Pickup is already in terminal status "${currentStatus}"` };
     }
 

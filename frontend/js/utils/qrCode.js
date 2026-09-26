@@ -11,40 +11,36 @@
 const QR_PREFIX = 'GREENLEGACY:';
 
 export const QRCode = {
-  // The exact string encoded into a pickup's QR code.
-  payloadFor(pickupId) {
-    return `${QR_PREFIX}${pickupId}`;
+  // The exact string encoded into a pickup's QR code (now the real one-time token).
+  payloadFor(tokenOrId) {
+    if (!tokenOrId) return '';
+    return String(tokenOrId).trim();
   },
 
-  // Extract a pickup ID from scanned or manually-typed text. Accepts the
-  // full prefixed payload ("GREENLEGACY:GK-2026-89421") from a real scan,
-  // or a bare request ID ("GK-2026-89421") typed into the manual fallback.
-  // Returns null if the text doesn't look like a Green Legacy pickup ID at all.
-  extractPickupId(rawText) {
+  // Extract a raw one-time token or pickup ID from scanned or manually-typed text.
+  extractToken(rawText) {
     if (!rawText) return null;
-    const text = String(rawText).trim();
-
+    let text = String(rawText).trim();
     if (text.toUpperCase().startsWith(QR_PREFIX)) {
-      return text.slice(QR_PREFIX.length).trim().toUpperCase();
+      text = text.slice(QR_PREFIX.length).trim();
     }
-    if (/^GK-\d{4}-\d+$/i.test(text)) {
-      return text.toUpperCase();
-    }
-    return null;
+    return text || null;
+  },
+
+  // Extract a pickup ID or token from scanned or manually-typed text.
+  extractPickupId(rawText) {
+    return this.extractToken(rawText);
   },
 
   // Render an actual scannable QR code (SVG) into a container element.
-  // Honest about failure: if the vendored library didn't load (e.g. no
-  // internet at demo time), shows the plain-text request ID instead of
-  // pretending a QR code is there.
-  renderInto(containerId, pickupId) {
+  renderInto(containerId, tokenOrId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
     if (typeof window.qrcode !== 'function') {
       container.innerHTML = `
         <div style="font-family: monospace; font-size: 0.75rem; color: var(--text-muted); padding: 0.75rem; border: 1px dashed var(--color-border); border-radius: var(--radius-md); text-align: center;">
-          QR library unavailable (possibly offline).<br>Show Request ID <strong>${pickupId}</strong> to the collector instead.
+          QR library unavailable (possibly offline).<br>Token: <strong>${tokenOrId}</strong>
         </div>
       `;
       return;
@@ -52,14 +48,14 @@ export const QRCode = {
 
     try {
       const qr = window.qrcode(0, 'M');
-      qr.addData(this.payloadFor(pickupId));
+      qr.addData(this.payloadFor(tokenOrId));
       qr.make();
       container.innerHTML = qr.createSvgTag(4, 2);
     } catch (e) {
-      console.warn('Green Legacy: could not render QR code.', e);
+      console.warn('CleanCred: could not render QR code.', e);
       container.innerHTML = `
         <div style="font-family: monospace; font-size: 0.75rem; color: var(--text-muted); padding: 0.75rem; border: 1px dashed var(--color-border); border-radius: var(--radius-md); text-align: center;">
-          QR could not be rendered.<br>Show Request ID <strong>${pickupId}</strong> to the collector instead.
+          QR could not be rendered.<br>Token: <strong>${tokenOrId}</strong>
         </div>
       `;
     }

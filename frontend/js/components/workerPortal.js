@@ -100,33 +100,41 @@ export const WorkerPortalView = {
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
-                  ${item.status === 'verified' ? `
+                  ${item.status === 'COLLECTED' || item.status === 'collected' || item.status === 'verified' ? `
                     <span class="badge" style="background: #D1FAE5; color: #065F46; font-size: 0.88rem; padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.35rem;">
                       <i data-lucide="check-circle-2" class="lucide-icon-sm"></i>
-                      <span>Verified (${item.purity_score ? item.purity_score + '% Purity • ' : ''}+${item.pointsReward} GC)</span>
+                      <span>Collected &amp; Verified (+${item.pointsReward || 10} Credits)</span>
                     </span>
-                  ` : item.status === 'rejected' ? `
+                  ` : item.status === 'rejected' || item.status === 'WORKER_REJECTED' ? `
                     <span class="badge" style="background: #FEE2E2; color: #991B1B; font-size: 0.88rem; padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.35rem;">
                       <i data-lucide="x-circle" class="lucide-icon-sm"></i>
                       <span>Rejected</span>
                     </span>
-                  ` : item.status === 'created' ? `
+                  ` : item.status === 'READY_FOR_COLLECTION' ? `
+                    <button class="btn btn-primary btn-sm" style="background: #10B981; border-color: #10B981; font-weight: 700;" onclick="window.WorkerPortalView.openScanModalForPickup('${item.id}')">
+                      <i data-lucide="qr-code" class="lucide-icon-sm"></i>
+                      <span>Scan / Collect QR</span>
+                    </button>
+                  ` : item.status === 'created' || item.status === 'SUBMITTED' ? `
                     <button class="btn btn-secondary btn-sm" onclick="window.WorkerPortalView.advanceStatus('${item.id}', 'assigned')">
                       <i data-lucide="check" class="lucide-icon-sm"></i>
                       <span>Accept Route</span>
+                    </button>
+                    <button class="btn btn-primary btn-sm" onclick="window.WorkerPortalView.openVerificationModal('${item.id}')">
+                      <i data-lucide="scale" class="lucide-icon-sm"></i>
+                      <span>Inspect &amp; Verify</span>
                     </button>
                   ` : item.status === 'assigned' ? `
                     <button class="btn btn-secondary btn-sm" onclick="window.WorkerPortalView.advanceStatus('${item.id}', 'on_the_way')">
                       <i data-lucide="truck" class="lucide-icon-sm"></i>
                       <span>Start Route</span>
                     </button>
-                  ` : item.status === 'on_the_way' ? `
-                    <button class="btn btn-primary btn-sm" onclick="window.WorkerPortalView.advanceStatus('${item.id}', 'collected')">
-                      <i data-lucide="package-check" class="lucide-icon-sm"></i>
-                      <span>Mark Collected</span>
+                    <button class="btn btn-primary btn-sm" onclick="window.WorkerPortalView.openVerificationModal('${item.id}')">
+                      <i data-lucide="scale" class="lucide-icon-sm"></i>
+                      <span>Inspect &amp; Verify</span>
                     </button>
                   ` : `
-                    <button class="btn btn-primary" onclick="window.WorkerPortalView.openVerificationModal('${item.id}')">
+                    <button class="btn btn-primary btn-sm" onclick="window.WorkerPortalView.openVerificationModal('${item.id}')">
                       <i data-lucide="scale" class="lucide-icon-sm"></i>
                       <span>Inspect &amp; Verify</span>
                     </button>
@@ -177,13 +185,8 @@ export const WorkerPortalView = {
 
   openVerificationModal(pickupId) {
     SoundFX.playClick();
-    const item = State.state.workerQueue.find(q => q.id === pickupId);
+    const item = State.state.workerQueue.find(q => String(q.id) === String(pickupId));
     if (!item) return;
-
-    if (item.status !== 'collected') {
-      window.AppRouter.showToast('Pickup must be collected before verification.');
-      return;
-    }
 
     this.selectedPickup = item;
     const modalBody = document.getElementById('worker-modal-body');
@@ -195,7 +198,7 @@ export const WorkerPortalView = {
           </div>
           <div>
             <h3 style="color: var(--color-navy); margin: 0; font-size: 1.25rem;">Scale Verification &amp; Inspection</h3>
-            <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.15rem 0 0 0;">Request #${item.id} &bull; Citizen: ${item.userName}</p>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-0.15rem 0 0 0;">Request #${item.id} &bull; Citizen: ${item.userName}</p>
           </div>
         </div>
 
@@ -206,7 +209,7 @@ export const WorkerPortalView = {
         </div>
 
         <!-- Segregation Quality Checklist -->
-        <div class="neu-card-inset" style="padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+        <div class="neu-card-inset" style="padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem;">
           <strong style="color: var(--color-navy); font-size: 0.85rem; display: block; margin-bottom: 0.5rem;">Physical Segregation Checklist:</strong>
           <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; margin-bottom: 0.35rem; cursor: pointer;">
             <input type="checkbox" checked id="chk-clean" style="accent-color: var(--color-primary);"> Zero hazardous / non-biodegradable cross-contamination
@@ -216,6 +219,17 @@ export const WorkerPortalView = {
           </label>
           <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; cursor: pointer;">
             <input type="checkbox" checked id="chk-bin" style="accent-color: var(--color-primary);"> Packed in standardized municipal color-coded bag
+          </label>
+        </div>
+
+        <!-- GPS Proximity Gate Checklist & Attack Test -->
+        <div class="neu-card-inset" style="padding: 0.85rem 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; border-left: 3px solid #EF4444;">
+          <div style="font-size: 0.82rem; font-weight: 700; color: var(--color-navy); margin-bottom: 0.25rem;">
+            GPS Proximity Hard Gate (50m Limit)
+          </div>
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; cursor: pointer; color: #DC2626; font-weight: 700;">
+            <input type="checkbox" id="chk-gps-distant" style="accent-color: #DC2626;">
+            <span>Simulate Worker &gt;50m away (GPS spoof/mismatch test)</span>
           </label>
         </div>
 
@@ -236,7 +250,7 @@ export const WorkerPortalView = {
           </button>
           <button class="btn btn-primary btn-lg" onclick="window.WorkerPortalView.processVerification('${item.id}', true)">
             <i data-lucide="check-circle-2" class="lucide-icon-sm"></i>
-            <span>Approve &amp; Release Credits</span>
+            <span>Approve &amp; Verify Segregation</span>
           </button>
         </div>
       `;
@@ -251,27 +265,33 @@ export const WorkerPortalView = {
     document.getElementById('worker-inspect-modal').classList.remove('active');
   },
 
-  processVerification(pickupId, approved) {
+  async processVerification(pickupId, approved) {
     if (approved) {
-      const slider = document.getElementById('modal-weight-slider');
-      const verifiedWeight = slider ? parseFloat(slider.value) : undefined;
-      const res = State.awardCredits(pickupId, verifiedWeight);
+      const isDistant = document.getElementById('chk-gps-distant')?.checked;
+      const workerCoords = isDistant ? { lat: 19.0800, lng: 72.8800 } : null;
 
-      if (res && res.alreadyVerified) {
-        SoundFX.playClick();
-        window.AppRouter.showToast('Pickup already verified — credits are on record.');
-      } else if (res && res.success && (res.points > 0 || res.awardedPoints > 0)) {
-        SoundFX.playPointsEarned();
-        Confetti.trigger(90);
-        const purityText = res.purity_score ? ` (Purity: ${res.purity_score}%)` : '';
-        window.AppRouter.showToast(`Pickup verified!${purityText} +${res.points || res.awardedPoints} Green Credits released.`);
-      } else {
-        SoundFX.playClick();
-        window.AppRouter.showToast(res && res.message ? res.message : 'Verification could not be completed.');
+      try {
+        const res = await State.verifyWasteSubmission(pickupId, true, workerCoords);
+        if (res && res.alreadyVerified) {
+          SoundFX.playClick();
+          window.AppRouter.showToast('Pickup already verified — ready for QR collection.');
+        } else if (res && res.success) {
+          SoundFX.playPointsEarned();
+          const scoreText = res.verification_score ? ` (Score: ${res.verification_score} · Risk: ${res.risk_level})` : '';
+          window.AppRouter.showToast(`Inspection verified!${scoreText} One-time Handover QR generated.`);
+        }
+      } catch (err) {
+        console.error('CleanCred: Verification failed:', err);
+        const msg = err.detail || err.message || 'Verification could not be completed';
+        window.AppRouter.showToast(`Verification Error: ${msg}`);
       }
     } else {
       SoundFX.playClick();
-      State.updatePickupStatus(pickupId, 'rejected');
+      try {
+        await State.verifyWasteSubmission(pickupId, false);
+      } catch (err) {
+        // worker rejected
+      }
       window.AppRouter.showToast('Pickup marked as rejected.');
     }
 
@@ -283,7 +303,12 @@ export const WorkerPortalView = {
   // QR Scan Verification
   // ------------------------------------------------------------------
   openScanModal() {
+    this.openScanModalForPickup(null);
+  },
+
+  openScanModalForPickup(pickupId) {
     SoundFX.playClick();
+    this.targetPickupId = pickupId;
     const modal = document.getElementById('worker-scan-modal');
     if (!modal) return;
     modal.classList.add('active');
@@ -297,6 +322,7 @@ export const WorkerPortalView = {
     }
     const modal = document.getElementById('worker-scan-modal');
     if (modal) modal.classList.remove('active');
+    this.targetPickupId = null;
     this.render();
   },
 
@@ -306,8 +332,8 @@ export const WorkerPortalView = {
 
     body.innerHTML = `
       <div style="text-align: center;">
-        <h3 style="color: var(--color-navy); margin-bottom: 0.25rem;">Scan Citizen Pickup QR</h3>
-        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">Align citizen QR code inside the camera viewfinder.</p>
+        <h3 style="color: var(--color-navy); margin-bottom: 0.25rem;">Scan Citizen Handover QR</h3>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">Align citizen one-time QR code inside the camera viewfinder.</p>
 
         <div style="position: relative; width: 100%; aspect-ratio: 1 / 1; background: #0A1929; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1rem;">
           <video id="worker-scan-video" style="width: 100%; height: 100%; object-fit: cover;" muted></video>
@@ -319,7 +345,7 @@ export const WorkerPortalView = {
 
         <button class="btn btn-secondary btn-block" onclick="window.WorkerPortalView.useManualFallback()">
           <i data-lucide="keyboard" class="lucide-icon-sm"></i>
-          <span>Enter Request ID Manually</span>
+          <span>Enter One-Time Token Manually</span>
         </button>
       </div>
     `;
@@ -339,20 +365,35 @@ export const WorkerPortalView = {
     const body = document.getElementById('worker-scan-body');
     if (!body) return;
 
+    let targetItem = null;
+    if (this.targetPickupId) {
+      targetItem = State.state.workerQueue.find(q => String(q.id) === String(this.targetPickupId));
+    }
+    const prefillToken = (targetItem && targetItem.qr_token) ? targetItem.qr_token : '';
+
     body.innerHTML = `
       <div style="text-align: center;">
-        <h3 style="color: var(--color-navy); margin-bottom: 0.25rem;">Manual Request Verification</h3>
-        <span class="badge" style="background: #FEF3C7; color: #92400E; font-weight: 700; margin-bottom: 1rem;">Enter Request ID</span>
+        <h3 style="color: var(--color-navy); margin-bottom: 0.25rem;">Manual Token Verification</h3>
+        <span class="badge" style="background: #FEF3C7; color: #92400E; font-weight: 700; margin-bottom: 1rem;">Enter Handover Token</span>
         ${errorMessage ? `<p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem;">${errorMessage}</p>` : ''}
 
         <div class="form-group" style="text-align: left;">
-          <label class="form-label">Pickup Request ID</label>
-          <input type="text" id="manual-pickup-id" class="form-input neu-input" placeholder="e.g. GK-2026-89421" style="text-transform: uppercase;" onkeydown="if(event.key==='Enter') window.WorkerPortalView.submitManualId()">
+          <label class="form-label">One-Time QR Token</label>
+          <input type="text" id="manual-pickup-id" class="form-input neu-input" placeholder="e.g. CC-A1B2C3D4 or Token" value="${prefillToken}" style="font-family: var(--font-mono); font-size: 0.95rem;" onkeydown="if(event.key==='Enter') window.WorkerPortalView.submitManualId()">
+          ${targetItem ? `<div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.35rem;">Targeting Request #${targetItem.id} (${targetItem.userName})</div>` : ''}
+        </div>
+
+        <!-- GPS Proximity Gate Checklist & Attack Test -->
+        <div class="neu-card-inset" style="padding: 0.75rem 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; border-left: 3px solid #EF4444; text-align: left;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; cursor: pointer; color: #DC2626; font-weight: 700;">
+            <input type="checkbox" id="chk-scan-distant" style="accent-color: #DC2626;">
+            <span>Simulate Worker &gt;50m away (GPS collection test)</span>
+          </label>
         </div>
 
         <button class="btn btn-primary btn-lg btn-block" style="margin-top: 0.5rem;" onclick="window.WorkerPortalView.submitManualId()">
           <i data-lucide="check" class="lucide-icon-sm"></i>
-          <span>Verify Pickup</span>
+          <span>Verify &amp; Collect Pickup</span>
         </button>
         <button class="btn btn-secondary btn-block" style="margin-top: 0.5rem;" onclick="window.WorkerPortalView.renderScanCameraView()">
           <i data-lucide="camera" class="lucide-icon-sm"></i>
@@ -378,55 +419,58 @@ export const WorkerPortalView = {
 
   handleScannedText(rawText) {
     SoundFX.playClick();
-    const pickupId = QRCode.extractPickupId(rawText);
+    const token = QRCode.extractToken(rawText);
 
-    if (!pickupId) {
+    if (!token) {
       this.renderScanResult({ state: 'invalid', raw: rawText });
       return;
     }
 
-    const queueItem = State.state.workerQueue.find(q => q.id === pickupId);
-    const pickupRecord = State.state.pickups.find(p => p.id === pickupId);
+    // Match item by targetPickupId, or by qr_token, or by id
+    let queueItem = null;
+    if (this.targetPickupId) {
+      queueItem = State.state.workerQueue.find(q => String(q.id) === String(this.targetPickupId));
+    }
+    if (!queueItem) {
+      queueItem = State.state.workerQueue.find(q => q.qr_token === token || String(q.id) === token);
+    }
+    if (!queueItem) {
+      queueItem = State.state.workerQueue.find(q => q.status === 'READY_FOR_COLLECTION');
+    }
 
-    if (!queueItem && !pickupRecord) {
-      this.renderScanResult({ state: 'invalid', raw: rawText, pickupId });
+    if (!queueItem) {
+      this.renderScanResult({ state: 'invalid', raw: token });
       return;
     }
 
-    const isVerified = (queueItem && queueItem.status === 'verified') || (pickupRecord && pickupRecord.status === 'verified');
-    if (isVerified) {
+    if (queueItem.status === 'collected' || queueItem.status === 'verified') {
       this.renderScanResult({
         state: 'already-verified',
         item: {
-          id: pickupId,
-          userName: (queueItem && queueItem.userName) || State.state.user.name,
-          pointsCredited: (pickupRecord && pickupRecord.pointsCredited) || (queueItem && queueItem.pointsReward) || 0
+          id: queueItem.id,
+          userName: queueItem.userName,
+          pointsCredited: queueItem.pointsReward || 10
         }
       });
       return;
     }
 
-    if (!queueItem) {
-      this.renderScanResult({ state: 'invalid', raw: rawText, pickupId });
-      return;
-    }
-
-    this.renderScanResult({ state: 'confirm', item: queueItem });
+    this.renderScanResult({ state: 'confirm', item: queueItem, token });
   },
 
-  renderScanResult({ state, item, raw, pickupId }) {
+  renderScanResult({ state, item, raw, message, pickupId }) {
     const body = document.getElementById('worker-scan-body');
     if (!body) return;
 
-    if (state === 'invalid') {
+    if (state === 'invalid' || state === 'error') {
       body.innerHTML = `
         <div style="text-align: center;">
           <div style="width: 52px; height: 52px; border-radius: 50%; background: #FEE2E2; color: #DC2626; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
             <i data-lucide="x-circle" class="lucide-icon-lg"></i>
           </div>
-          <h3 style="color: #991B1B; margin-bottom: 0.25rem;">Invalid QR / Request ID</h3>
+          <h3 style="color: #991B1B; margin-bottom: 0.25rem;">Collection Rejected</h3>
           <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
-            "${pickupId || raw}" doesn't match any pickup assigned to you.
+            ${message || `"${raw}" could not be collected.`}
           </p>
           <button class="btn btn-primary btn-block" onclick="window.WorkerPortalView.renderScanCameraView()">
             Try Again
@@ -443,9 +487,9 @@ export const WorkerPortalView = {
           <div style="width: 52px; height: 52px; border-radius: 50%; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
             <i data-lucide="check-circle-2" class="lucide-icon-lg"></i>
           </div>
-          <h3 style="color: var(--color-primary-dark); margin-bottom: 0.25rem;">Already Verified</h3>
+          <h3 style="color: var(--color-primary-dark); margin-bottom: 0.25rem;">Already Collected</h3>
           <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
-            Pickup #${item.id}${item.userName ? ` (${item.userName})` : ''} was already verified${item.pointsCredited ? ` — ${item.pointsCredited} GC were already credited` : ''}. No duplicate points awarded.
+            Pickup #${item.id}${item.userName ? ` (${item.userName})` : ''} has already been collected and credits credited. No duplicate tokens permitted.
           </p>
           <button class="btn btn-secondary btn-block" onclick="window.WorkerPortalView.closeScanModal()">
             Close
@@ -462,71 +506,72 @@ export const WorkerPortalView = {
         <div style="width: 52px; height: 52px; border-radius: 50%; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
           <i data-lucide="qr-code" class="lucide-icon-lg"></i>
         </div>
-        <span class="badge badge-green" style="margin-bottom: 0.75rem;">QR Verified &bull; Authentic Request</span>
+        <span class="badge badge-green" style="margin-bottom: 0.75rem;">Token Authenticated</span>
         <h3 style="color: var(--color-navy); margin-bottom: 0.75rem;">${item.subType}</h3>
 
-        <div class="neu-card-inset" style="padding: 1rem; border-radius: var(--radius-md); text-align: left; margin-bottom: 1.25rem; font-size: 0.85rem;">
-          <div class="flex-between" style="margin-bottom: 0.4rem;"><span style="color: var(--text-muted);">Request ID:</span><strong>${item.id}</strong></div>
+        <div class="neu-card-inset" style="padding: 1rem; border-radius: var(--radius-md); text-align: left; margin-bottom: 1rem; font-size: 0.85rem;">
+          <div class="flex-between" style="margin-bottom: 0.4rem;"><span style="color: var(--text-muted);">Request ID:</span><strong>#${item.id}</strong></div>
           <div class="flex-between" style="margin-bottom: 0.4rem;"><span style="color: var(--text-muted);">Citizen:</span><strong>${item.userName}</strong></div>
-          <div class="flex-between" style="margin-bottom: 0.4rem;"><span style="color: var(--text-muted);">Declared Weight:</span><strong>${item.quantityKg} KG</strong></div>
-          <div class="flex-between"><span style="color: var(--text-muted);">Points Reward:</span><strong style="color: var(--color-primary-dark);">+${item.pointsReward} GC</strong></div>
+          <div class="flex-between" style="margin-bottom: 0.4rem;"><span style="color: var(--text-muted);">Token:</span><strong style="font-family: var(--font-mono);">${item.token || item.qr_token || 'VERIFIED'}</strong></div>
+          <div class="flex-between"><span style="color: var(--text-muted);">Credits Reward:</span><strong style="color: var(--color-primary-dark);">+${item.pointsReward || 10} Credits</strong></div>
         </div>
 
-        <button class="btn btn-primary btn-lg btn-block" onclick="window.WorkerPortalView.confirmScannedPickup('${item.id}')">
+        <!-- GPS Proximity Gate Checklist & Attack Test -->
+        <div class="neu-card-inset" style="padding: 0.75rem 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; border-left: 3px solid #EF4444; text-align: left;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; cursor: pointer; color: #DC2626; font-weight: 700;">
+            <input type="checkbox" id="chk-scan-distant" style="accent-color: #DC2626;">
+            <span>Simulate Worker &gt;50m away (GPS collection test)</span>
+          </label>
+        </div>
+
+        <button class="btn btn-primary btn-lg btn-block" onclick="window.WorkerPortalView.confirmScannedPickup('${item.id}', '${item.token || item.qr_token || ''}')">
           <i data-lucide="check" class="lucide-icon-sm"></i>
-          <span>Confirm Collection &amp; Issue Credits</span>
+          <span>Confirm Collection &amp; Disburse Credits</span>
         </button>
       </div>
     `;
     if (window.lucide) window.lucide.createIcons();
   },
 
-  confirmScannedPickup(pickupId) {
-    const pickup = State.state.pickups.find(p => p.id === pickupId);
-    if (pickup && pickup.status !== 'collected' && pickup.status !== 'verified' && pickup.status !== 'rejected') {
-      if (pickup.status === 'created') State.updatePickupStatus(pickupId, 'assigned');
-      if (pickup.status === 'assigned') State.updatePickupStatus(pickupId, 'on_the_way');
-      if (pickup.status === 'on_the_way') State.updatePickupStatus(pickupId, 'collected');
-    }
-    const result = State.awardCredits(pickupId);
+  async confirmScannedPickup(pickupId, token) {
+    const isDistant = document.getElementById('chk-scan-distant')?.checked;
+    const workerCoords = isDistant ? { lat: 19.0800, lng: 72.8800 } : null;
 
-    const modal = document.getElementById('worker-scan-modal');
-    if (modal) modal.classList.add('active');
-    const body = document.getElementById('worker-scan-body');
-    if (!body) return;
+    try {
+      const result = await State.collectReport(pickupId, token, workerCoords);
+      if (result && result.success) {
+        SoundFX.playPointsEarned();
+        Confetti.trigger(90);
 
-    if (!result || !result.success || result.alreadyVerified || !(result.points > 0)) {
-      const queueItem = State.state.workerQueue.find(q => q.id === pickupId);
-      const pickupRecord = State.state.pickups.find(p => p.id === pickupId);
-      this.renderScanResult({
-        state: 'already-verified',
-        item: {
-          id: pickupId,
-          userName: (queueItem && queueItem.userName) || State.state.user.name,
-          pointsCredited: (result && result.points) || (pickupRecord && pickupRecord.pointsCredited) || 0
+        const body = document.getElementById('worker-scan-body');
+        if (body) {
+          body.innerHTML = `
+            <div style="text-align: center;">
+              <div style="width: 56px; height: 56px; border-radius: 50%; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
+                <i data-lucide="check-circle-2" class="lucide-icon-lg"></i>
+              </div>
+              <h3 style="color: var(--color-primary-dark); margin-bottom: 0.5rem;">Collection Verified</h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+                +${result.credits_awarded} Credits disbursed to citizen. Lifecycle status updated to Collected.
+              </p>
+              <button class="btn btn-primary btn-lg btn-block" onclick="window.WorkerPortalView.closeScanModal()">
+                Done
+              </button>
+            </div>
+          `;
+          if (window.lucide) window.lucide.createIcons();
         }
+      }
+    } catch (err) {
+      console.error('CleanCred: Collection failed:', err);
+      const msg = err.detail || err.message || 'Collection failed';
+      window.AppRouter.showToast(`Collection Error: ${msg}`);
+      this.renderScanResult({
+        state: 'error',
+        message: msg,
+        pickupId
       });
-      return;
     }
-
-    SoundFX.playPointsEarned();
-    Confetti.trigger(90);
-
-    body.innerHTML = `
-      <div style="text-align: center;">
-        <div style="width: 56px; height: 56px; border-radius: 50%; background: #DCFCE7; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
-          <i data-lucide="check-circle-2" class="lucide-icon-lg"></i>
-        </div>
-        <h3 style="color: var(--color-primary-dark); margin-bottom: 0.5rem;">Collection Verified</h3>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
-          +${result.points} Green Credits disbursed to citizen. Lifecycle status updated to Verified.
-        </p>
-        <button class="btn btn-primary btn-lg btn-block" onclick="window.WorkerPortalView.closeScanModal()">
-          Done
-        </button>
-      </div>
-    `;
-    if (window.lucide) window.lucide.createIcons();
   },
 
   cleanup() {

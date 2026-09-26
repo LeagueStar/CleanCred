@@ -22,6 +22,7 @@ export const ReportWasteView = {
     pickupSlot: 'Morning Route (08:00 AM - 11:00 AM)',
     notes: '',
     photoUrl: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&q=80',
+    photoFile: null,
     photoSource: 'demo', // 'upload' | 'demo'
     aiVerified: true,
     geoCoords: null,
@@ -112,6 +113,7 @@ export const ReportWasteView = {
       pickupSlot: 'Morning Route (08:00 AM - 11:00 AM)',
       notes: '',
       photoUrl: initialPhoto,
+      photoFile: null,
       photoSource: 'demo',
       aiVerified: true,
       geoCoords: null,
@@ -603,6 +605,7 @@ export const ReportWasteView = {
     const file = input && input.files ? input.files[0] : null;
     if (!file) return;
 
+    this.formData.photoFile = file;
     const reader = new FileReader();
     reader.onload = (e) => {
       this.formData.photoUrl = e.target.result;
@@ -619,6 +622,7 @@ export const ReportWasteView = {
   selectDemoImage(url) {
     SoundFX.playClick();
     this.formData.photoUrl = url;
+    this.formData.photoFile = null;
     this.formData.photoSource = 'demo';
     this.render();
   },
@@ -652,23 +656,32 @@ export const ReportWasteView = {
     }
   },
 
-  submitRequest() {
+  async submitRequest() {
     SoundFX.playClick();
-    const newRequest = State.createWasteRequest({
-      category: this.formData.category,
-      subType: this.formData.subType,
-      quantity: this.formData.quantity,
-      address: this.formData.address,
-      pickupSlot: this.formData.pickupSlot,
-      notes: this.formData.notes,
-      photoUrl: this.formData.photoUrl,
-      photoSource: this.formData.photoSource || 'demo',
-      geoCoords: this.formData.geoCoords
-    });
+    try {
+      const newRequest = await State.createWasteRequest({
+        category: this.formData.category,
+        subType: this.formData.subType,
+        quantity: this.formData.quantity,
+        address: this.formData.address,
+        pickupSlot: this.formData.pickupSlot,
+        notes: this.formData.notes,
+        photoUrl: this.formData.photoUrl,
+        photoFile: this.formData.photoFile,
+        photoSource: this.formData.photoSource || 'demo',
+        geoCoords: this.formData.geoCoords
+      });
 
-    this.lastSubmittedRequestId = newRequest ? newRequest.id : null;
-    this.currentStep = 5;
-    this.render();
+      this.lastSubmittedRequestId = newRequest ? newRequest.id : null;
+      this.currentStep = 5;
+      this.render();
+    } catch (err) {
+      console.error('CleanCred: Waste submission error:', err);
+      const msg = err.detail || err.message || 'Waste report submission failed';
+      if (window.AppRouter && window.AppRouter.showToast) {
+        window.AppRouter.showToast(`Error: ${msg}`);
+      }
+    }
   }
 };
 

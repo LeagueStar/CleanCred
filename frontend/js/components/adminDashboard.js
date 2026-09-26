@@ -371,34 +371,36 @@ export const AdminDashboardView = {
   initCharts() {
     if (!window.Chart) return;
 
-    const API_BASE_URL = 'http://localhost:8000';
-
-    fetch(`${API_BASE_URL}/dashboard`)
-      .then(res => res.ok ? res.json() : Promise.reject(res.statusText))
-      .then(dash => {
-        this.renderChartsWithData(dash);
+    State.apiFetch('/analytics', {}, 'admin')
+      .then(analytics => {
+        this.renderChartsWithData(analytics);
       })
       .catch(err => {
-        console.warn('CleanCred: Dashboard API offline, rendering baseline charts:', err);
+        console.warn('CleanCred: Analytics API offline, rendering baseline charts:', err);
         this.renderChartsWithData(null);
       });
   },
 
-  renderChartsWithData(dash) {
+  renderChartsWithData(analytics) {
     // Destroy existing chart instances
     if (this.charts.weekly) this.charts.weekly.destroy();
     if (this.charts.taxonomy) this.charts.taxonomy.destroy();
 
-    // Map response data from /dashboard (STEP 6)
-    const summary = (dash && dash.waste_summary) || {};
-    const wetVal = summary.wet || 0;
-    const dryVal = summary.dry || 0;
-    const harmfulVal = summary.harmful || 0;
+    let wetVal = 0, dryVal = 0, harmfulVal = 0;
+    if (analytics && Array.isArray(analytics.categories)) {
+      analytics.categories.forEach(c => {
+        const cat = (c.category || '').toUpperCase();
+        if (cat === 'WET') wetVal += c.count;
+        else if (cat === 'DRY') dryVal += c.count;
+        else if (cat === 'HAZARDOUS' || cat === 'HARMFUL') harmfulVal += c.count;
+      });
+    }
+
     const hasData = (wetVal + dryVal + harmfulVal) > 0;
     const taxonomyData = hasData ? [wetVal, dryVal, harmfulVal] : [52, 36, 12];
 
-    const totalReports = (dash && dash.total_reports) || 0;
-    const approvedReports = (dash && dash.approved_reports) || 0;
+    const totalReports = (analytics && analytics.totals && analytics.totals.reports) || 0;
+    const approvedReports = (analytics && analytics.totals && analytics.totals.collected) || 0;
     const weeklyWasteData = [38, 42, 45, 51, 48, 59, 64 + totalReports];
     const weeklyCreditsData = [28, 31, 35, 39, 37, 46, 52 + (approvedReports * 10)];
 
