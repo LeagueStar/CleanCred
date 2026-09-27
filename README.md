@@ -236,7 +236,7 @@ For the full legal terms, restrictions, and planned open-source transition detai
 | :--- | :--- | :--- |
 | **Kartik Devdhawala** | Current Lead Maintainer | [@LeagueStar](https://github.com/LeagueStar) |
 | **Harshprit Bagga** | Core Team Member | — |
-| **Shivansh Prajapati** | Project Founder / Original Author | — |
+| **Shivansh Prajapati** | Core Team Member | — |
 | **Suraj Singh** | Core Team Member | — |
 | **Satyam Gupta** | Core Team Member | — |
 | **Kreya Patel** | Core Team Member | — |
