@@ -12,15 +12,15 @@ import { SoundFX } from '../utils/audio.js';
 export const AdminDashboardView = {
   charts: {},
   activeTab: 'overview',
+  analyticsData: null,
 
   render() {
     const container = document.getElementById('view-admin');
     if (!container) return;
 
-    const stats = State.state.cityStats;
     const pickups = State.state.pickups;
-    const totalPointsMinted = (stats.greenPointsIssued / 1000000).toFixed(2); // e.g. 4.85M
-    const totalTons = Math.round(stats.totalWasteTons);
+    const analytics = this.analyticsData || State.state.cityStats?.analytics || null;
+    const kpis = this.getKpiValues(analytics);
 
     container.innerHTML = `
       <div class="app-container animate-fade-in" style="max-width: 1280px; margin: 0 auto; padding-bottom: 5rem;">
@@ -38,10 +38,10 @@ export const AdminDashboardView = {
               </div>
               <div>
                 <div class="eyebrow" style="margin: 0; font-size: 0.68rem;">Operations Control</div>
-                <div style="font-size: 0.95rem; font-weight: 800; color: var(--color-navy);">Mumbai Central</div>
+                <div style="font-size: 0.95rem; font-weight: 800; color: var(--color-navy);">Mumbai Central (Pilot)</div>
                 <div style="display: flex; align-items: center; gap: 0.35rem; margin-top: 0.15rem;">
                   <span class="status-dot green animate-pulse"></span>
-                  <span style="font-size: 0.72rem; font-weight: 700; color: var(--color-primary-dark);">42 Wards Active</span>
+                  <span style="font-size: 0.72rem; font-weight: 700; color: var(--color-primary-dark);">Pilot Site (Ward 4B)</span>
                 </div>
               </div>
             </div>
@@ -186,11 +186,11 @@ export const AdminDashboardView = {
                   <span>TOTAL CREDITS</span>
                   <i data-lucide="coins" class="lucide-icon-sm" style="color: var(--color-primary-dark);"></i>
                 </div>
-                <div style="font-family: var(--font-heading); font-size: 1.85rem; font-weight: 900; color: var(--color-navy);">
-                  ${totalPointsMinted}M <small style="font-size: 0.9rem; font-weight: 700; color: var(--color-primary);">Credits</small>
+                <div id="admin-kpi-credits" style="font-family: var(--font-heading); font-size: 1.85rem; font-weight: 900; color: var(--color-navy);">
+                  ${kpis.creditsFormatted}
                 </div>
-                <div style="font-size: 0.75rem; font-weight: 700; color: var(--color-primary-dark); margin-top: 0.25rem;">
-                  ↑ 24.8% issued this month
+                <div id="admin-kpi-credits-sub" style="font-size: 0.75rem; font-weight: 700; color: var(--color-primary-dark); margin-top: 0.25rem;">
+                  Minted via verified pickups
                 </div>
               </div>
 
@@ -200,11 +200,11 @@ export const AdminDashboardView = {
                   <span>RECOVERY RATE</span>
                   <i data-lucide="activity" class="lucide-icon-sm" style="color: var(--color-primary);"></i>
                 </div>
-                <div style="font-family: var(--font-heading); font-size: 1.85rem; font-weight: 900; color: var(--color-primary);">
-                  84.4%
+                <div id="admin-kpi-recovery" style="font-family: var(--font-heading); font-size: 1.85rem; font-weight: 900; color: var(--color-primary);">
+                  ${kpis.recoveryRate}
                 </div>
-                <div style="font-size: 0.75rem; font-weight: 700; color: var(--color-primary-dark); margin-top: 0.25rem;">
-                  Target 80% Exceeded!
+                <div id="admin-kpi-recovery-sub" style="font-size: 0.75rem; font-weight: 700; color: var(--color-primary-dark); margin-top: 0.25rem;">
+                  ${kpis.reports > 0 ? (parseFloat(kpis.recoveryRate) >= 80 ? 'Target 80% Exceeded!' : `${kpis.recoveryRate} Recovery Achieved`) : 'Baseline pending pickups'}
                 </div>
               </div>
 
@@ -214,11 +214,11 @@ export const AdminDashboardView = {
                   <span>VERIFIED COLLECTIONS</span>
                   <i data-lucide="check-circle-2" class="lucide-icon-sm" style="color: var(--waste-dry);"></i>
                 </div>
-                <div style="font-family: var(--font-heading); font-size: 1.85rem; font-weight: 900; color: var(--color-navy);">
-                  ${Formatters.formatNumber(stats.verifiedPickups)}
+                <div id="admin-kpi-collections" style="font-family: var(--font-heading); font-size: 1.85rem; font-weight: 900; color: var(--color-navy);">
+                  ${kpis.collectionsFormatted}
                 </div>
-                <div style="font-size: 0.75rem; font-weight: 700; color: var(--waste-dry); margin-top: 0.25rem;">
-                  99.2% Source Segregation Pure
+                <div id="admin-kpi-collections-sub" style="font-size: 0.75rem; font-weight: 700; color: var(--waste-dry); margin-top: 0.25rem;">
+                  ${kpis.verified > 0 ? `${kpis.verified} pending collection` : 'All verified collected'}
                 </div>
               </div>
 
@@ -228,11 +228,11 @@ export const AdminDashboardView = {
                   <span>LANDFILL DIVERSION</span>
                   <i data-lucide="truck" class="lucide-icon-sm" style="color: var(--color-amber);"></i>
                 </div>
-                <div style="font-family: var(--font-heading); font-size: 1.85rem; font-weight: 900; color: var(--color-navy);">
-                  ${Formatters.formatNumber(totalTons)} <small style="font-size: 0.9rem; font-weight: 700; color: var(--text-muted);">Tons</small>
+                <div id="admin-kpi-diversion" style="font-family: var(--font-heading); font-size: 1.85rem; font-weight: 900; color: var(--color-navy);">
+                  ${kpis.diversionFormatted}
                 </div>
-                <div style="font-size: 0.75rem; font-weight: 700; color: var(--color-amber); margin-top: 0.25rem;">
-                  42 Wards Reporting Daily
+                <div id="admin-kpi-diversion-sub" style="font-size: 0.75rem; font-weight: 700; color: var(--color-amber); margin-top: 0.25rem;">
+                  Pilot Zone (Est. ~5kg/pickup)
                 </div>
               </div>
 
@@ -246,7 +246,7 @@ export const AdminDashboardView = {
                 <div class="flex-between" style="margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
                   <div>
                     <h3 style="font-size: 1.05rem; color: var(--color-navy); font-weight: 800; margin: 0;">Weekly Waste Diversion &amp; Credits</h3>
-                    <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.15rem 0 0 0;">Decentralized municipal ingestion across 42 wards</p>
+                    <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.15rem 0 0 0;">Decentralized municipal ingestion (Pilot Zone)</p>
                   </div>
                   <span class="badge badge-green">Past 7 Days</span>
                 </div>
@@ -368,16 +368,84 @@ export const AdminDashboardView = {
     }, 600);
   },
 
-  initCharts() {
-    if (!window.Chart) return;
+  getKpiValues(analytics) {
+    const totals = (analytics && analytics.totals) || {};
+    const credits = typeof totals.credits === 'number' ? totals.credits : 0;
+    const collected = typeof totals.collected === 'number' ? totals.collected : 0;
+    const reports = typeof totals.reports === 'number' ? totals.reports : 0;
+    const verified = typeof totals.verified === 'number' ? totals.verified : 0;
 
+    // Small number formatting: do not format small numbers with "M" abbreviations (like 0.00M)
+    let creditsFormatted = '';
+    if (credits >= 1000000) {
+      creditsFormatted = `${(credits / 1000000).toFixed(2)}M <small style="font-size: 0.9rem; font-weight: 700; color: var(--color-primary);">Credits</small>`;
+    } else {
+      creditsFormatted = `${Formatters.formatNumber(credits)} <small style="font-size: 0.9rem; font-weight: 700; color: var(--color-primary);">Credits</small>`;
+    }
+
+    // Recovery rate: computed from real numbers, or backend analytics.collection_rate. Handle 0 reports gracefully (0.0%)
+    let recoveryRate = '0.0%';
+    if (reports > 0) {
+      recoveryRate = `${((collected / reports) * 100).toFixed(1)}%`;
+    } else if (analytics && typeof analytics.collection_rate === 'number') {
+      recoveryRate = `${analytics.collection_rate.toFixed(1)}%`;
+    }
+
+    // Landfill diversion: backend does not track raw tonnage yet.
+    // Calculate honest estimate: assume ~5.0 kg average waste diversion per collected pickup (5.0 kg / 1000 = 0.005 tons)
+    const diversionTons = ((collected * 5.0) / 1000).toFixed(2);
+    const diversionFormatted = `${diversionTons} <small style="font-size: 0.9rem; font-weight: 700; color: var(--text-muted);">Tons (Est.)</small>`;
+
+    const collectionsFormatted = Formatters.formatNumber(collected);
+
+    return {
+      creditsFormatted,
+      recoveryRate,
+      collectionsFormatted,
+      diversionFormatted,
+      collected,
+      reports,
+      verified
+    };
+  },
+
+  updateKpiCards(analytics) {
+    const kpis = this.getKpiValues(analytics);
+    const elCredits = document.getElementById('admin-kpi-credits');
+    const elRecovery = document.getElementById('admin-kpi-recovery');
+    const elCollections = document.getElementById('admin-kpi-collections');
+    const elDiversion = document.getElementById('admin-kpi-diversion');
+    const elRecoverySub = document.getElementById('admin-kpi-recovery-sub');
+    const elCollectionsSub = document.getElementById('admin-kpi-collections-sub');
+
+    if (elCredits) elCredits.innerHTML = kpis.creditsFormatted;
+    if (elRecovery) elRecovery.textContent = kpis.recoveryRate;
+    if (elCollections) elCollections.textContent = kpis.collectionsFormatted;
+    if (elDiversion) elDiversion.innerHTML = kpis.diversionFormatted;
+    if (elRecoverySub) {
+      elRecoverySub.textContent = kpis.reports > 0
+        ? (parseFloat(kpis.recoveryRate) >= 80 ? 'Target 80% Exceeded!' : `${kpis.recoveryRate} Recovery Achieved`)
+        : 'Baseline pending pickups';
+    }
+    if (elCollectionsSub) {
+      elCollectionsSub.textContent = kpis.verified > 0 ? `${kpis.verified} pending collection` : 'All verified collected';
+    }
+  },
+
+  initCharts() {
     State.apiFetch('/analytics', {}, 'admin')
       .then(analytics => {
-        this.renderChartsWithData(analytics);
+        this.analyticsData = analytics;
+        this.updateKpiCards(analytics);
+        if (window.Chart) {
+          this.renderChartsWithData(analytics);
+        }
       })
       .catch(err => {
         console.warn('CleanCred: Analytics API offline, rendering baseline charts:', err);
-        this.renderChartsWithData(null);
+        if (window.Chart) {
+          this.renderChartsWithData(null);
+        }
       });
   },
 
