@@ -214,6 +214,36 @@ Validates:
 
 ---
 
-## License
+## 🤝 Contributing
 
-This project is prepared for evaluation under the Smart India Hackathon. Please see the project maintainers for licensing and distribution details.
+This project was developed exclusively for the **Smart India Hackathon 2026**. Outside contributions, pull requests, and forks are not accepted at this time to preserve the integrity of the submission. The repository will be opened for community contributions after SIH 2026 concludes.
+
+---
+
+## 🛡️ License & Copyright
+
+**Copyright © 2026 Team GreenLegacy. All Rights Reserved.**
+
+This software and its associated documentation are proprietary and confidential. All rights remain strictly reserved until the conclusion of the Smart India Hackathon (SIH) 2026, after which the project will be transitioned to an open-source license. Outside copying, distribution, cloning, or commercial use is not permitted during the competition evaluation window.
+
+For the full legal terms, restrictions, and planned open-source transition details, please see [COPYRIGHT](COPYRIGHT).
+
+---
+
+## 👥 Team GreenLegacy
+
+| Member | Role / Affiliation | GitHub |
+| :--- | :--- | :--- |
+| **Kartik Devdhawala** | Current Lead Maintainer | [@LeagueStar](https://github.com/LeagueStar) |
+| **Harshprit Bagga** | Core Team Member | — |
+| **Shivansh Prajapati** | Project Founder / Original Author | — |
+| **Suraj Singh** | Core Team Member | — |
+| **Satyam Gupta** | Core Team Member | — |
+| **Kreya Patel** | Core Team Member | — |
+
+<div align="center">
+
+**🌐 [Live Website](https://leaguestar.github.io/CleanCred/)** · Built with 💚 for a cleaner tomorrow
+
+</div>
+
