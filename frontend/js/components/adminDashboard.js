@@ -8,9 +8,11 @@
 import { State } from '../state.js';
 import { Formatters } from '../utils/formatters.js';
 import { SoundFX } from '../utils/audio.js';
+import { MapHelper } from '../utils/mapHelper.js';
 
 export const AdminDashboardView = {
   charts: {},
+  adminMap: null,
   activeTab: 'overview',
   analyticsData: null,
 
@@ -273,7 +275,60 @@ export const AdminDashboardView = {
 
             </div>
 
-            <!-- ROW 3: LIVE MUNICIPAL INGESTION FEED (REAL PICKUPS) -->
+            <!-- ROW 3: MUNICIPAL GEOSPATIAL COVERAGE & PICKUP MAP -->
+            <div class="neu-card neu-card-raised" style="border-radius: var(--radius-xl);">
+              <div class="flex-between" style="margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div>
+                  <h3 style="font-size: 1.1rem; color: var(--color-navy); font-weight: 800; display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+                    <i data-lucide="map-pin" class="lucide-icon-sm" style="color: var(--color-primary-dark);"></i>
+                    <span>Municipal Geospatial Coverage &amp; Pickup Map</span>
+                  </h3>
+                  <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.15rem 0 0 0;">
+                    Real-time field telemetry across Ward 4B (Pilot Site). Interactive cluster pins for active citizen reports &amp; MRF recovery hubs.
+                  </p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span class="badge badge-green" style="display: inline-flex; align-items: center; gap: 0.3rem;">
+                    <i data-lucide="map" class="lucide-icon-xs"></i>
+                    <span>Leaflet Voyager</span>
+                  </span>
+                  <button class="btn btn-secondary btn-sm" onclick="window.AdminDashboardView.refreshMap()" title="Recenter and invalidate map tiles">
+                    <i data-lucide="crosshair" class="lucide-icon-xs"></i>
+                    <span>Recenter</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Map Container with Explicit Height in CSS -->
+              <div id="admin-reports-map" style="height: 380px; width: 100%; border-radius: var(--radius-lg); border: 1.5px solid #CBD5E1; box-shadow: inset 0 2px 6px rgba(0,0,0,0.06); position: relative; z-index: 1;"></div>
+              
+              <!-- Legend Bar -->
+              <div class="flex-between" style="margin-top: 0.85rem; padding: 0.65rem 0.85rem; background: var(--bg-surface-elevated); border-radius: var(--radius-md); font-size: 0.78rem; color: var(--text-muted); border: 1px solid var(--color-border); flex-wrap: wrap; gap: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                  <span style="display: flex; align-items: center; gap: 0.35rem;">
+                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #16A34A;"></span>
+                    <strong style="color: var(--color-navy);">Wet Waste</strong>
+                  </span>
+                  <span style="display: flex; align-items: center; gap: 0.35rem;">
+                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #2563EB;"></span>
+                    <strong style="color: var(--color-navy);">Dry Waste</strong>
+                  </span>
+                  <span style="display: flex; align-items: center; gap: 0.35rem;">
+                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #DC2626;"></span>
+                    <strong style="color: var(--color-navy);">Harmful Waste</strong>
+                  </span>
+                  <span style="display: flex; align-items: center; gap: 0.35rem;">
+                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #0F172A;"></span>
+                    <strong style="color: var(--color-navy);">MRF Facility Hub</strong>
+                  </span>
+                </div>
+                <div>
+                  <span style="color: var(--text-muted);">Ward 4B (Pilot) &bull; Coordinates: 19.0596° N, 72.8295° E</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ROW 4: LIVE MUNICIPAL INGESTION FEED (REAL PICKUPS) -->
             <div class="neu-card neu-card-raised" style="border-radius: var(--radius-xl);">
               <div class="flex-between" style="margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
                 <div>
@@ -358,6 +413,9 @@ export const AdminDashboardView = {
     SoundFX.playClick();
     this.activeTab = tab;
     this.render();
+    setTimeout(() => {
+      MapHelper.invalidateSize('admin-reports-map');
+    }, 150);
   },
 
   triggerQuickExport() {
@@ -440,12 +498,14 @@ export const AdminDashboardView = {
         if (window.Chart) {
           this.renderChartsWithData(analytics);
         }
+        this.initMap(analytics);
       })
       .catch(err => {
         console.warn('CleanCred: Analytics API offline, rendering baseline charts:', err);
         if (window.Chart) {
           this.renderChartsWithData(null);
         }
+        this.initMap(null);
       });
   },
 
@@ -551,6 +611,86 @@ export const AdminDashboardView = {
           }
         }
       });
+    }
+  },
+
+  initMap(analytics) {
+    const mapElement = document.getElementById('admin-reports-map');
+    if (!mapElement || !window.L) return;
+
+    // Remove existing map on this container safely
+    MapHelper.destroyMap('admin-reports-map');
+
+    const centerCoord = [19.0596, 72.8295]; // Ward 4B Bandra West
+    this.adminMap = MapHelper.initMap('admin-reports-map', centerCoord, 13);
+    if (!this.adminMap) return;
+
+    // MRF Facility Hub Pin
+    const mrfPin = MapHelper.createCustomPin('M', 'MRF Hub (Bandra)', '#0F172A');
+    window.L.marker([19.0880, 72.8950], { icon: mrfPin })
+      .bindPopup('<b>Bandra MRF &amp; Baler Unit</b><br>Municipal Material Recovery Hub')
+      .addTo(this.adminMap);
+
+    // Existing Pickups / Reports Pins
+    const pickups = State.state.pickups || [];
+    pickups.forEach((p, idx) => {
+      let lat = p.geoCoords?.lat;
+      let lng = p.geoCoords?.lng;
+      if (!lat || !lng) {
+        // Deterministic offset within Ward 4B pilot bounds if coords missing
+        const offsetLat = ((idx % 5) - 2) * 0.0035;
+        const offsetLng = (((idx * 3) % 5) - 2) * 0.0035;
+        lat = 19.0596 + offsetLat;
+        lng = 72.8295 + offsetLng;
+      }
+
+      const catLower = (p.category || '').toLowerCase();
+      const colorHex = catLower === 'wet' ? '#16A34A' : (catLower === 'dry' ? '#2563EB' : '#DC2626');
+      const iconLetter = catLower === 'wet' ? 'W' : (catLower === 'dry' ? 'D' : '!');
+      const pin = MapHelper.createCustomPin(iconLetter, `#${p.id}`, colorHex);
+
+      const statusBadge = p.status === 'verified'
+        ? '<span style="color:#16A34A;font-weight:700;">Verified</span>'
+        : (p.status === 'collected' ? '<span style="color:#2563EB;font-weight:700;">Collected</span>' : '<span style="color:#D97706;font-weight:700;">Created</span>');
+
+      window.L.marker([lat, lng], { icon: pin })
+        .bindPopup(`
+          <div style="font-family:sans-serif;font-size:0.8rem;line-height:1.4;">
+            <strong style="color:#0F172A;font-size:0.88rem;">Report #${p.id} &bull; ${Formatters.escapeHtml(p.categoryName || p.category)}</strong><br>
+            <span style="color:#64748B;">${Formatters.escapeHtml(p.address || 'Ward 4B, Mumbai')}</span><br>
+            <span>Weight: <b>${p.quantityKg || 3.5} KG</b> &bull; Status: ${statusBadge}</span>
+          </div>
+        `)
+        .addTo(this.adminMap);
+    });
+
+    // Hotspot telemetry overlay
+    if (analytics && Array.isArray(analytics.hotspots) && analytics.hotspots.length > 0) {
+      analytics.hotspots.forEach(h => {
+        window.L.circle([h.lat, h.lon], {
+          color: '#DC2626',
+          fillColor: '#EF4444',
+          fillOpacity: 0.25,
+          radius: 120
+        }).bindPopup(`<b>Recurring Hotspot</b><br>${h.reports} reports clustered`).addTo(this.adminMap);
+      });
+    }
+
+    setTimeout(() => {
+      MapHelper.invalidateSize('admin-reports-map');
+    }, 200);
+  },
+
+  refreshMap() {
+    SoundFX.playClick();
+    if (this.adminMap) {
+      this.adminMap.setView([19.0596, 72.8295], 13);
+      MapHelper.invalidateSize('admin-reports-map');
+      if (window.AppRouter && window.AppRouter.showToast) {
+        window.AppRouter.showToast('Map recentered to Ward 4B.');
+      }
+    } else {
+      this.initMap(this.analyticsData);
     }
   }
 };

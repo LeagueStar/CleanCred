@@ -33,11 +33,15 @@ def fail(msg):
     log(msg, ok=False)
     sys.exit(1)
 
+import random
+import uuid
+
 def create_test_image(color=(34, 197, 94), text_seed=None):
     img = Image.new("RGB", (100, 100), color=color)
-    if text_seed:
-        # modify a pixel to guarantee unique hash
-        img.putpixel((0, 0), (text_seed % 256, (text_seed * 7) % 256, (text_seed * 13) % 256))
+    rnd = random.Random(text_seed if text_seed is not None else uuid.uuid4().hex)
+    for x in range(20):
+        for y in range(20):
+            img.putpixel((x, y), (rnd.randint(0, 255), rnd.randint(0, 255), rnd.randint(0, 255)))
     buf = io.BytesIO()
     img.save(buf, format="JPEG")
     return buf.getvalue()

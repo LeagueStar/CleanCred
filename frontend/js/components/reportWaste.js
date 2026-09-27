@@ -13,6 +13,8 @@ import { MapHelper } from '../utils/mapHelper.js';
 export const ReportWasteView = {
   currentStep: 1,
   lastSubmittedRequestId: null,
+  cameraStream: null,
+  isCameraActive: false,
   formData: {
     category: 'wet', // 'wet' | 'dry' | 'harmful'
     subType: 'Kitchen Vegetable & Fruit Scraps',
@@ -99,6 +101,7 @@ export const ReportWasteView = {
   },
 
   startNewReport(params = {}) {
+    this.closeCameraCapture();
     this.currentStep = 1;
     this.lastSubmittedRequestId = null;
     const cat = (params.category && this.categoryConfig[params.category]) ? params.category : 'wet';
@@ -324,20 +327,41 @@ export const ReportWasteView = {
 
             <!-- Main Photo Upload & Preview Box -->
             <div class="photo-upload-zone" style="margin-bottom: 1.25rem;">
-              <!-- Upload Action at Top -->
+              <!-- Dual Action Controls: Live Camera + File Upload -->
               <input type="file" id="waste-photo-file-input" accept="image/*" style="display: none;" onchange="window.ReportWasteView.handleFileUpload(this)">
-              <button type="button" class="btn btn-primary btn-upload-photo" onclick="document.getElementById('waste-photo-file-input').click()" style="width: 100%; margin-bottom: 0.85rem;">
-                <i data-lucide="upload" class="lucide-icon-sm"></i>
-                <span>Upload Photo from Device</span>
-              </button>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.85rem;">
+                <button type="button" class="btn btn-primary btn-upload-photo" onclick="window.ReportWasteView.openCameraCapture()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
+                  <i data-lucide="camera" class="lucide-icon-sm"></i>
+                  <span>Live Camera</span>
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('waste-photo-file-input').click()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
+                  <i data-lucide="upload" class="lucide-icon-sm"></i>
+                  <span>Upload File</span>
+                </button>
+              </div>
+
+              <!-- Live Camera Viewfinder Box (Shown when active) -->
+              <div id="waste-camera-viewfinder" style="display: ${this.isCameraActive ? 'block' : 'none'}; margin-bottom: 0.85rem; border-radius: var(--radius-md); overflow: hidden; border: 2px solid var(--color-primary); background: #000; position: relative;">
+                <video id="waste-camera-stream" autoplay playsinline style="width: 100%; max-height: 240px; object-fit: cover; display: block;"></video>
+                <canvas id="waste-camera-canvas" style="display: none;"></canvas>
+                <div style="position: absolute; bottom: 8px; left: 0; right: 0; display: flex; justify-content: center; gap: 0.5rem; padding: 0.5rem; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px);">
+                  <button type="button" class="btn btn-primary btn-sm" onclick="window.ReportWasteView.snapPhotoFromCamera()">
+                    <i data-lucide="camera" class="lucide-icon-xs"></i>
+                    <span>Snap Photo</span>
+                  </button>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="window.ReportWasteView.closeCameraCapture()">
+                    <span>Cancel</span>
+                  </button>
+                </div>
+              </div>
 
               <div style="position: relative; width: 100%; border-radius: var(--radius-md); overflow: hidden; border: 1.5px solid var(--color-border); background: var(--bg-surface); margin-bottom: 0.5rem;">
                 <img src="${this.formData.photoUrl}" alt="Waste Preview" style="width: 100%; max-height: 200px; object-fit: cover; display: block;" />
               </div>
               
               <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--color-navy);">
-                <i data-lucide="camera" class="lucide-icon-sm"></i>
-                <span>Attached: ${this.formData.subType}</span>
+                <i data-lucide="${this.formData.photoSource === 'camera' ? 'camera' : (this.formData.photoSource === 'upload' ? 'file-check' : 'image')}" class="lucide-icon-sm"></i>
+                <span>${this.formData.photoSource === 'camera' ? 'Live Camera Capture' : (this.formData.photoSource === 'upload' ? 'Uploaded from Device' : 'Attached')}: ${this.formData.subType}</span>
               </div>
             </div>
 
@@ -589,6 +613,7 @@ export const ReportWasteView = {
   },
 
   goToStep(step) {
+    this.closeCameraCapture();
     SoundFX.playClick();
     this.currentStep = step;
     this.render();
@@ -600,7 +625,83 @@ export const ReportWasteView = {
     }
   },
 
+  async openCameraCapture() {
+    SoundFX.playClick();
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      if (window.AppRouter && window.AppRouter.showToast) {
+        window.AppRouter.showToast('Camera not supported in this browser. Opening file upload...');
+      }
+      const fileInput = document.getElementById('waste-photo-file-input');
+      if (fileInput) fileInput.click();
+      return;
+    }
+
+    try {
+      this.closeCameraCapture();
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+      });
+      this.cameraStream = stream;
+      this.isCameraActive = true;
+      this.render();
+
+      const videoEl = document.getElementById('waste-camera-stream');
+      if (videoEl) {
+        videoEl.srcObject = stream;
+        videoEl.setAttribute('playsinline', 'true');
+        await videoEl.play();
+      }
+    } catch (err) {
+      console.warn('ReportWasteView: camera capture error:', err);
+      this.closeCameraCapture();
+      if (window.AppRouter && window.AppRouter.showToast) {
+        window.AppRouter.showToast(`Camera access unavailable (${err.message || 'Permission denied'}). Switching to file upload.`);
+      }
+      const fileInput = document.getElementById('waste-photo-file-input');
+      if (fileInput) fileInput.click();
+    }
+  },
+
+  snapPhotoFromCamera() {
+    const videoEl = document.getElementById('waste-camera-stream');
+    const canvasEl = document.getElementById('waste-camera-canvas');
+    if (!videoEl || !canvasEl) return;
+
+    canvasEl.width = videoEl.videoWidth || 640;
+    canvasEl.height = videoEl.videoHeight || 480;
+    const ctx = canvasEl.getContext('2d');
+    ctx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
+
+    canvasEl.toBlob((blob) => {
+      if (!blob) return;
+      const fileName = `camera_proof_${Date.now()}.jpg`;
+      const photoFile = new File([blob], fileName, { type: 'image/jpeg' });
+      this.formData.photoFile = photoFile;
+      this.formData.photoUrl = URL.createObjectURL(blob);
+      this.formData.photoSource = 'camera';
+      SoundFX.playClick();
+      this.closeCameraCapture();
+      this.render();
+      if (window.AppRouter && window.AppRouter.showToast) {
+        window.AppRouter.showToast('Live camera photo captured successfully.');
+      }
+    }, 'image/jpeg', 0.9);
+  },
+
+  closeCameraCapture() {
+    if (this.cameraStream) {
+      try {
+        this.cameraStream.getTracks().forEach(track => track.stop());
+      } catch (e) {
+        // Stream track cleanup ignore
+      }
+      this.cameraStream = null;
+    }
+    this.isCameraActive = false;
+  },
+
   handleFileUpload(input) {
+    this.closeCameraCapture();
     const file = input && input.files ? input.files[0] : null;
     if (!file) return;
 
@@ -619,6 +720,7 @@ export const ReportWasteView = {
   },
 
   selectDemoImage(url) {
+    this.closeCameraCapture();
     SoundFX.playClick();
     this.formData.photoUrl = url;
     this.formData.photoFile = null;

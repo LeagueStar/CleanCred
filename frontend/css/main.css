@@ -487,3 +487,25 @@ a:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================================================
+   LEAFLET MAP CONTAINERS (Zero-Height Rendering Guard)
+   ========================================================================== */
+.leaflet-container {
+  width: 100% !important;
+  min-height: 260px;
+  background-color: #E2E8F0;
+  z-index: 1;
+}
+
+#live-tracking-map {
+  height: 520px;
+  min-height: 380px;
+  width: 100%;
+}
+
+#admin-reports-map {
+  height: 380px;
+  min-height: 300px;
+  width: 100%;
+}

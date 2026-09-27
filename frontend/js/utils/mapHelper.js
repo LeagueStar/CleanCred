@@ -100,7 +100,34 @@ export const MapHelper = {
       maxZoom: 19
     }).addTo(map);
 
+    // Guard against zero-height container bug by invalidating size after initial layout
+    setTimeout(() => {
+      try {
+        if (map && typeof map.invalidateSize === 'function') {
+          map.invalidateSize();
+        }
+      } catch (e) {
+        // Layout exception safe ignore
+      }
+    }, 150);
+
     return map;
+  },
+
+  /**
+   * Explicitly invalidate size for an existing map instance (e.g. on tab switch or accordion toggle)
+   */
+  invalidateSize(elementId) {
+    if (this._mapInstances.has(elementId)) {
+      try {
+        const map = this._mapInstances.get(elementId);
+        if (map && typeof map.invalidateSize === 'function') {
+          map.invalidateSize();
+        }
+      } catch (err) {
+        console.warn('MapHelper: error invalidating size:', err);
+      }
+    }
   },
 
   /**

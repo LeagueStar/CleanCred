@@ -96,4 +96,9 @@ def init_db():
         except sqlite3.OperationalError:
             pass
     conn.commit()
+    try:
+        from seed_demo_data import seed_demo_data
+        seed_demo_data(conn)
+    except Exception as e:
+        pass
     conn.close()
