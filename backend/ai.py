@@ -1,3 +1,9 @@
+"""
+CleanCred Multimodal AI Waste Classification Service
+Connects to Google Gemini 2.5 Flash for computer vision segregation verification,
+with a labeled local fallback (DEMO_AI_MODE=1) for offline hackathon testing.
+"""
+
 import json
 import os
 from pathlib import Path
@@ -13,13 +19,25 @@ Inspect ONLY the supplied image. Return JSON:
 Rules: WET=mostly organic/biodegradable; DRY=paper/cardboard/plastic/metal/glass and other dry recyclable waste; HAZARDOUS=batteries, chemicals, medical/sharp hazardous household waste. UNKNOWN if unclear, empty, unrelated or clearly mixed. Never infer from the user's selected category. accepted=true only when visual evidence is sufficient.
 """
 
-def _extract_json(text: str):
+def _extract_json(text: str) -> dict:
+    """
+    Extract structured JSON dictionary from Gemini markdown response.
+    """
     text = (text or "").strip().replace("```json", "").replace("```", "").strip()
     start, end = text.find("{"), text.rfind("}")
     if start < 0 or end < 0: raise ValueError("Model did not return JSON")
     return json.loads(text[start:end+1])
 
 def verify_image(image_path: str) -> dict:
+    """
+    Inspect waste image evidence using Gemini vision model or offline demo heuristic.
+
+    Args:
+        image_path (str): Path to stored image evidence file on disk.
+
+    Returns:
+        dict: Classification payload with category, accepted flag, confidence, explanation, and model name.
+    """
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
         if os.getenv("DEMO_AI_MODE", "0") == "1":

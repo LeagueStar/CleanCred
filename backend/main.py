@@ -1,3 +1,11 @@
+"""
+CleanCred Verified Waste Recovery API (FastAPI)
+Swachh Bharat Mission (SBM-U 2.0) Civic Architecture
+
+Enforces physical custody and segregation gates:
+Report (Citizen) -> AI & Proximity Verification (Worker) -> Handover QR (Scale) -> Ledger Mint (Credits)
+"""
+
 import os, json, secrets, hashlib
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -44,16 +52,36 @@ class VerifyRequest(BaseModel): report_id:int; segregated:bool; worker_lat:float
 class CollectRequest(BaseModel): report_id:int; qr_token:str=Field(min_length=10); worker_lat:float=Field(ge=-90,le=90); worker_lon:float=Field(ge=-180,le=180)
 
 @app.get("/health")
-def health(): return {"ok":True,"service":"cleancred-api","version":app.version,"demo_ai":os.getenv("DEMO_AI_MODE","0")=="1"}
+def health():
+    """
+    Public health check endpoint.
+    Auth: None (Public)
+    Response: {"ok": true, "service": "cleancred-api", "version": "...", "demo_ai": bool}
+    """
+    return {"ok":True,"service":"cleancred-api","version":app.version,"demo_ai":os.getenv("DEMO_AI_MODE","0")=="1"}
 
 @app.post("/users")
 def create_user(body:CreateUser):
+    """
+    Register a new user account with hashed PIN storage.
+    Auth: None (Bootstrap / Public)
+    Body: {"name": str, "role": "citizen"|"worker"|"admin", "pin": str}
+    Response: User record dictionary with id, name, role, points, created_at.
+    Errors: 400 Bad Request if role is invalid.
+    """
     role=body.role.lower()
     if role not in {"citizen","worker","admin"}: raise HTTPException(400,"Invalid role")
     c=get_conn(); cur=c.execute("INSERT INTO users(name,role,pin_hash,points,created_at) VALUES(?,?,?,?,?)",(body.name.strip(),role,pin_hash(body.pin),0,iso(now()))); c.commit(); row=c.execute("SELECT id,name,role,points,created_at FROM users WHERE id=?",(cur.lastrowid,)).fetchone(); c.close(); return dict(row)
 
 @app.post("/auth/login")
 def login(body:LoginRequest):
+    """
+    Authenticate a user via role ID and PIN.
+    Auth: None (Public)
+    Body: {"user_id": int, "pin": str}
+    Response: {"access_token": str, "user": {...}}
+    Errors: 401 Unauthorized if user ID or PIN is invalid.
+    """
     c=get_conn(); row=c.execute("SELECT * FROM users WHERE id=?",(body.user_id,)).fetchone(); c.close()
     if not row or not secrets.compare_digest(row["pin_hash"],pin_hash(body.pin)): raise HTTPException(401,"Invalid user ID or PIN")
     token=secrets.token_urlsafe(32); SESSIONS[token]=row["id"]
@@ -61,10 +89,32 @@ def login(body:LoginRequest):
 
 @app.get("/users")
 def users(auth: str|None=Header(default=None)):
+    """
+    List all registered municipal users.
+    Auth: Bearer token (Role: admin)
+    Response: List of user dicts [{"id": int, "name": str, "role": str, "points": int, ...}]
+    Errors: 401 Unauthorized, 403 Forbidden.
+    """
     require_role(auth,"admin"); c=get_conn(); rows=c.execute("SELECT id,name,role,points,created_at FROM users ORDER BY id").fetchall(); c.close(); return [dict(r) for r in rows]
 
 @app.post("/reports")
 async def create_report(authorization:str|None=Header(default=None),category:str=Form(...),latitude:float=Form(...),longitude:float=Form(...),image:UploadFile=File(...)):
+    """
+    Submit citizen waste evidence with GPS coordinates and photo proof.
+    Auth: Bearer token (Role: citizen)
+    Form data:
+        category: WET | DRY | HAZARDOUS
+        latitude: float (-90 to 90)
+        longitude: float (-180 to 180)
+        image: multipart/form-data binary image file (<= 8 MB)
+    Response: {"report_id": int, "status": "SUBMITTED", "server_timestamp": str, "evidence_hash": str}
+    Errors:
+        400 Bad Request (invalid category or non-image MIME)
+        401 Unauthorized (missing or invalid token)
+        403 Forbidden (non-citizen role)
+        409 Conflict (duplicate evidence SHA-256 match)
+        413 Payload Too Large (> 8 MB)
+    """
     user=require_role(authorization,"citizen"); category=category.upper()
     if category not in {"WET","DRY","HAZARDOUS"}: raise HTTPException(400,"Category must be WET, DRY or HAZARDOUS")
     if not image.content_type or not image.content_type.startswith("image/"): raise HTTPException(400,"Only image data is accepted")
@@ -95,6 +145,25 @@ def risk_and_score(report, ai, distance, duplicate_count=0):
 
 @app.post("/verify")
 def verify(body:VerifyRequest,authorization:str|None=Header(default=None)):
+    """
+    On-site municipal worker verification of waste segregation and physical proximity.
+    Auth: Bearer token (Role: worker)
+    Body:
+        report_id: int
+        segregated: bool (worker approves/rejects sorting)
+        worker_lat: float (-90 to 90)
+        worker_lon: float (-180 to 180)
+    Response:
+        {"ok": true, "report_id": int, "status": "READY_FOR_COLLECTION",
+         "verification_score": float, "risk_level": "LOW"|"MEDIUM"|"HIGH",
+         "risk_flags": list, "ai": {...}, "distance_m": float, "qr_token": str, ...}
+    Errors:
+        401 Unauthorized (missing/invalid worker token)
+        403 Forbidden (GPS distance > 50m, timestamp expired, worker rejected segregation, AI rejected)
+        404 Not Found (report doesn't exist)
+        409 Conflict (report already collected or already verified)
+        502 Bad Gateway (AI multimodal vision error)
+    """
     worker=require_role(authorization,"worker"); report,ai,old_worker,collection=load_report(body.report_id)
     if not report: raise HTTPException(404,"Report not found")
     if collection: raise HTTPException(409,"Report is already collected")
@@ -119,6 +188,22 @@ def verify(body:VerifyRequest,authorization:str|None=Header(default=None)):
 
 @app.post("/collect")
 def collect(body:CollectRequest,authorization:str|None=Header(default=None)):
+    """
+    Physical waste handover collection and credit ledger deposit.
+    Auth: Bearer token (Role: worker - must match the verifying worker)
+    Body:
+        report_id: int
+        qr_token: str (one-time URL-safe token presented by citizen)
+        worker_lat: float (-90 to 90)
+        worker_lon: float (-180 to 180)
+    Response:
+        {"ok": true, "report_id": int, "status": "COLLECTED", "credits_awarded": int, "user": {...}, ...}
+    Errors:
+        401 Unauthorized (missing/invalid worker token)
+        403 Forbidden (GPS distance > 50m, token mismatch, worker ID mismatch, unverified report)
+        404 Not Found (report doesn't exist)
+        409 Conflict (QR already consumed / replay attack)
+    """
     worker=require_role(authorization,"worker"); report,ai,wcheck,collection=load_report(body.report_id)
     if not report: raise HTTPException(404,"Report not found")
     if collection: raise HTTPException(409,"QR has already been consumed")
@@ -135,14 +220,42 @@ def collect(body:CollectRequest,authorization:str|None=Header(default=None)):
 
 @app.get("/reports/mine")
 def reports_mine(authorization:str|None=Header(default=None)):
+    """Fetch all waste reports submitted by the currently authenticated citizen.
+
+    Requires Bearer token with 'citizen' role.
+    Joins AI verification, worker physical check, and collection audit timestamps.
+
+    Returns:
+        List[dict]: Array of report objects belonging to the authenticated citizen.
+    """
     user=require_role(authorization,"citizen"); c=get_conn(); rows=c.execute("""SELECT r.id,r.user_id,u.name citizen,r.category,r.report_lat,r.report_lon,r.captured_at,r.status,r.verification_score,r.risk_level,r.risk_flags,a.predicted_category,a.accepted ai_accepted,a.confidence,a.explanation,a.model,a.verified_at ai_verified_at,w.worker_id,w.distance_m,w.verified_at worker_verified_at,col.collected_at FROM reports r JOIN users u ON u.id=r.user_id LEFT JOIN ai_verifications a ON a.report_id=r.id LEFT JOIN worker_verifications w ON w.report_id=r.id LEFT JOIN collections col ON col.report_id=r.id WHERE r.user_id=? ORDER BY r.id DESC""",(user["id"],)).fetchall(); c.close(); return [dict(x) for x in rows]
 
 @app.get("/reports")
 def reports(authorization:str|None=Header(default=None)):
+    """Administrative municipal audit endpoint returning all system reports.
+
+    Requires Bearer token with 'admin' role.
+    Includes full operational metadata: citizen identity, geo-coordinates,
+    AI model verdicts, worker proximity distance, and collection timestamps.
+
+    Returns:
+        List[dict]: Array of all reports across all citizens in reverse chronological order.
+    """
     require_role(authorization,"admin"); c=get_conn(); rows=c.execute("""SELECT r.id,r.user_id,u.name citizen,r.category,r.report_lat,r.report_lon,r.captured_at,r.status,r.verification_score,r.risk_level,r.risk_flags,a.predicted_category,a.accepted ai_accepted,a.confidence,a.explanation,a.model,a.verified_at ai_verified_at,w.worker_id,w.distance_m,w.verified_at worker_verified_at,col.collected_at FROM reports r JOIN users u ON u.id=r.user_id LEFT JOIN ai_verifications a ON a.report_id=r.id LEFT JOIN worker_verifications w ON w.report_id=r.id LEFT JOIN collections col ON col.report_id=r.id ORDER BY r.id DESC""").fetchall(); c.close(); return [dict(x) for x in rows]
 
 @app.get("/reports/{report_id}/timeline")
 def timeline(report_id:int,authorization:str|None=Header(default=None)):
+    """Retrieve the tamper-evident 5-stage lifecycle audit trail for a report.
+
+    Lifecycle stages:
+        1. REPORT: Initial citizen submission timestamp & geo-tag.
+        2. AI VERIFY: Multimodal AI classification, confidence, and model name.
+        3. WORKER VERIFY: Physical worker segregation check and GPS distance.
+        4. COLLECT: One-time dynamic QR code burn and handoff confirmation.
+        5. EARN: Immutable ledger credit reward transaction.
+
+    Authorized for report owner (citizen), sanitation workers, and municipal admins.
+    """
     current=auth_user(authorization); r,a,w,col=load_report(report_id)
     if not r: raise HTTPException(404,"Report not found")
     if current["role"] not in {"admin","worker"} and current["id"]!=r["user_id"]: raise HTTPException(403,"Not allowed")
@@ -156,6 +269,13 @@ def timeline(report_id:int,authorization:str|None=Header(default=None)):
 
 @app.get("/wallet/{user_id}")
 def wallet(user_id:int,authorization:str|None=Header(default=None)):
+    """Retrieve the current points balance and transaction ledger for a user.
+
+    Citizens can only access their own wallet; admins have universal read access.
+
+    Returns:
+        dict: {"user": {id, name, role, points}, "transactions": [{report_id, points, reason, created_at}, ...]}
+    """
     current=auth_user(authorization)
     if current["id"]!=user_id and current["role"]!="admin": raise HTTPException(403,"Not allowed")
     c=get_conn(); user=c.execute("SELECT id,name,role,points FROM users WHERE id=?",(user_id,)).fetchone(); tx=c.execute("SELECT report_id,points,reason,created_at FROM credit_transactions WHERE user_id=? ORDER BY id DESC",(user_id,)).fetchall(); c.close()
@@ -164,10 +284,25 @@ def wallet(user_id:int,authorization:str|None=Header(default=None)):
 
 @app.get("/leaderboard")
 def leaderboard():
+    """Public citizen gamification leaderboard returning top 20 civic contributors.
+
+    Returns:
+        List[dict]: Sorted list of citizen records containing id, name, and total points.
+    """
     c=get_conn(); rows=c.execute("SELECT id,name,points FROM users WHERE role='citizen' ORDER BY points DESC,name LIMIT 20").fetchall(); c.close(); return [dict(x) for x in rows]
 
 @app.get("/analytics")
 def analytics(authorization:str|None=Header(default=None)):
+    """Municipal administrative telemetry and KPI intelligence endpoint.
+
+    Requires Bearer token with 'admin' role.
+    Aggregates global system metrics: total submissions, verification count,
+    collection count, municipal diversion rate, waste category breakdown,
+    risk tier distributions, and geospatial dumping hotspots (>= 2 incidents).
+
+    Returns:
+        dict: Aggregated analytics payload for admin command center charts and KPIs.
+    """
     require_role(authorization,"admin"); c=get_conn()
     total=c.execute("SELECT COUNT(*) n FROM reports").fetchone()["n"]; verified=c.execute("SELECT COUNT(*) n FROM worker_verifications").fetchone()["n"]; collected=c.execute("SELECT COUNT(*) n FROM collections").fetchone()["n"]; credits=c.execute("SELECT COALESCE(SUM(points),0) n FROM credit_transactions").fetchone()["n"]; users=c.execute("SELECT COUNT(*) n FROM users WHERE role='citizen'").fetchone()["n"]
     cats=[dict(x) for x in c.execute("SELECT category,COUNT(*) count FROM reports GROUP BY category ORDER BY count DESC").fetchall()]
@@ -177,9 +312,15 @@ def analytics(authorization:str|None=Header(default=None)):
 
 @app.get("/reports/{report_id}/image")
 def report_image(report_id:int,authorization:str|None=Header(default=None)):
+    """Stream evidence image for a specific waste report from local storage.
+
+    Access is restricted to the citizen owner, field workers, or municipal admins.
+    Validates token authorization before serving the binary file.
+    """
     current=auth_user(authorization); c=get_conn(); row=c.execute("SELECT image_path,user_id FROM reports WHERE id=?",(report_id,)).fetchone(); c.close()
     if not row: raise HTTPException(404,"Image not found")
     if current["role"] not in {"admin","worker"} and current["id"]!=row["user_id"]: raise HTTPException(403,"Not allowed")
     path=Path(row["image_path"])
     if not path.exists(): raise HTTPException(404,"Image not found")
     return FileResponse(path)
+

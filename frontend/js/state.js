@@ -1,6 +1,37 @@
 /* ==========================================================================
-   CLEANCRED — REACTIVE STATE STORE
-   Persistent State, Role-Based Access, & Event Subscriptions
+   CLEANCRED — REACTIVE STATE STORE & BACKEND INTEGRATION
+   ==========================================================================
+   This module provides the central application state management for CleanCred:
+   
+   1. REACTIVE STORE:
+      - Encapsulates active role ('citizen' | 'worker' | 'admin' | 'institution'),
+        user profile metrics, waste pickup queue, municipal analytics, and notifications.
+      - Implements an Observer pattern via `subscribe(listener)`: subscribers receive
+        `(newState, action, payload)` updates whenever `update()` or state transitions occur.
+
+   2. STORAGE VERSIONING & LOCAL PERSISTENCE:
+      - Persists demo state in `localStorage` under `cleancredDemoState_v3`.
+      - Tracks schema version `STORAGE_VERSION = 3`.
+      - Guarded against schema drift: if stored data version differs or deserialization
+        fails, local cache is safely evicted and state reverts to canonical `getSeedState()`.
+
+   3. AUTHENTICATION BOOTSTRAP:
+      - Self-bootstraps demo sessions on startup (`initAuth()`) by logging into the
+        backend using standard demo role PINs:
+        * Citizen: DemoTester (PIN: 1234)
+        * Worker:  DemoCollector (PIN: 5678)
+        * Admin:   DemoAdmin (PIN: 9999)
+      - Caches Bearer tokens in `this.sessions` for seamless role switching.
+
+   4. API CLIENT & SYNC:
+      - Provides `apiFetch(path, opts)` wrapper that injects role Bearer tokens and
+        enforces structured JSON error reporting.
+      - Periodically synchronizes live data (`syncWithBackend()`) against FastAPI endpoints:
+        `/reports/mine`, `/wallet/{user_id}`, and `/analytics`.
+      - Bridges UI operations directly to the backend:
+        * `submitReport()`: Multipart/form-data upload to POST /reports.
+        * `verifyPickup()`: POST /verify with geolocation hard gate (<= 50m).
+        * `collectPickup()`: POST /collect with one-time QR code burn & ledger crediting.
    ========================================================================== */
 
 import { Formatters } from './utils/formatters.js';

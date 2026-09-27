@@ -1,9 +1,21 @@
+"""
+CleanCred Relational Database Layer
+Configures SQLite database schema, foreign key enforcement, WAL mode,
+safe migrations, and initial demo seed dataset bootstrap.
+"""
+
 import sqlite3
 from pathlib import Path
 
 DB_PATH = Path(__file__).resolve().parent / "cleancred.db"
 
-def get_conn():
+def get_conn() -> sqlite3.Connection:
+    """
+    Open and configure a SQLite connection with Row factory, foreign keys, and WAL mode.
+
+    Returns:
+        sqlite3.Connection: Configured SQLite database connection.
+    """
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
@@ -11,6 +23,9 @@ def get_conn():
     return conn
 
 def init_db():
+    """
+    Initialize SQLite tables, indexes, safe additive schema migrations, and initial seed records.
+    """
     conn = get_conn()
     conn.executescript("""
     CREATE TABLE IF NOT EXISTS users (
