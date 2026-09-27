@@ -2,7 +2,7 @@
    CLEANCRED — MUNICIPAL WORKER VERIFICATION PORTAL
    CleanCred Core Engine
    Tactile Neumorphism + Civic Technology
-   Role: Ramesh Kumar | Zone 4 - Ward 4B | Electric Van MH-02-GK-4091
+   Role: Municipal Waste Collector & Route Inspector
    ========================================================================== */
 
 import { State } from '../state.js';
@@ -76,17 +76,24 @@ export const WorkerPortalView = {
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 1rem;">
-            ${queue.map(item => `
+            ${queue.map(item => {
+              const cat = (item.category || '').toLowerCase();
+              const isWet = cat === 'wet';
+              const isDry = cat === 'dry';
+              const catBg = isWet ? 'var(--waste-wet-bg)' : isDry ? 'var(--waste-dry-bg)' : 'var(--waste-harmful-bg)';
+              const catColor = isWet ? 'var(--waste-wet)' : isDry ? 'var(--waste-dry)' : 'var(--waste-harmful)';
+              const catIcon = isWet ? 'apple' : isDry ? 'package' : 'battery-charging';
+              return `
               <div class="neu-card-flat" style="display: flex; align-items: center; justify-content: space-between; padding: 1.25rem; border-radius: var(--radius-lg); flex-wrap: wrap; gap: 1rem;">
                 
                 <div style="display: flex; align-items: center; gap: 1.25rem;">
-                  <div style="width: 48px; height: 48px; border-radius: var(--radius-md); background: ${item.category === 'wet' ? 'var(--waste-wet-bg)' : item.category === 'dry' ? 'var(--waste-dry-bg)' : 'var(--waste-harmful-bg)'}; color: ${item.category === 'wet' ? 'var(--waste-wet)' : item.category === 'dry' ? 'var(--waste-dry)' : 'var(--waste-harmful)'}; display: flex; align-items: center; justify-content: center;">
-                    <i data-lucide="${item.category === 'wet' ? 'apple' : item.category === 'dry' ? 'package' : 'battery-charging'}" class="lucide-icon-md"></i>
+                  <div style="width: 48px; height: 48px; border-radius: var(--radius-md); background: ${catBg}; color: ${catColor}; display: flex; align-items: center; justify-content: center;">
+                    <i data-lucide="${catIcon}" class="lucide-icon-md"></i>
                   </div>
                   <div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
                       <strong style="color: var(--color-navy); font-size: 1.05rem;">${item.subType}</strong>
-                      <span class="badge" style="background: ${item.category === 'wet' ? 'var(--waste-wet-bg)' : item.category === 'dry' ? 'var(--waste-dry-bg)' : 'var(--waste-harmful-bg)'}; color: ${item.category === 'wet' ? 'var(--waste-wet)' : item.category === 'dry' ? 'var(--waste-dry)' : 'var(--waste-harmful)'}; font-weight: 700;">
+                      <span class="badge" style="background: ${catBg}; color: ${catColor}; font-weight: 700;">
                         ${item.quantityKg} KG
                       </span>
                     </div>
@@ -142,7 +149,8 @@ export const WorkerPortalView = {
                 </div>
 
               </div>
-            `).join('')}
+            `;
+            }).join('')}
           </div>
         </div>
 

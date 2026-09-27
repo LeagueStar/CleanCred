@@ -388,7 +388,7 @@ class StateStore {
         {
           id: 'notif_1',
           title: '🚚 Pickup On The Way',
-          message: 'Worker Ramesh Kumar is 12 mins away from your location for request #GK-2026-89421.',
+          message: 'Your assigned worker is en route to your location for request #GK-2026-89421.',
           timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
           read: false,
           type: 'pickup'
@@ -668,7 +668,7 @@ class StateStore {
               address: this.state.user.address || 'Flat 402, Green Meadows, Ward 4B, Mumbai',
               createdAt: r.captured_at,
               status,
-              workerName: 'Ramesh Kumar (Ward 4B Fleet)',
+              workerName: 'Ramesh Kumar',
               workerPhone: '+91 98111 22334',
               vehicleNo: 'MH-02-GK-4091',
               otp: String(r.id).padStart(4, '0'),
@@ -849,7 +849,7 @@ class StateStore {
       scheduledTime: slot.includes('Morning') ? '08:00 AM - 11:00 AM' : (slot.includes('Afternoon') ? '02:00 PM - 05:00 PM' : slot),
       createdAt: data.server_timestamp || new Date().toISOString(),
       status: 'created',
-      workerName: 'Ramesh Kumar (Ward 4B Fleet)',
+      workerName: 'Ramesh Kumar',
       workerPhone: '+91 98111 22334',
       vehicleNo: 'MH-02-GK-4091',
       otp: serverId.padStart(4, '0'),

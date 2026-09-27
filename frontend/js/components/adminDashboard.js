@@ -309,8 +309,8 @@ export const AdminDashboardView = {
                           ${p.id}
                         </td>
                         <td style="padding: 0.75rem 0.5rem;">
-                          <span class="badge ${p.category === 'wet' ? 'badge-green' : p.category === 'dry' ? 'badge-blue' : 'badge-red'}">
-                            ${p.categoryName || p.category.toUpperCase()}
+                          <span class="badge ${(p.category || '').toLowerCase() === 'wet' ? 'badge-green' : (p.category || '').toLowerCase() === 'dry' ? 'badge-blue' : 'badge-red'}">
+                            ${p.categoryName || (p.category || '').toUpperCase()}
                           </span>
                         </td>
                         <td style="padding: 0.75rem 0.5rem; font-weight: 600; color: var(--color-navy);">

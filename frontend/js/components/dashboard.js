@@ -111,19 +111,19 @@ export const DashboardView = {
               <div class="pickup-status-card neu-card neu-card-raised">
                 <div class="pickup-status-info">
                   <div class="flex-between" style="margin-bottom: 0.4rem;">
-                    <span class="badge ${p.category === 'wet' ? 'badge-green' : p.category === 'dry' ? 'badge-blue' : 'badge-red'}">
+                    <span class="badge ${(p.category || '').toLowerCase() === 'wet' ? 'badge-green' : (p.category || '').toLowerCase() === 'dry' ? 'badge-blue' : 'badge-red'}">
                       ${p.status === 'on_the_way' ? 'COLLECTION IN PROGRESS' : p.status === 'assigned' ? 'WORKER ASSIGNED' : 'COLLECTION STAGED'}
                     </span>
                     <span style="font-size: 0.78rem; font-weight: 700; color: var(--color-primary-dark); display: flex; align-items: center; gap: 0.3rem;">
                       <i data-lucide="clock" class="lucide-icon-sm"></i>
-                      <span>ETA ${p.etaMinutes || 18} mins</span>
+                      <span>${p.status === 'on_the_way' ? 'En Route' : 'Assigned'}</span>
                     </span>
                   </div>
                   <strong style="font-size: 1.15rem; color: var(--color-navy); display: block;">
                     Request #${p.id} &bull; ${p.subType || p.categoryName}
                   </strong>
                   <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">
-                    Assigned Worker: <strong>${p.workerName || 'Ramesh Kumar'}</strong> (${p.vehicleNo || 'Electric Van MH-02-GK-4091'})
+                    Assigned Worker: <strong>${p.workerName || 'Ramesh Kumar'}</strong>
                   </p>
                 </div>
 
@@ -268,11 +268,18 @@ export const DashboardView = {
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-            ${State.state.pickups.slice(0, 4).map(p => `
+            ${State.state.pickups.slice(0, 4).map(p => {
+              const cat = (p.category || '').toLowerCase();
+              const isWet = cat === 'wet';
+              const isDry = cat === 'dry';
+              const catBg = isWet ? 'var(--waste-wet-bg)' : isDry ? 'var(--waste-dry-bg)' : 'var(--waste-harmful-bg)';
+              const catColor = isWet ? 'var(--waste-wet)' : isDry ? 'var(--waste-dry)' : 'var(--waste-harmful)';
+              const catIcon = isWet ? 'apple' : isDry ? 'package' : 'battery-charging';
+              return `
               <div class="neu-card-flat" style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1.25rem; border-radius: var(--radius-md);">
                 <div style="display: flex; align-items: center; gap: 0.85rem;">
-                  <div style="width: 38px; height: 38px; border-radius: var(--radius-md); background: ${p.category === 'wet' ? 'var(--waste-wet-bg)' : p.category === 'dry' ? 'var(--waste-dry-bg)' : 'var(--waste-harmful-bg)'}; color: ${p.category === 'wet' ? 'var(--waste-wet)' : p.category === 'dry' ? 'var(--waste-dry)' : 'var(--waste-harmful)'}; display: flex; align-items: center; justify-content: center;">
-                    <i data-lucide="${p.category === 'wet' ? 'apple' : p.category === 'dry' ? 'package' : 'battery-charging'}" class="lucide-icon-sm"></i>
+                  <div style="width: 38px; height: 38px; border-radius: var(--radius-md); background: ${catBg}; color: ${catColor}; display: flex; align-items: center; justify-content: center;">
+                    <i data-lucide="${catIcon}" class="lucide-icon-sm"></i>
                   </div>
                   <div>
                     <strong style="color: var(--color-navy); font-size: 0.95rem;">${p.subType || p.categoryName}</strong>
@@ -292,7 +299,8 @@ export const DashboardView = {
                   `}
                 </div>
               </div>
-            `).join('')}
+            `;
+            }).join('')}
           </div>
         </div>
 
@@ -456,7 +464,7 @@ export const DashboardView = {
             ${newReq.otp}
           </div>
           <div style="font-size: 0.72rem; color: var(--text-muted);">
-            Worker: <strong>Ramesh Kumar</strong> &bull; ETA: ~18 mins
+            Worker: <strong>${newReq.workerName || 'Ramesh Kumar'}</strong> &bull; Status: Assigned
           </div>
         </div>
 

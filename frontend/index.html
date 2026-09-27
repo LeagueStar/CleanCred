@@ -10,21 +10,23 @@
   <!-- Tailwind CSS CDN (Utility Classes) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brandGreen: '#059669',
-            brandNavy: '#0F172A',
-            brandBlue: '#0891B2',
-            canvas: '#E0E5EC'
-          },
-          fontFamily: {
-            heading: ['Outfit', 'sans-serif'],
-            body: ['Plus Jakarta Sans', 'sans-serif']
+    if (window.tailwind) {
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brandGreen: '#059669',
+              brandNavy: '#0F172A',
+              brandBlue: '#0891B2',
+              canvas: '#E0E5EC'
+            },
+            fontFamily: {
+              heading: ['Outfit', 'sans-serif'],
+              body: ['Plus Jakarta Sans', 'sans-serif']
+            }
           }
         }
-      }
+      };
     }
   </script>
 

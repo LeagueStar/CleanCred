@@ -43,12 +43,12 @@ export const LiveTrackingView = {
         categoryName: 'Demonstration Fleet Telemetry',
         pointsReward: 0,
         quantityKg: 0,
-        subType: 'Ward 4B Fleet Demo Route',
+        subType: 'Municipal Demonstration Route',
         address: 'Municipal Demonstration Route (Ward 4B)',
         status: 'on_the_way',
         workerName: 'Demo Vehicle Operator',
         workerPhone: '+91 98111 22334',
-        vehicleNo: 'Electric Van MH-02-GK-4091',
+        vehicleNo: 'Collection Van',
         otp: '----',
         etaMinutes: 12
       };
@@ -128,7 +128,7 @@ export const LiveTrackingView = {
               </span>
               <span style="display: flex; align-items: center; gap: 0.35rem;">
                 <i data-lucide="truck" class="lucide-icon-sm" style="color: #2563EB;"></i>
-                <span>Electric Van: ${pickup.vehicleNo || 'MH-02-GK-4091'}</span>
+                <span>Vehicle: ${pickup.vehicleNo || 'Collection Van'}</span>
               </span>
               <span style="display: flex; align-items: center; gap: 0.35rem;">
                 <i data-lucide="activity" class="lucide-icon-sm" style="color: var(--color-primary);"></i>
@@ -161,7 +161,7 @@ export const LiveTrackingView = {
               <div class="neu-card-inset" style="padding: 0.85rem 1rem; border-radius: var(--radius-md); margin-bottom: 1rem;">
                 <div class="flex-between" style="margin-bottom: 0.35rem; font-size: 0.85rem;">
                   <span style="color: var(--text-muted); font-weight: 600;">Assigned Vehicle</span>
-                  <strong style="color: var(--color-navy);">${pickup.vehicleNo || 'Electric Van MH-02-GK-4091'}</strong>
+                  <strong style="color: var(--color-navy);">${pickup.vehicleNo || 'Collection Van'}</strong>
                 </div>
                 <div class="flex-between" style="font-size: 0.85rem;">
                   <span style="color: var(--text-muted); font-weight: 600;">Pickup Handshake OTP</span>
@@ -245,7 +245,7 @@ export const LiveTrackingView = {
                     <i data-lucide="${pickup.status === 'on_the_way' ? 'navigation' : 'check'}" style="width: 12px; height: 12px;"></i>
                   </div>
                   <strong style="font-size: 0.875rem; color: var(--color-navy);">Collection Van En Route</strong>
-                  <div style="font-size: 0.75rem; color: var(--text-muted);">Arriving at doorstep (ETA: ${pickup.etaMinutes || 12} mins)</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">Assigned worker is en route to your location</div>
                 </div>
 
                 <!-- 4. Collected -->
@@ -366,10 +366,10 @@ export const LiveTrackingView = {
       this.truckMarker.setLatLng([newLat, newLng]);
       State.addNotification({
         title: 'Van Location Updated',
-        message: 'Ramesh Kumar is now entering Green Park Avenue (~8 mins away).',
+        message: 'Your assigned worker is en route to your location.',
         type: 'pickup'
       });
-      window.AppRouter.showToast('Telemetry updated: Ramesh is ~8 mins away.');
+      window.AppRouter.showToast('Telemetry updated: Worker is en route.');
     }
   }
 };

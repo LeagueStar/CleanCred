@@ -160,7 +160,7 @@ export const ReportWasteView = {
           </div>
           <h1 class="wizard-step-title">Report Waste Collection</h1>
           <p class="wizard-step-desc">
-            Schedule verified municipal collection. Credits are credited upon scale verification by Ramesh Kumar.
+            Schedule verified municipal collection. Credits are credited upon on-site scale verification by the assigned worker.
           </p>
         </div>
 
@@ -376,7 +376,7 @@ export const ReportWasteView = {
             <div class="wizard-step-eyebrow">STEP 3 Location &bull; Municipal Routing &amp; Time Slot</div>
             <h2 class="wizard-step-title">Pickup Location &amp; Time Slot</h2>
             <p class="wizard-step-desc">
-              Your location ensures direct route dispatch to Ramesh Kumar's electric collection van.
+              Your location ensures direct route dispatch to your assigned municipal collection vehicle.
             </p>
 
             <!-- Real Geolocation Card (BUG 3 FIX) -->
@@ -462,7 +462,7 @@ export const ReportWasteView = {
 
             <div class="neu-card-flat" style="border-radius: var(--radius-md); overflow: hidden; margin-bottom: 1.25rem;">
               <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--color-border); background: var(--bg-surface-elevated); display: flex; align-items: center; justify-content: space-between;">
-                <span class="badge ${this.formData.category === 'wet' ? 'badge-green' : this.formData.category === 'dry' ? 'badge-blue' : 'badge-red'}">
+                <span class="badge ${(this.formData.category || '').toLowerCase() === 'wet' ? 'badge-green' : (this.formData.category || '').toLowerCase() === 'dry' ? 'badge-blue' : 'badge-red'}">
                   ${config.name}
                 </span>
                 <strong style="font-size: 1.05rem; color: var(--color-primary-dark);">+${config.points} Credits/KG (Gated on Verification)</strong>
@@ -499,7 +499,7 @@ export const ReportWasteView = {
                 <span>Verification Rule:</span>
               </strong>
               <span style="color: #78350F;">
-                Credits are <em>not</em> credited on report submission. They will be deposited into your wallet once municipal worker Ramesh Kumar verifies segregation on his digital scale.
+                Credits are <em>not</em> credited on report submission. They will be deposited into your wallet once the assigned municipal worker verifies segregation on a digital scale.
               </span>
             </div>
 
@@ -520,10 +520,9 @@ export const ReportWasteView = {
         const latest = this.lastSubmittedRequestId
           ? State.state.pickups.find(p => p.id === this.lastSubmittedRequestId)
           : State.state.pickups.find(p => p.status === 'created');
-        const workerName = (latest && latest.workerName) || 'Worker Ramesh Kumar (Ward 4B Fleet)';
+        const workerName = (latest && latest.workerName) || 'Ramesh Kumar';
         const otpVal = (latest && latest.otp) || (latest ? '----' : '8492 (Demo Seed)');
         const reqIdVal = (latest && latest.id) || 'GK-2026-NEW';
-        const etaVal = (latest && latest.etaMinutes) ? `${latest.etaMinutes} mins` : '18 mins';
         return `
           <div style="text-align: center; padding: 1.5rem 0;">
             <div class="wizard-step-eyebrow" style="margin-bottom: 0.75rem;">STEP 5 Submitted &bull; Collection Dispatched</div>
@@ -543,7 +542,7 @@ export const ReportWasteView = {
                 ${Formatters.escapeHtml(otpVal)}
               </div>
               <div style="font-size: 0.78rem; color: var(--text-muted);">
-                Request ID: <strong>${Formatters.escapeHtml(reqIdVal)}</strong> &bull; Worker ETA: <strong>${Formatters.escapeHtml(etaVal)}</strong>
+                Request ID: <strong>${Formatters.escapeHtml(reqIdVal)}</strong> &bull; Status: <strong>Assigned</strong>
               </div>
             </div>
 
