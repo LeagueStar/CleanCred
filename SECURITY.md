@@ -20,4 +20,4 @@ If you believe you have found a security vulnerability in CleanCred, please repo
 * Detailed steps to reproduce the issue.
 * Any relevant logs, screenshots, or code snippets.
 
-We will acknowledge receipt of your vulnerability report within [e.g., 48 hours] and strive to send you regular updates about our progress. If the vulnerability is confirmed, we will release a patch as quickly as possible.
+We will acknowledge receipt of your vulnerability report within 48 hours and strive to send you regular updates about our progress. If the vulnerability is confirmed, we will release a patch as quickly as possible.
