@@ -544,7 +544,7 @@ export const ReportWasteView = {
         const latest = this.lastSubmittedRequestId
           ? State.state.pickups.find(p => p.id === this.lastSubmittedRequestId)
           : State.state.pickups.find(p => p.status === 'created');
-        const workerName = (latest && latest.workerName) || 'Ramesh Kumar';
+        const workerName = (latest && latest.workerName) || 'DemoCollector';
         const otpVal = (latest && latest.otp) || (latest ? '----' : '8492 (Demo Seed)');
         const reqIdVal = (latest && latest.id) || 'GK-2026-NEW';
         return `

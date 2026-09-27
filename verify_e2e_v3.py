@@ -76,7 +76,7 @@ def main():
     # Worker login
     r_wrk = requests.post(f"{BASE_URL}/auth/login", json={"user_id": 2, "pin": "5678"})
     if r_wrk.status_code == 401 or r_wrk.status_code == 404:
-        requests.post(f"{BASE_URL}/users", json={"name": "Ramesh Kumar", "role": "worker", "pin": "5678"})
+        requests.post(f"{BASE_URL}/users", json={"name": "DemoCollector", "role": "worker", "pin": "5678"})
         r_wrk = requests.post(f"{BASE_URL}/auth/login", json={"user_id": 2, "pin": "5678"})
     assert r_wrk.status_code == 200, f"Worker login failed: {r_wrk.text}"
     worker_token = r_wrk.json()["access_token"]
@@ -86,7 +86,7 @@ def main():
     # Admin login
     r_adm = requests.post(f"{BASE_URL}/auth/login", json={"user_id": 3, "pin": "9999"})
     if r_adm.status_code == 401 or r_adm.status_code == 404:
-        requests.post(f"{BASE_URL}/users", json={"name": "Admin Office", "role": "admin", "pin": "9999"})
+        requests.post(f"{BASE_URL}/users", json={"name": "DemoAdmin", "role": "admin", "pin": "9999"})
         r_adm = requests.post(f"{BASE_URL}/auth/login", json={"user_id": 3, "pin": "9999"})
     assert r_adm.status_code == 200, f"Admin login failed: {r_adm.text}"
     admin_token = r_adm.json()["access_token"]

@@ -123,7 +123,7 @@ export const DashboardView = {
                     Request #${p.id} &bull; ${p.subType || p.categoryName}
                   </strong>
                   <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">
-                    Assigned Worker: <strong>${p.workerName || 'Ramesh Kumar'}</strong>
+                    Assigned Worker: <strong>${p.workerName || 'DemoCollector'}</strong>
                   </p>
                 </div>
 
@@ -464,7 +464,7 @@ export const DashboardView = {
             ${newReq.otp}
           </div>
           <div style="font-size: 0.72rem; color: var(--text-muted);">
-            Worker: <strong>${newReq.workerName || 'Ramesh Kumar'}</strong> &bull; Status: Assigned
+            Worker: <strong>${newReq.workerName || 'DemoCollector'}</strong> &bull; Status: Assigned
           </div>
         </div>
 

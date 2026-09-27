@@ -8,8 +8,8 @@ import { Formatters } from './utils/formatters.js';
 const API_BASE_URL = 'http://127.0.0.1:8000';
 
 // Demo persistence (localStorage) — see saveState()/restoreState()/resetState()
-const STORAGE_KEY = 'cleancredDemoState_v2';
-const STORAGE_VERSION = 2;
+const STORAGE_KEY = 'cleancredDemoState_v3';
+const STORAGE_VERSION = 3;
 
 class StateStore {
   constructor() {
@@ -53,10 +53,10 @@ class StateStore {
         joinDate: '12 Jan 2026'
       },
 
-      // Municipal Worker Profile (Ramesh Kumar)
+      // Municipal Worker Profile (DemoCollector)
       worker: {
-        id: 'wrk_ramesh_04',
-        name: 'Ramesh Kumar',
+        id: 'wrk_democollector',
+        name: 'DemoCollector',
         zone: 'Zone 4 — Ward 4B (West Bandra)',
         vehicle: 'Electric Waste Van (MH-02-GK-4091)',
         rating: 4.9,
@@ -98,7 +98,7 @@ class StateStore {
           address: 'Flat 402, Green Meadows, Ward 4B, Mumbai',
           createdAt: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
           status: 'on_the_way', // 'created', 'assigned', 'on_the_way', 'collected', 'verified', 'rejected'
-          workerName: 'Ramesh Kumar',
+          workerName: 'DemoCollector',
           workerPhone: '+91 98111 22334',
           vehicleNo: 'MH-02-GK-4091',
           otp: '8492',
@@ -117,7 +117,7 @@ class StateStore {
           address: 'Flat 402, Green Meadows, Ward 4B, Mumbai',
           createdAt: new Date(Date.now() - 2 * 86400 * 1000).toISOString(),
           status: 'verified',
-          workerName: 'Ramesh Kumar',
+          workerName: 'DemoCollector',
           otp: '5120',
           pointsCredited: 7
         },
@@ -516,8 +516,8 @@ class StateStore {
     try {
       const [citizenAuth, workerAuth, adminAuth] = await Promise.all([
         this.loginOrRegister('citizen', 1, '1234', 'DemoTester'),
-        this.loginOrRegister('worker', 2, '5678', 'Ramesh Kumar'),
-        this.loginOrRegister('admin', 3, '9999', 'Admin Office')
+        this.loginOrRegister('worker', 2, '5678', 'DemoCollector'),
+        this.loginOrRegister('admin', 3, '9999', 'DemoAdmin')
       ]);
       if (citizenAuth) this.sessions.citizen = citizenAuth;
       if (workerAuth) this.sessions.worker = workerAuth;
@@ -668,7 +668,7 @@ class StateStore {
               address: this.state.user.address || 'Flat 402, Green Meadows, Ward 4B, Mumbai',
               createdAt: r.captured_at,
               status,
-              workerName: 'Ramesh Kumar',
+              workerName: 'DemoCollector',
               workerPhone: '+91 98111 22334',
               vehicleNo: 'MH-02-GK-4091',
               otp: String(r.id).padStart(4, '0'),
@@ -849,7 +849,7 @@ class StateStore {
       scheduledTime: slot.includes('Morning') ? '08:00 AM - 11:00 AM' : (slot.includes('Afternoon') ? '02:00 PM - 05:00 PM' : slot),
       createdAt: data.server_timestamp || new Date().toISOString(),
       status: 'created',
-      workerName: 'Ramesh Kumar',
+      workerName: 'DemoCollector',
       workerPhone: '+91 98111 22334',
       vehicleNo: 'MH-02-GK-4091',
       otp: serverId.padStart(4, '0'),

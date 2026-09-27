@@ -148,7 +148,7 @@ export const LiveTrackingView = {
                     <i data-lucide="user-check" class="lucide-icon-md"></i>
                   </div>
                   <div>
-                    <strong style="color: var(--color-navy); font-size: 1rem; display: block;">${pickup.workerName || 'Ramesh Kumar'}</strong>
+                    <strong style="color: var(--color-navy); font-size: 1rem; display: block;">${pickup.workerName || 'DemoCollector'}</strong>
                     <div style="font-size: 0.78rem; color: var(--text-muted);">Municipal Sanitation Officer &bull; 4.9 Rating</div>
                   </div>
                 </div>
@@ -181,7 +181,7 @@ export const LiveTrackingView = {
               ` : pickup.status !== 'verified' && pickup.status !== 'collected' ? `
               <div class="neu-card-flat" style="padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; text-align: center;">
                 <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                  ${pickup.qr_token ? 'Present this Handover QR to ' + Formatters.escapeHtml(pickup.workerName || 'Ramesh Kumar') + ' on arrival' : 'QR Handover Token (Generated upon Worker Inspection)'}
+                  ${pickup.qr_token ? 'Present this Handover QR to ' + Formatters.escapeHtml(pickup.workerName || 'DemoCollector') + ' on arrival' : 'QR Handover Token (Generated upon Worker Inspection)'}
                 </div>
                 <div id="live-tracking-qr" style="display: flex; justify-content: center;"></div>
                 ${pickup.qr_token ? `
@@ -236,7 +236,7 @@ export const LiveTrackingView = {
                     <i data-lucide="check" style="width: 12px; height: 12px;"></i>
                   </div>
                   <strong style="font-size: 0.875rem; color: var(--color-navy);">Worker Assigned</strong>
-                  <div style="font-size: 0.75rem; color: var(--text-muted);">${pickup.workerName || 'Ramesh Kumar'} accepted the route</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">${pickup.workerName || 'DemoCollector'} accepted the route</div>
                 </div>
 
                 <!-- 3. On the Way -->
