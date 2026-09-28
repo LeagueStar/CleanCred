@@ -79,9 +79,6 @@ CleanCred/
 │           ├── mapHelper.js          # Leaflet map pins, routing polylines, auto-resizing
 │           ├── qrCode.js             # QR code matrix generator
 │           └── qrScanner.js          # WebRTC live camera barcode & QR decoder
-├── docs/
-│   ├── JUDGE_DEMO.md       # Step-by-step 3-minute hackathon judge evaluation script
-│   └── TEST_MATRIX.md      # Full automated test matrix and anti-fraud verification spec
 ├── verify_e2e_v3.py        # 14-step automated end-to-end integration and anti-fraud test suite
 └── README.md
 ```
